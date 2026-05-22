@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
-const app = express();
+const fs = require('fs');
+const cloudinary = require('cloudinary').v2; // <-- IL FAUT ABSOLUMENT CETTE LIGNE EXACTE !
 
+const app = express();
 // Permet à Express de lire les fichiers à la racine (index.html, style.css, admin.html)
 app.use(express.static(__dirname));
 app.use(express.json());
