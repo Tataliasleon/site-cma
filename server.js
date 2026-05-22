@@ -113,7 +113,7 @@ app.post('/api/upload-carousel', upload.single('carouselFile'), (req, res) => {
     res.status(400).json({ error: "Échec du téléchargement de l'image" });
 });
 
-// La bonne façon d'écrire la route pour qu'elle fonctionne PARTOUT (Local et En ligne)
+// Force Express à renvoyer le fichier admin.html situé à la racine du projet
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
