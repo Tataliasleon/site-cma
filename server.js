@@ -83,20 +83,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Cette route accepte "admin.html" OU "Admin.html" pour éviter les erreurs Linux
+// On force Express à chercher le fichier exact présent sur GitHub
 app.get('/admin', (req, res) => {
-    const option1 = path.join(__dirname, 'admin.html');
-    const option2 = path.join(__dirname, 'Admin.html');
-
-    if (fs.existsSync(option1)) {
-        res.sendFile(option1);
-    } else if (fs.existsSync(option2)) {
-        res.sendFile(option2);
-    } else {
-        res.status(404).send("Fichier admin.html introuvable à la racine du projet !");
-    }
+    res.sendFile(path.join(__dirname, 'Admin.html'));
 });
-
 // ==========================================
 // 3. LES ROUTES API (DONNÉES & IMAGES)
 // ==========================================
