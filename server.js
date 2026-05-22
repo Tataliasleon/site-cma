@@ -3,28 +3,29 @@ const path = require('path');
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer'); 
-const { CloudinaryStorage } = require('multer-storage-cloudinary'); // <-- IL MANQUE CETTE LIGNE EXACTE !
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
-// Permet à Express de lire les fichiers à la racine (index.html, style.css, admin.html)
-app.use(express.static(__dirname));
-app.use(express.json());
 
 // Configuration pour lire le JSON et servir les fichiers statiques
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Permet à Express de lire les fichiers à la racine (index.html, style.css, admin.html)
 app.use(express.static(__dirname));
-// Permet à Express de servir tes anciennes images stockées localement
+
+// Permet à Express de servir tes anciennes images stockées localement (si existantes)
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // ==========================================
-// 1. CONFIGURATION DE CLOUDINARY
+// 1. CONFIGURATION DE CLOUDINARY (SÉCURISÉE)
 // ==========================================
+// Utilise les variables d'environnement Render, ou tes clés par défaut si non définies
 cloudinary.config({
-  cloud_name: 'dotjq0cqg', 
-  api_key: '554472961924777',       
-  api_secret: 'zCYze8MRkylM9WZ_M3eT3P7gRr4'  
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dotjq0cqg', 
+  api_key: process.env.CLOUDINARY_API_KEY || '554472961924777',       
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'zCYze8MRkylM9WZ_M3eT3P7gRr4'  
 });
 
 // Configurer le stockage Cloudinary pour les fichiers
@@ -82,19 +83,32 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Page d'administration (SANS le .html dans l'URL)
+// Page d'administration (Unique et sécurisée)
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
-
 
 // ==========================================
 // 3. LES ROUTES API (DONNÉES & IMAGES)
 // ==========================================
 
-// Obtenir toutes les données (C'est la route qui manquait ou qui bloquait !)
+// Obtenir toutes les données
 app.get('/api/data', (req, res) => {
     res.json(readData());
+});
+
+// Enregistrer les modifications de l'admin (Sauvegarde des textes)
+app.post('/api/save-data', (req, res) => {
+    try {
+        const currentData = readData();
+        // Fusionner les anciennes données avec les nouvelles reçues du formulaire
+        const updatedData = { ...currentData, ...req.body };
+        writeData(updatedData);
+        res.json({ success: true, message: "Données enregistrées avec succès !" });
+    } catch (err) {
+        console.error("Erreur lors de la sauvegarde :", err);
+        res.status(500).json({ error: "Erreur serveur lors de l'enregistrement" });
+    }
 });
 
 // Enregistrer le Logo sur Cloudinary
@@ -113,14 +127,9 @@ app.post('/api/upload-carousel', upload.single('carouselFile'), (req, res) => {
     res.status(400).json({ error: "Échec du téléchargement de l'image" });
 });
 
-// Force Express à renvoyer le fichier admin.html situé à la racine du projet
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
 
 // Lancement du serveur
 app.listen(PORT, () => {
     console.log(`\n=== SERVEUR CMA OPÉRATIONNEL SUR LE PORT ${PORT} ===`);
-    console.log(`👉 Administration : http://localhost:${PORT}/admin\n`);
+    console.log(`👉 En ligne : https://centre-missionnaire-actes-1-8.onrender.com`);
 });
