@@ -111,13 +111,9 @@ app.post('/api/upload-carousel', upload.single('carouselFile'), (req, res) => {
 });
 
 // Mettre à jour toutes les informations depuis l'admin
-app.post('/api/update-all', (req, res) => {
-    try {
-        writeData(req.body);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+// La bonne façon d'écrire la route pour qu'elle fonctionne PARTOUT (Local et En ligne)
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
 
