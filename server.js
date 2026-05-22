@@ -6,6 +6,7 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary'); // <-- IL MANQUE CETTE LIGNE EXACTE !
 
 const app = express();
+const PORT = process.env.PORT || 10000;
 // Permet à Express de lire les fichiers à la racine (index.html, style.css, admin.html)
 app.use(express.static(__dirname));
 app.use(express.json());
