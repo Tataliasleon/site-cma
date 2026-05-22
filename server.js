@@ -83,9 +83,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Page d'administration (Unique et sécurisée)
+// Cette route accepte "admin.html" OU "Admin.html" pour éviter les erreurs Linux
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
+    const option1 = path.join(__dirname, 'admin.html');
+    const option2 = path.join(__dirname, 'Admin.html');
+
+    if (fs.existsSync(option1)) {
+        res.sendFile(option1);
+    } else if (fs.existsSync(option2)) {
+        res.sendFile(option2);
+    } else {
+        res.status(404).send("Fichier admin.html introuvable à la racine du projet !");
+    }
 });
 
 // ==========================================
