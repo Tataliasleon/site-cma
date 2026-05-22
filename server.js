@@ -1,12 +1,10 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// Permet à Express de lire les fichiers à la racine (index.html, style.css, admin.html)
+app.use(express.static(__dirname));
+app.use(express.json());
 
 // Configuration pour lire le JSON et servir les fichiers statiques
 app.use(express.json());
@@ -110,7 +108,6 @@ app.post('/api/upload-carousel', upload.single('carouselFile'), (req, res) => {
     res.status(400).json({ error: "Échec du téléchargement de l'image" });
 });
 
-// Mettre à jour toutes les informations depuis l'admin
 // La bonne façon d'écrire la route pour qu'elle fonctionne PARTOUT (Local et En ligne)
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
