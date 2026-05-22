@@ -1,0 +1,22 @@
+{
+  "name": "eglise-cma",
+  "version": "1.0.0",
+  "description": "Site web de l'Eglise C.M.A",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.6",
+    "express": "^4.22.2",
+    "fs": "^0.0.1-security",
+    "multer": "^2.1.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "path": "^0.12.7"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

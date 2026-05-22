@@ -1,0 +1,34 @@
+{
+  "logoSrc": "/images/logo.jpeg",
+  "texteAccueil": "Bienvenue au Centre Missionnaire Actes 1:8",
+  "carouselImages": [
+    {
+      "src": "https://res.cloudinary.com/dotjq0cqg/image/upload/v1779428290/cma_site_images/nbsvgltyyrecxj189dns.jpg",
+      "caption": ""
+    },
+    {
+      "src": "https://res.cloudinary.com/dotjq0cqg/image/upload/v1779428336/cma_site_images/dfey31ohznjpiosyzarf.jpg",
+      "caption": ""
+    },
+    {
+      "src": "https://res.cloudinary.com/dotjq0cqg/image/upload/v1779428355/cma_site_images/vvptep1ormrtko9ef92x.jpg",
+      "caption": ""
+    },
+    {
+      "src": "https://res.cloudinary.com/dotjq0cqg/image/upload/v1779428385/cma_site_images/abloxypev2ucmcea5ev0.jpg",
+      "caption": ""
+    },
+    {
+      "src": "https://res.cloudinary.com/dotjq0cqg/image/upload/v1779428454/cma_site_images/fkswcd9tm654gsdz8mlp.jpg",
+      "caption": ""
+    }
+  ],
+  "vieEgliseTexte": "Notre église est une communauté vibrante...",
+  "mediaTitre": "Média & Direct",
+  "mediaDescription": "Connectez-vous à nos cultes...",
+  "lienYouTube": "https://youtu.be/s60DDKM2lLk?si=B9R7D-OgYl_141cJ",
+  "faireDonTexte": "Soutenez l'œuvre de Dieu...",
+  "coordonneesBancaires": "RAWBANK\nCompte : CD03...",
+  "mobileMoney": "M-Pesa : +243...",
+  "lienFacebook": ""
+}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre Missionnaire Actes 1:8</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="logo-container">
+            <img id="logo-img" src="/images/logo.jpeg" alt="Logo CMA">
+        </div>
+        <div class="burger-btn" id="open-burger-btn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <div class="burger-overlay-menu" id="burger-menu">
+        <div class="close-menu-btn" id="close-burger-btn">&times;</div>
+        <nav class="burger-links">
+            <a href="#">Accueil</a>
+            <a href="#vie-eglise">Vie de l'Église</a>
+            <a href="#media">Média & Direct</a>
+            <a href="#dons">Faire un Don</a>
+        </nav>
+    </div>
+
+    <div class="welcome-box">
+        <h1 id="site-welcome-text">Bienvenue au Centre Missionnaire Actes 1:8</h1>
+    </div>
+
+    <section class="hero-section">
+        <div class="carousel-container">
+            <div class="slider" id="carousel-slider">
+                <div class="slide-item">
+                    <div style="color: #a0a5c0; font-family: sans-serif; text-align: center; padding-top: 200px; width: 100%;">
+                        Chargement des images...
+                    </div>
+                </div>
+            </div>
+            
+            <button class="carousel-btn prev-slide" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn next-slide" id="btn-next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <section id="vie-eglise" class="content-section">
+        <h2>Vie de l'Église</h2>
+        <div class="decor-bar"></div>
+        <p id="vie-texte" class="section-paragraph"></p>
+    </section>
+
+    <section id="media" class="content-section">
+        <h2 id="media-titre">Média & Direct</h2>
+        <div class="decor-bar"></div>
+        <p id="media-description" class="section-paragraph" style="margin-bottom: 25px;"></p>
+        
+        <div style="width: 100%; max-width: 100%; position: relative;">
+            <iframe id="youtube-player" src="" frameborder="0" allowfullscreen style="display: none; width: 100%; height: 450px; border-radius: 12px;"></iframe>
+            
+            <div id="no-video-msg" class="video-container-placeholder">
+                <i class="fas fa-video-slash"></i>
+                <p>Aucun direct ou vidéo disponible pour le moment.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="dons" class="content-section">
+        <h2>Faire un Don</h2>
+        <div class="decor-bar"></div>
+        <p id="don-texte" class="section-paragraph"></p>
+        
+        <div class="don-grid">
+            <div class="don-card">
+                <h3>Coordonnées Bancaires</h3>
+                <pre id="banque-coordonnees"></pre>
+            </div>
+            <div class="don-card">
+                <h3>Mobile Money</h3>
+                <pre id="mobile-money"></pre>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- 1. SCRIPT DU MENU BURGER ---
+        const burgerMenu = document.getElementById('burger-menu');
+        const openBurgerBtn = document.getElementById('open-burger-btn');
+        const closeBurgerBtn = document.getElementById('close-burger-btn');
+        const burgerLinks = document.querySelectorAll('.burger-links a');
+
+        if (openBurgerBtn && burgerMenu && closeBurgerBtn) {
+            // Ouvrir le menu
+            openBurgerBtn.addEventListener('click', () => burgerMenu.classList.add('open'));
+            // Fermer le menu avec la croix
+            closeBurgerBtn.addEventListener('click', () => burgerMenu.classList.remove('open'));
+            // Fermer le menu automatiquement quand on clique sur un lien
+            burgerLinks.forEach(link => {
+                link.addEventListener('click', () => burgerMenu.classList.remove('open'));
+            });
+        }
+
+        // --- 2. SCRIPT DE GLISSEMENT DU CARROUSEL ---
+        let currentIdx = 0;
+        let imageCount = 0;
+        let carouselTimer = null;
+        const sliderTrack = document.getElementById('carousel-slider');
+
+        function moveCarousel() {
+            if (imageCount <= 1) return;
+            currentIdx++;
+            if (currentIdx >= imageCount) currentIdx = 0;
+            updateSliderPosition();
+        }
+
+        function updateSliderPosition() {
+            if (sliderTrack) {
+                sliderTrack.style.transform = `translateX(-${currentIdx * 100}%)`;
+            }
+        }
+
+        // Boutons manuels du carrousel
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (imageCount <= 1) return;
+            currentIdx = (currentIdx + 1) % imageCount;
+            updateSliderPosition();
+            resetTimer();
+        });
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (imageCount <= 1) return;
+            currentIdx = (currentIdx - 1 + imageCount) % imageCount;
+            updateSliderPosition();
+            resetTimer();
+        });
+
+        function resetTimer() {
+            if (carouselTimer) clearInterval(carouselTimer);
+            if (imageCount > 1) carouselTimer = setInterval(moveCarousel, 4000);
+        }
+
+        // --- 3. CHARGEMENT DYNAMIQUE DES DONNÉES DE L'API ---
+        async function initialiserSiteCMA() {
+            try {
+                const res = await fetch('/api/data?t=' + Date.now());
+                if (!res.ok) throw new Error("Réponse serveur corrompue");
+                const data = await res.json();
+
+                // 1. Message d'accueil hero
+                if (data.texteAccueil) document.getElementById('site-welcome-text').textContent = data.texteAccueil;
+
+                // 2. Remplacement du Logo
+                if (data.logoSrc) document.getElementById('logo-img').src = data.logoSrc;
+
+                // 3. Remplissage du Carrousel (Format horizontal compatible avec ton CSS)
+                if (sliderTrack) {
+                    sliderTrack.innerHTML = ""; // Vider le texte de chargement
+                    const listImgs = data.carouselImages && Array.isArray(data.carouselImages) 
+                        ? data.carouselImages.filter(i => i && i.src) 
+                        : [];
+                    
+                    imageCount = listImgs.length;
+
+                    if (imageCount > 0) {
+                        listImgs.forEach(img => {
+                            const slideItem = document.createElement('div');
+                            slideItem.className = 'slide-item';
+                            slideItem.innerHTML = `
+                                <img src="${img.src}" alt="CMA Image">
+                                ${img.caption ? `<div class="slide-caption"><p style="font-weight: bold;">${img.caption}</p></div>` : ''}
+                            `;
+                            sliderTrack.appendChild(slideItem);
+                        });
+
+                        resetTimer();
+                    } else {
+                        sliderTrack.innerHTML = `
+                            <div class="slide-item" style="display:flex; justify-content:center; align-items:center; color:#a0a5c0; font-family:sans-serif;">
+                                <p>Aucun visuel actif dans le carrousel. Ajoutez-en depuis l'administration.</p>
+                            </div>`;
+                    }
+                }
+
+                // 4. Vie de l'église
+                if (data.vieEgliseTexte) document.getElementById('vie-texte').textContent = data.vieEgliseTexte;
+
+                // 5. Section Vidéo & YouTube intelligent
+                if (data.mediaTitre) document.getElementById('media-titre').textContent = data.mediaTitre;
+                if (data.mediaDescription) document.getElementById('media-description').textContent = data.mediaDescription;
+                
+                const player = document.getElementById('youtube-player');
+                const placeholderBox = document.getElementById('no-video-msg');
+                
+                if (player && data.lienYouTube && data.lienYouTube.trim() !== "") {
+                    let url = data.lienYouTube;
+                    if (url.includes('watch?v=')) {
+                        url = 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0];
+                    } else if (url.includes('youtu.be/')) {
+                        url = 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1].split('?')[0];
+                    }
+                    player.src = url;
+                    player.style.display = 'block';
+                    if (placeholderBox) placeholderBox.style.display = 'none';
+                }
+
+                // 6. Section Finances & Dons (Prise en compte du format 'pre')
+                if (data.faireDonTexte) document.getElementById('don-texte').textContent = data.faireDonTexte;
+                if (data.coordonneesBancaires) document.getElementById('banque-coordonnees').innerText = data.coordonneesBancaires;
+                if (data.mobileMoney) document.getElementById('mobile-money').innerText = data.mobileMoney;
+
+            } catch (err) {
+                console.error("Erreur d'initialisation CMA :", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initialiserSiteCMA);
+    </script>
+</body>
+</html>

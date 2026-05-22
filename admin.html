@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panneau de Contrôle Cloud - CMA</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #07080e; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; padding: 40px 20px; }
+        .admin-container { max-width: 750px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #1e2238; padding-bottom: 15px; }
+        .btn-site { background: #1e2238; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; border: 1px solid #2d325a; cursor: pointer; }
+        .card { background: #131526; border-radius: 12px; padding: 25px; margin-bottom: 25px; border: 1px solid #1e2238; }
+        .card h3 { margin-top: 0; margin-bottom: 15px; color: #3b82f6; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        label { display: block; margin-top: 15px; font-weight: 600; font-size: 0.9rem; color: #a0a5c0; }
+        .input-box { width: 100%; padding: 12px; background: #0b0c16; border: 1px solid #22253f; color: white; border-radius: 6px; margin-top: 5px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; }
+        .file-input-wrapper { margin-top: 20px; background: #0b0c16; padding: 20px; border-radius: 8px; border: 2px dashed #3b82f6; text-align: center; }
+        .btn-save { width: 100%; padding: 15px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .img-item { background: #0b0c16; padding: 15px; border-radius: 6px; margin-top: 12px; border: 1px solid #1e2238; }
+        .img-preview { max-height: 100px; max-width: 150px; object-fit: cover; border-radius: 4px; background: #131526; display: block; }
+        .row-inputs { display: flex; gap: 12px; width: 100%; align-items: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="header">
+            <h2>Gestion Cloud Actes 1:8</h2>
+            <a href="/" class="btn-site" target="_blank">Voir le Site</a>
+        </div>
+
+        <div class="card">
+            <h3>Logo de l'Église</h3>
+            <div style="display: flex; align-items: center; gap: 20px; background: #0b0c16; padding: 15px; border-radius: 8px;">
+                <img id="logo-preview" src="" style="height: 65px; width: 65px; border-radius: 8px; object-fit: cover; background: #131526;">
+                <div>
+                    <input type="file" id="logo-file-picker" accept="image/*" onchange="uploadLogoCloudinary()">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Texte d'Introduction Global</h3>
+            <textarea id="edit-welcome-text" class="input-box" rows="3"></textarea>
+        </div>
+
+        <div class="card">
+            <h3>Photos du Carrousel</h3>
+            <div id="images-list-container"></div>
+            <div class="file-input-wrapper">
+                <p style="margin-bottom: 10px; color:#a0a5c0; font-size:0.9rem;">Ajouter une photo dans le Cloud :</p>
+                <input type="file" id="carousel-file-picker" accept="image/*" onchange="uploadCarouselCloudinary()">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Contenu : Vie de l'Église</h3>
+            <textarea id="edit-vie-texte" class="input-box" rows="4"></textarea>
+        </div>
+
+        <div class="card">
+            <h3>Contenu : Média & Réseaux Sociaux</h3>
+            <label>Titre de Section :</label>
+            <input type="text" id="edit-media-titre" class="input-box">
+            <label>Description :</label>
+            <textarea id="edit-media-desc" class="input-box" rows="2"></textarea>
+            
+            <label style="color: #ef4444;">Lien Vidéo ou Direct YouTube :</label>
+            <input type="text" id="edit-media-youtube" class="input-box">
+            
+            <label style="color: #3b82f6;">Lien Vidéo ou Direct Facebook :</label>
+            <input type="text" id="edit-media-facebook" class="input-box">
+        </div>
+
+        <div class="card">
+            <h3>Contenu : Dons & Finances</h3>
+            <label>Introduction :</label>
+            <textarea id="edit-don-intro" class="input-box" rows="2"></textarea>
+            <label>Coordonnées Bancaires :</label>
+            <textarea id="edit-don-banque" class="input-box" rows="4"></textarea>
+            <label>Comptes Mobile Money :</label>
+            <textarea id="edit-don-mobile" class="input-box" rows="4"></textarea>
+        </div>
+
+        <button class="btn-save" onclick="saveAllChanges()">Enregistrer dans le Cloud</button>
+    </div>
+
+    <script>
+        let fullData = {};
+
+        // SÉCURITÉ ABSOLUE : Remplit le champ s'il existe, ne fait rien sinon
+        function safeSetTarget(id, val) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = val || '';
+            }
+        }
+
+        // SÉCURITÉ ABSOLUE : Récupère la valeur si le champ existe
+        function safeGetTargetValue(id) {
+            const el = document.getElementById(id);
+            return el ? el.value : '';
+        }
+
+        function loadData() {
+            fetch('/api/data?t=' + Date.now())
+                .then(res => res.json())
+                .then(data => {
+                    fullData = data;
+                    
+                    const logoPrev = document.getElementById('logo-preview');
+                    if(data.logoSrc && logoPrev) {
+                        logoPrev.src = data.logoSrc;
+                    }
+                    
+                    safeSetTarget('edit-welcome-text', data.texteAccueil);
+                    safeSetTarget('edit-vie-texte', data.vieEgliseTexte);
+                    safeSetTarget('edit-media-titre', data.mediaTitre);
+                    safeSetTarget('edit-media-desc', data.mediaDescription);
+                    safeSetTarget('edit-media-youtube', data.lienYouTube);
+                    safeSetTarget('edit-media-facebook', data.lienFacebook);
+                    safeSetTarget('edit-don-intro', data.faireDonTexte);
+                    safeSetTarget('edit-don-banque', data.coordonneesBancaires);
+                    safeSetTarget('edit-don-mobile', data.mobileMoney);
+
+                    const container = document.getElementById('images-list-container');
+                    if (container) {
+                        container.innerHTML = ""; 
+                        if (data.carouselImages && Array.isArray(data.carouselImages)) {
+                            data.carouselImages.forEach(img => { 
+                                if(img && img.src) {
+                                    displayImageRow(img.src, img.caption || ''); 
+                                }
+                            });
+                        }
+                    }
+                })
+                .catch(err => console.error("Erreur au chargement des données :", err));
+        }
+
+        function displayImageRow(src, caption) {
+            const container = document.getElementById('images-list-container');
+            if(!container) return;
+            const div = document.createElement('div');
+            div.className = "img-item";
+            div.innerHTML = `
+                <img src="${src}" class="img-preview">
+                <div class="row-inputs">
+                    <input type="hidden" value="${src}" class="img-src">
+                    <input type="text" value="${caption}" placeholder="Légende de la photo..." class="input-box img-caption" style="margin:0; flex:1;">
+                    <button type="button" style="background:#ef4444; border:none; color:white; padding:12px 15px; border-radius:6px; cursor:pointer;" onclick="this.closest('.img-item').remove()">Supprimer</button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function uploadLogoCloudinary() {
+            const fileInput = document.getElementById('logo-file-picker');
+            if(!fileInput || fileInput.files.length === 0) return;
+            const formData = new FormData();
+            formData.append('logoFile', fileInput.files[0]);
+
+            fetch('/api/upload-logo', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(resData => {
+                    if(resData.src) {
+                        const logoPrev = document.getElementById('logo-preview');
+                        if(logoPrev) logoPrev.src = resData.src;
+                        fullData.logoSrc = resData.src;
+                    }
+                }).catch(err => alert("Erreur d'envoi du logo"));
+        }
+
+        function uploadCarouselCloudinary() {
+            const fileInput = document.getElementById('carousel-file-picker');
+            if(!fileInput || fileInput.files.length === 0) return;
+            const formData = new FormData();
+            formData.append('carouselFile', fileInput.files[0]);
+
+            fetch('/api/upload-carousel', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(resData => {
+                    if(resData.src) {
+                        displayImageRow(resData.src, "");
+                        fileInput.value = "";
+                    }
+                }).catch(err => alert("Erreur d'envoi de la photo"));
+        }
+
+        function saveAllChanges() {
+            fullData.texteAccueil = safeGetTargetValue('edit-welcome-text');
+            fullData.vieEgliseTexte = safeGetTargetValue('edit-vie-texte');
+            fullData.mediaTitre = safeGetTargetValue('edit-media-titre');
+            fullData.mediaDescription = safeGetTargetValue('edit-media-desc');
+            fullData.lienYouTube = safeGetTargetValue('edit-media-youtube');
+            fullData.lienFacebook = safeGetTargetValue('edit-media-facebook');
+            fullData.faireDonTexte = safeGetTargetValue('edit-don-intro');
+            fullData.coordonneesBancaires = safeGetTargetValue('edit-don-banque');
+            fullData.mobileMoney = safeGetTargetValue('edit-don-mobile');
+
+            const imgRows = document.querySelectorAll('.img-item');
+            const updatedImages = [];
+            imgRows.forEach(row => {
+                const srcEl = row.querySelector('.img-src');
+                const capEl = row.querySelector('.img-caption');
+                if (srcEl) {
+                    updatedImages.push({ src: srcEl.value, caption: capEl ? capEl.value : '' });
+                }
+            });
+            fullData.carouselImages = updatedImages;
+
+            fetch('/api/update-all', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(fullData)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert("Modifications enregistrées sur Cloudinary !");
+                    loadData();
+                }
+            }).catch(err => alert("Erreur de sauvegarde"));
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
