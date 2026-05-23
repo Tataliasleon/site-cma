@@ -11,7 +11,7 @@
 <div class="admin-container">
     <div class="admin-header">
         <div class="admin-logo-box">
-            <img id="logoPreview" src="/images/logo.jpeg" alt="Logo Église" style="display: block; max-height: 90px; margin: 0 auto 15px auto;">
+            <img id="logoPreview" src="/images/logo.jpeg" alt="Logo Église">
         </div>
         <h1>⚙️ Panneau d'Administration</h1>
         <p>Centre Missionnaire Actes 1:8</p>
@@ -31,7 +31,7 @@
         <div class="form-section">
             <h2>2. Galerie d'images défilantes (Carrousel)</h2>
             <div class="form-group">
-                <label style="color: #0056b3; font-weight: bold;">Ajoutez vos photos une par une ou plusieurs à la fois (Elles s'accumulent sans s'effacer) :</label>
+                <label style="color: #0056b3; font-weight: bold;">Ajoutez vos photos une par une ou plusieurs à la fois :</label>
                 <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 15px; background: #eef2f7; border: 2px dashed #0056b3; border-radius: 6px; cursor: pointer;">
                 
                 <div style="margin-top: 10px; font-weight: 600; color: #555;">
@@ -50,7 +50,7 @@
             </div>
             <div class="form-group">
                 <label>Présentation de l'Église (Vie de l'Église) :</label>
-                <textarea id="vieEgliseTexte"></textarea>
+                <textarea id="vieEgliseTexte" rows="5"></textarea>
             </div>
         </div>
 
@@ -70,11 +70,11 @@
             <h2>5. Coordonnées pour les Dons</h2>
             <div class="form-group">
                 <label>Informations bancaires :</label>
-                <textarea id="coordonneesBancaires"></textarea>
+                <textarea id="coordonneesBancaires" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label>Comptes Mobile Money :</label>
-                <textarea id="mobileMoney"></textarea>
+                <textarea id="mobileMoney" rows="3"></textarea>
             </div>
         </div>
 
@@ -101,7 +101,6 @@
         window.scrollTo(0,0);
     }
 
-    // Chargement initial
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
@@ -123,10 +122,9 @@
                         afficherToutesLesPhotos();
                     }
                 }
-            }).catch(err => console.log("Attente du serveur..."));
+            }).catch(err => console.log("Liaison serveur"));
     });
 
-    // Gestion du Logo
     logoInput.addEventListener('change', () => {
         if(logoInput.files && logoInput.files[0]) {
             const r = new FileReader();
@@ -135,28 +133,25 @@
         }
     });
 
-    // Accumulation des images
     carouselInput.addEventListener('change', () => {
         if(carouselInput.files && carouselInput.files.length > 0) {
             Array.from(carouselInput.files).forEach(file => {
                 photosAccumulees.push(file);
             });
             afficherToutesLesPhotos();
-            carouselInput.value = ""; // Permet de recliquer librement
+            carouselInput.value = "";
         }
     });
 
     function afficherToutesLesPhotos() {
         carouselPreview.innerHTML = "";
         
-        // 1. Images déjà validées sur Cloudinary
         imagesServeurActuelles.forEach(url => {
             const img = document.createElement('img');
             img.src = url;
             carouselPreview.appendChild(img);
         });
 
-        // 2. Nouvelles images locales accumulées
         photosAccumulees.forEach(file => {
             const r = new FileReader();
             r.onload = (e) => {
@@ -171,13 +166,11 @@
         photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
     }
 
-    // Envoi et Sauvegarde définitive
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Envoi des images et mise à jour de la page publique en cours...", true);
+        msg("Mise à jour globale en cours...", true);
 
         try {
-            // 1. Upload Logo si modifié
             if(logoInput.files && logoInput.files[0]) {
                 const fd = new FormData();
                 fd.append('logoFile', logoInput.files[0]);
@@ -186,7 +179,6 @@
                 if(d.src) currentLogoSrc = d.src;
             }
 
-            // 2. Upload de toutes les photos accumulées
             let finalCarouselUrls = [...imagesServeurActuelles];
 
             if(photosAccumulees.length > 0) {
@@ -194,15 +186,11 @@
                 photosAccumulees.forEach(file => {
                     fd.append('carouselFiles', file);
                 });
-                
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
-                if(d.srcs) {
-                    finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
-                }
+                if(d.srcs) finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
             }
 
-            // 3. Sauvegarde propre dans data.json (Erreur corrigée ici !)
             const finalData = {
                 logoSrc: currentLogoSrc,
                 carouselImages: finalCarouselUrls,
@@ -219,18 +207,17 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(finalData)
             });
-            
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Félicitations ! Tout le site public a été synchronisé et mis à jour.", true);
+                msg("✅ Site synchronisé et mis à jour avec succès !", true);
                 imagesServeurActuelles = finalCarouselUrls;
                 photosAccumulees = [];
                 afficherToutesLesPhotos();
             } else {
-                msg("❌ Le serveur a refusé d'enregistrer le fichier final.", false);
+                msg("❌ Erreur serveur.", false);
             }
         } catch (err) {
-            msg("❌ Erreur de connexion avec le serveur Render.", false);
+            msg("❌ Erreur réseau.", false);
         }
     });
 </script>
