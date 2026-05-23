@@ -220,3 +220,30 @@
     </script>
 </body>
 </html>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch('/api/data')
+        .then(res => res.json())
+        .then(data => {
+            if (data) {
+                // 1. Textes dynamiques
+                if (data.texteAccueil) document.getElementById('texteAccueilText').innerText = data.texteAccueil;
+                if (data.vieEgliseTexte) document.getElementById('vieEgliseText').innerText = data.vieEgliseTexte;
+
+                // 2. Affichage dynamique du Logo Cloudinary
+                const logoImg = document.getElementById('publicLogo');
+                if (logoImg && data.logoSrc) logoImg.src = data.logoSrc;
+
+                // 3. Affichage dynamique du lien Facebook
+                const fbBtn = document.getElementById('publicFacebook');
+                if (fbBtn && data.lienFacebook) {
+                    fbBtn.href = data.lienFacebook;
+                    fbBtn.style.display = 'inline-block'; // S'affiche seulement si configuré
+                }
+
+                // 4. Si tu as un élément iFrame pour YouTube
+                const ytIframe = document.getElementById('publicYouTube');
+                if (ytIframe && data.lienYouTube) ytIframe.src = data.lienYouTube;
+            }
+        })
+        .catch(err => console.error("Erreur de chargement des données :", err));
+});
