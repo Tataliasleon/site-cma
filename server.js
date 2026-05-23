@@ -216,7 +216,7 @@ app.get('/admin', (req, res) => {
 
 // On force Express à chercher le fichier exact présent sur GitHub
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Admin.html'));
+    res.sendFile(path.join(__dirname, 'admin.html'));
 });
 // ==========================================
 // 3. LES ROUTES API (DONNÉES & IMAGES)
