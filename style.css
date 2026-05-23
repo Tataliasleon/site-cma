@@ -1,16 +1,32 @@
-/* Structure du Carrousel d'Accueil */
-.hero-section {
-    position: relative;
+/* --- BLOC TITRE D'ACCUEIL --- */
+.hero-text-block {
+    text-align: center;
+    padding: 40px 20px;
+    background: #ffffff;
+}
+
+.hero-text-block h1 {
+    font-size: 2.2rem;
+    color: #1a252f;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* --- ZONE DE LA GALERIE PHOTO PROPORTIONNÉE --- */
+.gallery-section {
     width: 100%;
-    height: 75vh; /* Hauteur de la galerie visible à l'écran */
-    overflow: hidden;
-    background-color: #1a1a1a;
+    max-width: 1000px; /* Évite que la photo devienne démesurée sur grand écran */
+    margin: 0 auto 40px auto; /* Centre la galerie sur la page */
+    padding: 0 15px;
 }
 
 .carousel-container {
-    width: 100%;
-    height: 100%;
     position: relative;
+    width: 100%;
+    height: 500px; /* Hauteur parfaite et fixe pour bien voir les photos */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .carousel-track {
@@ -25,11 +41,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-size: cover;
+    background-size: contain; /* Ajuste l'image entière sans la couper grossièrement */
     background-position: center;
     background-repeat: no-repeat;
+    background-color: #f8f9fa; /* Fond neutre et propre derrière la photo */
     opacity: 0;
-    transition: opacity 1s ease-in-out; /* Transition douce lors du changement */
+    transition: opacity 0.8s ease-in-out;
     z-index: 1;
 }
 
@@ -38,46 +55,35 @@
     z-index: 2;
 }
 
-/* Boutons de contrôle gauche/droite */
+/* --- BOUTONS DE NAVIGATION SUBTILS --- */
 .carousel-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(26, 37, 47, 0.7);
     color: white;
     border: none;
-    font-size: 24px;
-    padding: 12px 18px;
+    font-size: 20px;
+    padding: 10px 14px;
     cursor: pointer;
     border-radius: 50%;
     z-index: 10;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.2s;
 }
 
 .carousel-btn:hover {
-    background: rgba(0, 86, 179, 0.8);
+    background: #0056b3;
 }
 
-.prev-btn { left: 20px; }
-.next-btn { right: 20px; }
+.prev-btn { left: 15px; }
+.next-btn { right: 15px; }
 
-/* Texte superposé sur la galerie */
-.hero-overlay-text {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5;
-    text-align: center;
-    width: 90%;
-}
-
-.hero-overlay-text h1 {
-    color: white;
-    font-size: 2.5rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-    background: rgba(0, 0, 0, 0.4);
-    padding: 15px 25px;
-    border-radius: 8px;
-    display: inline-block;
+/* Responsive pour téléphones */
+@media (max-width: 768px) {
+    .carousel-container {
+        height: 300px; /* Plus petit et adapté sur mobile */
+    }
+    .hero-text-block h1 {
+        font-size: 1.6rem;
+    }
 }
