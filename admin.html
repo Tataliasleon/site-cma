@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panneau d'Administration - CMA Actes 1:8</title>
+    <title>Administration - CMA Actes 1:8</title>
     <style>
         :root { --primary: #0056b3; --bg: #f4f6f9; --text: #333; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
@@ -11,33 +11,29 @@
         h1 { color: var(--primary); text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 30px; }
         .form-group { margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 8px; border-left: 4px solid var(--primary); }
         label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
-        textarea, input[type="text"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: white; }
+        textarea, input[type="text"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
         textarea { min-height: 80px; resize: vertical; }
         .preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .preview { max-height: 100px; border-radius: 6px; border: 1px solid #ddd; padding: 4px; object-fit: cover; }
-        .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: background 0.2s; }
-        .btn:hover { background: #004085; }
+        .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
         .status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 6px; display: none; font-weight: bold; }
         .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛠️ Panneau Administrateur - CMA</h1>
-        <div id="statusMessage" class="status"></div>
+        <h1>🛠️ Panneau Administrateur</h1>
+        <div id="statusMessage" class="status success"></div>
 
         <form id="adminForm">
             <div class="form-group">
                 <label>Logo de l'Église :</label>
                 <input type="file" id="logoFile" accept="image/*">
-                <div class="preview-container">
-                    <img id="logoPreview" class="preview" style="display:none;" alt="Aperçu logo">
-                </div>
+                <div class="preview-container"><img id="logoPreview" class="preview" style="display:none;"></div>
             </div>
 
             <div class="form-group">
-                <label>Photos pour le Carrousel (Sélectionnez plusieurs images d'un coup) :</label>
+                <label>Photos du Carrousel (Sélectionnez plusieurs images d'un coup) :</label>
                 <input type="file" id="carouselFiles" accept="image/*" multiple>
                 <div id="carouselPreviews" class="preview-container"></div>
             </div>
@@ -72,7 +68,7 @@
                 <textarea id="mobileMoney"></textarea>
             </div>
 
-            <button type="submit" class="btn">Enregistrer et Mettre à jour le Site</button>
+            <button type="submit" class="btn">Enregistrer et Mettre à jour</button>
         </form>
     </div>
 
@@ -81,40 +77,33 @@
         let currentLogoSrc = "";
         let currentCarouselImages = [];
 
-        // Gestion de l'aperçu du logo
         document.getElementById('logoFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (el) => {
-                    const img = document.getElementById('logoPreview');
-                    img.src = el.target.result;
-                    img.style.display = 'block';
+                    document.getElementById('logoPreview').src = el.target.result;
+                    document.getElementById('logoPreview').style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Gestion propre de l'aperçu multiple sans casser les images
         document.getElementById('carouselFiles').addEventListener('change', function(e) {
             const container = document.getElementById('carouselPreviews');
-            container.innerHTML = ""; 
-            
-            if (e.target.files.length > 0) {
-                Array.from(e.target.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (el) => {
-                        const img = document.createElement('img');
-                        img.src = el.target.result;
-                        img.className = 'preview';
-                        container.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
+            container.innerHTML = "";
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (el) => {
+                    const img = document.createElement('img');
+                    img.src = el.target.result;
+                    img.className = 'preview';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
         });
 
-        // Charger les données courantes depuis le serveur
         async function loadCurrentData() {
             try {
                 const res = await fetch('/api/data?t=' + Date.now());
@@ -128,12 +117,11 @@
                     document.getElementById('mobileMoney').value = data.mobileMoney || '';
                     
                     if (data.logoSrc) {
-                        const img = document.getElementById('logoPreview');
-                        img.src = data.logoSrc;
-                        img.style.display = 'block';
+                        document.getElementById('logoPreview').src = data.logoSrc;
+                        document.getElementById('logoPreview').style.display = 'block';
                         currentLogoSrc = data.logoSrc;
                     }
-                    if (data.carouselImages && data.carouselImages.length > 0) {
+                    if (data.carouselImages) {
                         currentCarouselImages = data.carouselImages;
                         const container = document.getElementById('carouselPreviews');
                         container.innerHTML = "";
@@ -145,74 +133,60 @@
                         });
                     }
                 }
-            } catch (err) {
-                console.error("Erreur de chargement initial:", err);
-            }
+            } catch (err) {}
         }
 
-        function showStatus(msg, isSuccess) {
+        function showStatus(msg) {
             statusDiv.textContent = msg;
-            statusDiv.className = 'status ' + (isSuccess ? 'success' : 'error');
             statusDiv.style.display = 'block';
             window.scrollTo(0, 0);
         }
 
-        // Envoi global sans bug
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            showStatus("Synchronisation et envoi vers Cloudinary / Render...", true);
+            showStatus("Mise à jour en cours...");
             
             try {
-                // 1. Envoi du logo si changé
-                const logoInput = document.getElementById('logoFile');
-                if (logoInput.files.length > 0) {
+                if (document.getElementById('logoFile').files.length > 0) {
                     const formData = new FormData();
-                    formData.append('logoFile', logoInput.files[0]);
+                    formData.append('logoFile', document.getElementById('logoFile').files[0]);
                     const res = await fetch('/api/upload-logo', { method: 'POST', body: formData });
                     const resData = await res.json();
                     if (resData.src) currentLogoSrc = resData.src;
                 }
 
-                // 2. Envoi des images du carrousel multiple
                 const carouselInput = document.getElementById('carouselFiles');
                 if (carouselInput.files.length > 0) {
-                    // On réinitialise le tableau pour mettre uniquement les nouvelles images choisies
-                    currentCarouselImages = []; 
-                    for (let i = 0; i < carouselInput.files.length; i++) {
-                        const formData = new FormData();
-                        formData.append('carouselFile', carouselInput.files[i]);
-                        const res = await fetch('/api/upload-carousel', { method: 'POST', body: formData });
-                        const resData = await res.json();
-                        if (resData.src) currentCarouselImages.push(resData.src);
-                    }
+                    const formData = new FormData();
+                    Array.from(carouselInput.files).forEach(file => {
+                        formData.append('carouselFiles', file);
+                    });
+                    const res = await fetch('/api/upload-carousel', { method: 'POST', body: formData });
+                    const resData = await res.json();
+                    if (resData.srcs) currentCarouselImages = resData.srcs;
                 }
 
-                // 3. Envoi de l'objet JSON complet vers la base de données
                 const payload = {
                     logoSrc: currentLogoSrc,
                     carouselImages: currentCarouselImages,
                     texteAccueil: document.getElementById('texteAccueil').value,
                     vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
                     lienYouTube: document.getElementById('lienYouTube').value,
-                    lienFacebook: document.getElementById('lienFacebook').value, // S'assure que Facebook est envoyé
+                    lienFacebook: document.getElementById('lienFacebook').value,
                     coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
                     mobileMoney: document.getElementById('mobileMoney').value
                 };
 
-                const response = await fetch('/api/save-data', {
+                await fetch('/api/save-data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
                 
-                if(response.ok) {
-                    showStatus("Modifications enregistrées ! Le site public est à jour.", true);
-                    loadCurrentData();
-                } else {
-                    showStatus("Erreur lors de la sauvegarde.", false);
-                }
+                showStatus("Enregistrement réussi !");
+                loadCurrentData();
             } catch (err) {
-                showStatus("Impossible de joindre le serveur.", false);
+                showStatus("Erreur lors de la sauvegarde.");
             }
         });
 
