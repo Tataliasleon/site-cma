@@ -4,246 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre Missionnaire Actes 1:8</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #0056b3;
+            --dark: #1a1a1a;
+            --light: #f4f6f9;
+            --text: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background-color: var(--light);
+        }
+        header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo-container img {
+            max-height: 60px;
+            display: block;
+        }
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1438032005730-c779502df39b?q=80&w=1200') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .hero h1 {
+            margin: 0 0 20px 0;
+            font-size: 2.5rem;
+        }
+        .section {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+        }
+        .media-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        iframe {
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .btn-social {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+            transition: opacity 0.2s;
+        }
+        .btn-facebook { background-color: #1877F2; }
+        .btn-youtube { background-color: #FF0000; }
+        .btn-social:hover { opacity: 0.9; }
+        .don-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .don-grid { grid-template-columns: 1fr; }
+        }
+        .don-card {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 6px;
+            border-top: 4px solid var(--primary);
+        }
+        .don-card h3 { margin-top: 0; color: var(--dark); }
+        .don-card p { white-space: pre-line; font-family: monospace; font-size: 1.1rem; }
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
 
-    <header class="top-bar">
+    <header>
         <div class="logo-container">
-            <img id="logo-img" src="/images/logo.jpeg" alt="Logo CMA">
+            <img id="publicLogo" src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=100" alt="Logo Église">
         </div>
-        <div class="burger-btn" id="open-burger-btn">
-            <i class="fas fa-bars"></i>
-        </div>
+        <nav style="font-weight: bold; color: var(--primary);">CMA Actes 1:8</nav>
     </header>
 
-    <div class="burger-overlay-menu" id="burger-menu">
-        <div class="close-menu-btn" id="close-burger-btn">&times;</div>
-        <nav class="burger-links">
-            <a href="#">Accueil</a>
-            <a href="#vie-eglise">Vie de l'Église</a>
-            <a href="#media">Média & Direct</a>
-            <a href="#dons">Faire un Don</a>
-        </nav>
-    </div>
-
-    <div class="welcome-box">
-        <h1 id="site-welcome-text">Bienvenue au Centre Missionnaire Actes 1:8</h1>
-    </div>
-
-    <section class="hero-section">
-        <div class="carousel-container">
-            <div class="slider" id="carousel-slider">
-                <div class="slide-item">
-                    <div style="color: #a0a5c0; font-family: sans-serif; text-align: center; padding-top: 200px; width: 100%;">
-                        Chargement des images...
-                    </div>
-                </div>
-            </div>
-            
-            <button class="carousel-btn prev-slide" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
-            <button class="carousel-btn next-slide" id="btn-next"><i class="fas fa-chevron-right"></i></button>
-        </div>
+    <section class="hero">
+        <h1 id="texteAccueilText">Bienvenue au Centre Missionnaire Actes 1:8</h1>
+        <p>Une communauté pour annoncer la parole et manifester la puissance de Dieu.</p>
     </section>
 
-    <section id="vie-eglise" class="content-section">
+    <section class="section">
         <h2>Vie de l'Église</h2>
-        <div class="decor-bar"></div>
-        <p id="vie-texte" class="section-paragraph"></p>
+        <p id="vieEgliseText" style="line-height: 1.6;">Chargement du contenu de l'église...</p>
     </section>
 
-    <section id="media" class="content-section">
-        <h2 id="media-titre">Média & Direct</h2>
-        <div class="decor-bar"></div>
-        <p id="media-description" class="section-paragraph" style="margin-bottom: 25px;"></p>
-        
-        <div style="width: 100%; max-width: 100%; position: relative;">
-            <iframe id="youtube-player" src="" frameborder="0" allowfullscreen style="display: none; width: 100%; height: 450px; border-radius: 12px;"></iframe>
+    <section class="section">
+        <h2>Média & Direct</h2>
+        <div class="media-container">
+            <iframe id="publicYouTube" src="" title="Direct YouTube" allowfullscreen></iframe>
             
-            <div id="no-video-msg" class="video-container-placeholder">
-                <i class="fas fa-video-slash"></i>
-                <p>Aucun direct ou vidéo disponible pour le moment.</p>
+            <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                <a class="btn-social btn-youtube" href="https://youtube.com" target="_blank">
+                    📺 Notre Chaîne YouTube
+                </a>
+                
+                <a id="publicFacebook" class="btn-social btn-facebook" href="#" target="_blank" style="display: none;">
+                    🔹 Rejoignez-nous sur Facebook
+                </a>
             </div>
         </div>
     </section>
 
-    <section id="dons" class="content-section">
+    <section class="section">
         <h2>Faire un Don</h2>
-        <div class="decor-bar"></div>
-        <p id="don-texte" class="section-paragraph"></p>
-        
+        <p style="font-style: italic; color: #666;">Soutenez l'œuvre de Dieu...</p>
         <div class="don-grid">
             <div class="don-card">
                 <h3>Coordonnées Bancaires</h3>
-                <pre id="banque-coordonnees"></pre>
+                <p id="coordonneesBancairesText">Chargement des détails bancaires...</p>
             </div>
             <div class="don-card">
                 <h3>Mobile Money</h3>
-                <pre id="mobile-money"></pre>
+                <p id="mobileMoneyText">Chargement des numéros Orange, Airtel, M-Pesa...</p>
             </div>
         </div>
     </section>
 
+    <footer>
+        <p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p>
+    </footer>
+
     <script>
-        // --- 1. SCRIPT DU MENU BURGER ---
-        const burgerMenu = document.getElementById('burger-menu');
-        const openBurgerBtn = document.getElementById('open-burger-btn');
-        const closeBurgerBtn = document.getElementById('close-burger-btn');
-        const burgerLinks = document.querySelectorAll('.burger-links a');
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('/api/data')
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        // 1. Textes dynamiques principaux
+                        if (data.texteAccueil) {
+                            document.getElementById('texteAccueilText').innerText = data.texteAccueil;
+                        }
+                        if (data.vieEgliseTexte) {
+                            document.getElementById('vieEgliseText').innerText = data.vieEgliseTexte;
+                        }
+                        if (data.coordonneesBancaires) {
+                            document.getElementById('coordonneesBancairesText').innerText = data.coordonneesBancaires;
+                        }
+                        if (data.mobileMoney) {
+                            document.getElementById('mobileMoneyText').innerText = data.mobileMoney;
+                        }
 
-        if (openBurgerBtn && burgerMenu && closeBurgerBtn) {
-            // Ouvrir le menu
-            openBurgerBtn.addEventListener('click', () => burgerMenu.classList.add('open'));
-            // Fermer le menu avec la croix
-            closeBurgerBtn.addEventListener('click', () => burgerMenu.classList.remove('open'));
-            // Fermer le menu automatiquement quand on clique sur un lien
-            burgerLinks.forEach(link => {
-                link.addEventListener('click', () => burgerMenu.classList.remove('open'));
-            });
-        }
+                        // 2. Affichage dynamique du Logo depuis Cloudinary
+                        const logoImg = document.getElementById('publicLogo');
+                        if (logoImg && data.logoSrc) {
+                            logoImg.src = data.logoSrc;
+                        }
 
-        // --- 2. SCRIPT DE GLISSEMENT DU CARROUSEL ---
-        let currentIdx = 0;
-        let imageCount = 0;
-        let carouselTimer = null;
-        const sliderTrack = document.getElementById('carousel-slider');
+                        // 3. Affichage dynamique et forcé du bouton Facebook
+                        const fbBtn = document.getElementById('publicFacebook');
+                        if (fbBtn && data.lienFacebook) {
+                            fbBtn.href = data.lienFacebook;
+                            fbBtn.style.display = 'inline-flex'; // Affiche proprement le bouton
+                        }
 
-        function moveCarousel() {
-            if (imageCount <= 1) return;
-            currentIdx++;
-            if (currentIdx >= imageCount) currentIdx = 0;
-            updateSliderPosition();
-        }
-
-        function updateSliderPosition() {
-            if (sliderTrack) {
-                sliderTrack.style.transform = `translateX(-${currentIdx * 100}%)`;
-            }
-        }
-
-        // Boutons manuels du carrousel
-        document.getElementById('btn-next').addEventListener('click', () => {
-            if (imageCount <= 1) return;
-            currentIdx = (currentIdx + 1) % imageCount;
-            updateSliderPosition();
-            resetTimer();
-        });
-
-        document.getElementById('btn-prev').addEventListener('click', () => {
-            if (imageCount <= 1) return;
-            currentIdx = (currentIdx - 1 + imageCount) % imageCount;
-            updateSliderPosition();
-            resetTimer();
-        });
-
-        function resetTimer() {
-            if (carouselTimer) clearInterval(carouselTimer);
-            if (imageCount > 1) carouselTimer = setInterval(moveCarousel, 4000);
-        }
-
-        // --- 3. CHARGEMENT DYNAMIQUE DES DONNÉES DE L'API ---
-        async function initialiserSiteCMA() {
-            try {
-                const res = await fetch('/api/data?t=' + Date.now());
-                if (!res.ok) throw new Error("Réponse serveur corrompue");
-                const data = await res.json();
-
-                // 1. Message d'accueil hero
-                if (data.texteAccueil) document.getElementById('site-welcome-text').textContent = data.texteAccueil;
-
-                // 2. Remplacement du Logo
-                if (data.logoSrc) document.getElementById('logo-img').src = data.logoSrc;
-
-                // 3. Remplissage du Carrousel (Format horizontal compatible avec ton CSS)
-                if (sliderTrack) {
-                    sliderTrack.innerHTML = ""; // Vider le texte de chargement
-                    const listImgs = data.carouselImages && Array.isArray(data.carouselImages) 
-                        ? data.carouselImages.filter(i => i && i.src) 
-                        : [];
-                    
-                    imageCount = listImgs.length;
-
-                    if (imageCount > 0) {
-                        listImgs.forEach(img => {
-                            const slideItem = document.createElement('div');
-                            slideItem.className = 'slide-item';
-                            slideItem.innerHTML = `
-                                <img src="${img.src}" alt="CMA Image">
-                                ${img.caption ? `<div class="slide-caption"><p style="font-weight: bold;">${img.caption}</p></div>` : ''}
-                            `;
-                            sliderTrack.appendChild(slideItem);
-                        });
-
-                        resetTimer();
-                    } else {
-                        sliderTrack.innerHTML = `
-                            <div class="slide-item" style="display:flex; justify-content:center; align-items:center; color:#a0a5c0; font-family:sans-serif;">
-                                <p>Aucun visuel actif dans le carrousel. Ajoutez-en depuis l'administration.</p>
-                            </div>`;
+                        // 4. Intégration du flux vidéo YouTube Direct
+                        const ytIframe = document.getElementById('publicYouTube');
+                        if (ytIframe && data.lienYouTube) {
+                            ytIframe.src = data.lienYouTube;
+                        }
                     }
-                }
-
-                // 4. Vie de l'église
-                if (data.vieEgliseTexte) document.getElementById('vie-texte').textContent = data.vieEgliseTexte;
-
-                // 5. Section Vidéo & YouTube intelligent
-                if (data.mediaTitre) document.getElementById('media-titre').textContent = data.mediaTitre;
-                if (data.mediaDescription) document.getElementById('media-description').textContent = data.mediaDescription;
-                
-                const player = document.getElementById('youtube-player');
-                const placeholderBox = document.getElementById('no-video-msg');
-                
-                if (player && data.lienYouTube && data.lienYouTube.trim() !== "") {
-                    let url = data.lienYouTube;
-                    if (url.includes('watch?v=')) {
-                        url = 'https://www.youtube.com/embed/' + url.split('v=')[1].split('&')[0];
-                    } else if (url.includes('youtu.be/')) {
-                        url = 'https://www.youtube.com/embed/' + url.split('youtu.be/')[1].split('?')[0];
-                    }
-                    player.src = url;
-                    player.style.display = 'block';
-                    if (placeholderBox) placeholderBox.style.display = 'none';
-                }
-
-                // 6. Section Finances & Dons (Prise en compte du format 'pre')
-                if (data.faireDonTexte) document.getElementById('don-texte').textContent = data.faireDonTexte;
-                if (data.coordonneesBancaires) document.getElementById('banque-coordonnees').innerText = data.coordonneesBancaires;
-                if (data.mobileMoney) document.getElementById('mobile-money').innerText = data.mobileMoney;
-
-            } catch (err) {
-                console.error("Erreur d'initialisation CMA :", err);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', initialiserSiteCMA);
+                })
+                .catch(err => console.error("Erreur lors de la récupération des données :", err));
+        });
     </script>
 </body>
 </html>
-document.addEventListener("DOMContentLoaded", () => {
-    fetch('/api/data')
-        .then(res => res.json())
-        .then(data => {
-            if (data) {
-                // 1. Textes dynamiques
-                if (data.texteAccueil) document.getElementById('texteAccueilText').innerText = data.texteAccueil;
-                if (data.vieEgliseTexte) document.getElementById('vieEgliseText').innerText = data.vieEgliseTexte;
-
-                // 2. Affichage dynamique du Logo Cloudinary
-                const logoImg = document.getElementById('publicLogo');
-                if (logoImg && data.logoSrc) logoImg.src = data.logoSrc;
-
-                // 3. Affichage dynamique du lien Facebook
-                const fbBtn = document.getElementById('publicFacebook');
-                if (fbBtn && data.lienFacebook) {
-                    fbBtn.href = data.lienFacebook;
-                    fbBtn.style.display = 'inline-block'; // S'affiche seulement si configuré
-                }
-
-                // 4. Si tu as un élément iFrame pour YouTube
-                const ytIframe = document.getElementById('publicYouTube');
-                if (ytIframe && data.lienYouTube) ytIframe.src = data.lienYouTube;
-            }
-        })
-        .catch(err => console.error("Erreur de chargement des données :", err));
-});
