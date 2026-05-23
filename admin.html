@@ -9,11 +9,12 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h1 { color: var(--primary); text-align: center; margin-bottom: 30px; font-size: 24px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 8px; border-left: 4px solid var(--primary); }
         label { display: block; font-weight: 600; margin-bottom: 8px; color: #555; }
-        textarea, input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        textarea { resize: vertical; min-height: 100px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 14px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: background 0.2s; }
+        textarea, input[type="text"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: white; }
+        textarea { resize: vertical; min-height: 80px; }
+        .preview { margin-top: 10px; max-height: 100px; display: none; border-radius: 6px; border: 1px dashed #ccc; padding: 5px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 14px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: background 0.2s; margin-top: 10px; }
         .btn:hover { background: #004085; }
         .status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 6px; display: none; font-weight: 600; }
         .success { background: #d4edda; color: #155724; }
@@ -22,48 +23,63 @@
 </head>
 <body>
     <div class="container">
-        <h1>🛠️ Gestion du Contenu - Centre Missionnaire Actes 1:8</h1>
+        <h1>🛠️ Gestion du Contenu & Médias - CMA Actes 1:8</h1>
         
         <div id="statusMessage" class="status"></div>
 
         <form id="adminForm">
             <div class="form-group">
+                <label>Modifier le Logo de l'Église :</label>
+                <input type="file" id="logoFile" accept="image/*">
+                <img id="logoPreview" class="preview" alt="Aperçu logo">
+            </div>
+
+            <div class="form-group">
+                <label>Ajouter une image au Carrousel d'accueil :</label>
+                <input type="file" id="carouselFile" accept="image/*">
+                <img id="carouselPreview" class="preview" alt="Aperçu carrousel">
+            </div>
+
+            <div class="form-group">
                 <label for="texteAccueil">Texte d'accueil principal :</label>
-                <textarea id="texteAccueil" name="texteAccueil"></textarea>
+                <textarea id="texteAccueil"></textarea>
             </div>
 
             <div class="form-group">
                 <label for="vieEgliseTexte">Section "Vie de l'Église" :</label>
-                <textarea id="vieEgliseTexte" name="vieEgliseTexte"></textarea>
+                <textarea id="vieEgliseTexte"></textarea>
             </div>
 
             <div class="form-group">
                 <label for="lienYouTube">Lien du Direct YouTube :</label>
-                <input type="text" id="lienYouTube" name="lienYouTube" placeholder="https://www.youtube.com/embed/...">
+                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/...">
             </div>
 
             <div class="form-group">
                 <label for="lienFacebook">Lien de la Page Facebook :</label>
-                <input type="text" id="lienFacebook" name="lienFacebook" placeholder="https://facebook.com/...">
+                <input type="text" id="lienFacebook">
             </div>
 
             <div class="form-group">
                 <label for="coordonneesBancaires">Coordonnées Bancaires (Dons) :</label>
-                <textarea id="coordonneesBancaires" name="coordonneesBancaires"></textarea>
+                <textarea id="coordonneesBancaires"></textarea>
             </div>
 
             <div class="form-group">
                 <label for="mobileMoney">Numéros Mobile Money :</label>
-                <textarea id="mobileMoney" name="mobileMoney"></textarea>
+                <textarea id="mobileMoney"></textarea>
             </div>
 
-            <button type="submit" class="btn">Enregistrer les modifications</button>
+            <button type="submit" class="btn">Enregistrer toutes les modifications</button>
         </form>
     </div>
 
     <script>
         const statusDiv = document.getElementById('statusMessage');
+        let currentLogoSrc = "";
+        let currentCarouselImages = [];
 
+        // Charger les données actuelles au démarrage
         async function loadCurrentData() {
             try {
                 const res = await fetch('/api/data');
@@ -75,6 +91,13 @@
                     document.getElementById('lienFacebook').value = data.lienFacebook || '';
                     document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || '';
                     document.getElementById('mobileMoney').value = data.mobileMoney || '';
+                    
+                    if (data.logoSrc) {
+                        const img = document.getElementById('logoPreview');
+                        img.src = data.logoSrc;
+                        img.style.display = 'block';
+                        currentLogoSrc = data.logoSrc;
+                    }
                 }
             } catch (err) {
                 showStatus("Erreur lors du chargement des données", false);
@@ -85,31 +108,58 @@
             statusDiv.textContent = msg;
             statusDiv.className = 'status ' + (isSuccess ? 'success' : 'error');
             statusDiv.style.display = 'block';
+            window.scrollTo(0, 0);
             setTimeout(() => { statusDiv.style.display = 'none'; }, 5000);
         }
 
+        // Soumission du formulaire complet
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = {
-                texteAccueil: document.getElementById('texteAccueil').value,
-                vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
-                lienYouTube: document.getElementById('lienYouTube').value,
-                lienFacebook: document.getElementById('lienFacebook').value,
-                coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
-                mobileMoney: document.getElementById('mobileMoney').value
-            };
-
+            
             try {
+                // 1. Gérer l'upload du logo si un fichier est sélectionné
+                const logoInput = document.getElementById('logoFile');
+                if (logoInput.files.length > 0) {
+                    const logoFormData = new FormData();
+                    logoFormData.append('logoFile', logoInput.files[0]);
+                    const logoRes = await fetch('/api/upload-logo', { method: 'POST', body: logoFormData });
+                    const logoData = await logoRes.json();
+                    if (logoData.src) currentLogoSrc = logoData.src;
+                }
+
+                // 2. Gérer l'upload du carrousel si un fichier est sélectionné
+                const carouselInput = document.getElementById('carouselFile');
+                if (carouselInput.files.length > 0) {
+                    const carouselFormData = new FormData();
+                    carouselFormData.append('carouselFile', carouselInput.files[0]);
+                    const carouselRes = await fetch('/api/upload-carousel', { method: 'POST', body: carouselFormData });
+                    const carouselData = await carouselRes.json();
+                    if (carouselData.src) currentCarouselImages.push(carouselData.src);
+                }
+
+                // 3. Sauvegarder l'ensemble des données
+                const formData = {
+                    logoSrc: currentLogoSrc,
+                    carouselImages: currentCarouselImages,
+                    texteAccueil: document.getElementById('texteAccueil').value,
+                    vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
+                    lienYouTube: document.getElementById('lienYouTube').value,
+                    lienFacebook: document.getElementById('lienFacebook').value,
+                    coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
+                    mobileMoney: document.getElementById('mobileMoney').value
+                };
+
                 const response = await fetch('/api/save-data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-                const result = await response.json();
-                if(result.success) {
-                    showStatus("Contenu mis à jour avec succès !", true);
+                
+                if(response.ok) {
+                    showStatus("Contenu et images mis à jour avec succès !", true);
+                    loadCurrentData();
                 } else {
-                    showStatus("Échec de l'enregistrement", false);
+                    showStatus("Échec de l'enregistrement des données", false);
                 }
             } catch (err) {
                 showStatus("Erreur de connexion avec le serveur", false);
