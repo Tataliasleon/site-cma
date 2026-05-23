@@ -28,7 +28,7 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 // Initialiser data.json s'il n'existe pas ou est vide
 if (!fs.existsSync(DATA_FILE) || fs.readFileSync(DATA_FILE, 'utf8').trim() === "") {
     fs.writeFileSync(DATA_FILE, JSON.stringify({
-        logoSrc: "",
+        logoSrc: "/images/logo.jpeg", // On force le chemin local de ton VS Code par défaut !
         carouselImages: [],
         texteAccueil: "Bienvenue au Centre Missionnaire Actes 1:8",
         vieEgliseTexte: "",
