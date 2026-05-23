@@ -27,15 +27,8 @@
         <div class="form-section">
             <h2>1. Textes de la Page d'Accueil</h2>
             <div class="form-group">
-                <label>Message de bienvenue (Grand titre d'accueil) :</label>
-                <input type="text" id="texteAccueil" required>
-            </div>
-            <div class="form-group">
-                <label>Présentation officielle (Vie de l'Église) :</label>
-                <textarea id="vieEgliseTexte" rows="6" required></textarea>
-            </div>
-        </div>
-
+              function supprimerServeur(index) { imagesServeurActuelles.splice(index, 1); afficherPhotos(); }
+function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPhotos(); }
         <div class="form-section">
             <h2>2. Galerie d'images (Carrousel)</h2>
             <div class="form-group">
