@@ -23,18 +23,20 @@
         </div>
     </header>
 
-    <section id="accueil" class="hero-section">
-        <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-                </div>
-            <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
-            <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
-        </div>
-
-        <div class="hero-overlay-text">
+    <main id="accueil">
+        <div class="hero-text-block">
             <h1 id="affichageTexteAccueil">Bienvenue au Centre Missionnaire Actes 1:8</h1>
         </div>
-    </section>
+
+        <div class="gallery-section">
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+                    </div>
+                <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
+                <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
+            </div>
+        </div>
+    </main>
 
     <section id="presentation" class="content-section">
         <div class="container">
@@ -59,7 +61,7 @@
 
     <section id="dons" class="content-section dons-section">
         <div class="container">
-            <h2>Soutenir l'Œuvre de Dieu (Dons & Offrandes)</h2>
+            <h2>Soutenir l'Œuvre de Dieu</h2>
             <div class="dons-grid">
                 <div class="don-card">
                     <h3>Coordonnées Bancaires</h3>
@@ -82,30 +84,26 @@
         let carouselImages = [];
         const track = document.getElementById('carouselTrack');
 
-        // 1. Récupérer les modifications enregistrées dans l'admin
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
                 .then(data => {
                     if (data) {
-                        // Appliquer le Logo et les Textes
                         if(data.logoSrc) document.getElementById('siteLogo').src = data.logoSrc;
                         if(data.texteAccueil) document.getElementById('affichageTexteAccueil').innerText = data.texteAccueil;
                         if(data.vieEgliseTexte) document.getElementById('affichageVieEglise').innerText = data.vieEgliseTexte;
                         if(data.coordonneesBancaires) document.getElementById('affichageBanque').innerText = data.coordonneesBancaires;
                         if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
 
-                        // Liens Réseaux Sociaux
                         if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
                         if(data.lienYouTube) {
                             document.getElementById('affichageYouTube').src = data.lienYouTube;
                             document.getElementById('containerYouTube').style.display = "block";
                         }
 
-                        // Construire la galerie défilante avec les images de l'admin
                         if(data.carouselImages && data.carouselImages.length > 0) {
                             carouselImages = data.carouselImages;
-                            track.innerHTML = ""; // Supprime tout contenu résiduel
+                            track.innerHTML = "";
                             
                             carouselImages.forEach((url, index) => {
                                 const slide = document.createElement('div');
@@ -114,19 +112,16 @@
                                 track.appendChild(slide);
                             });
 
-                            // Activer le défilement automatique toutes les 4 secondes si plusieurs images
                             if(carouselImages.length > 1) {
-                                setInterval(nextSlide, 4000);
+                                setInterval(nextSlide, 4500);
                             }
                         } else {
-                            // Image de secours si l'admin n'a encore mis aucune photo
-                            track.innerHTML = `<div class="carousel-slide active" style="background: #2c3e50; display: flex; align-items: center; justify-content: center; color: white;"><h3>Aucune photo dans la galerie. Ajoutez-en depuis l'admin !</h3></div>`;
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #f4f6f9; display: flex; align-items: center; justify-content: center; color: #666;"><h3>Aucune photo dans la galerie.</h3></div>`;
                         }
                     }
                 }).catch(err => console.error("Erreur de synchronisation"));
         });
 
-        // 2. Fonctions de mouvement du Carrousel
         function showSlide(index) {
             const slides = document.querySelectorAll('.carousel-slide');
             if(slides.length === 0) return;
