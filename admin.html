@@ -11,7 +11,7 @@
 <div class="admin-container">
     <div class="admin-header">
         <div class="admin-logo-box">
-            <img id="logoPreview" src="" alt="Logo Église" style="display: none; max-height: 90px; margin: 0 auto 15px auto;">
+            <img id="logoPreview" src="/images/logo.jpeg" alt="Logo Église" style="display: block; max-height: 90px; margin: 0 auto 15px auto;">
         </div>
         <h1>⚙️ Panneau d'Administration</h1>
         <p>Centre Missionnaire Actes 1:8</p>
@@ -31,8 +31,13 @@
         <div class="form-section">
             <h2>2. Galerie d'images défilantes (Carrousel)</h2>
             <div class="form-group">
-                <label style="color: #0056b3; font-weight: bold;">Cliquez ici pour sélectionner TOUTES vos photos en une seule fois :</label>
-                <input type="file" id="carouselFiles" accept="image/*" multiple="multiple" name="carouselFiles[]" style="display: block; width: 100%; padding: 10px; background: #eef2f7; border: 2px dashed #0056b3; border-radius: 6px; cursor: pointer;">
+                <label style="color: #0056b3; font-weight: bold;">Ajoutez vos photos une par une ou plusieurs à la fois (Elles s'accumulent sans s'effacer) :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 15px; background: #eef2f7; border: 2px dashed #0056b3; border-radius: 6px; cursor: pointer;">
+                
+                <div style="margin-top: 10px; font-weight: 600; color: #555;">
+                    📸 Nombre de photos prêtes à être envoyées : <span id="photoCounter" style="color: #0056b3;">0</span>
+                </div>
+                
                 <div id="carouselPreview" class="gallery-preview"></div>
             </div>
         </div>
@@ -78,13 +83,18 @@
 </div>
 
 <script>
-    let currentLogoSrc = "";
-    let currentCarouselImages = [];
+    let currentLogoSrc = "/images/logo.jpeg";
+    
+    // TABLEAU MÉMOIRE INTERNE : C'est lui qui va garder TOUTES les photos accumulées
+    let photosAccumulees = []; 
+    // Garde aussi les images déjà présentes sur le serveur
+    let imagesServeurActuelles = [];
 
     const logoInput = document.getElementById('logoFile');
     const logoPreview = document.getElementById('logoPreview');
     const carouselInput = document.getElementById('carouselFiles');
     const carouselPreview = document.getElementById('carouselPreview');
+    const photoCounter = document.getElementById('photoCounter');
     const statusMessage = document.getElementById('statusMessage');
 
     function msg(text, success) {
@@ -94,6 +104,7 @@
         window.scrollTo(0,0);
     }
 
+    // Charger les données du serveur au démarrage
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
@@ -109,49 +120,74 @@
                     if(data.logoSrc) {
                         currentLogoSrc = data.logoSrc;
                         logoPreview.src = data.logoSrc;
-                        logoPreview.style.display = 'block';
                     }
                     if(data.carouselImages && data.carouselImages.length > 0) {
-                        currentCarouselImages = data.carouselImages;
-                        carouselPreview.innerHTML = "";
-                        data.carouselImages.forEach(url => {
-                            const img = document.createElement('img');
-                            img.src = url;
-                            carouselPreview.appendChild(img);
-                        });
+                        imagesServeurActuelles = data.carouselImages;
+                        afficherToutesLesPhotos();
                     }
                 }
-            });
+            }).catch(err => console.log("Attante du serveur..."));
     });
 
+    // Aperçu du logo
     logoInput.addEventListener('change', () => {
         if(logoInput.files && logoInput.files[0]) {
             const r = new FileReader();
-            r.onload = (e) => { logoPreview.src = e.target.result; logoPreview.style.display='block'; };
+            r.onload = (e) => { logoPreview.src = e.target.result; };
             r.readAsDataURL(logoInput.files[0]);
         }
     });
 
+    // CAPTURE ET ACCUMULATION DES PHOTOS (L'élément magique)
     carouselInput.addEventListener('change', () => {
-        carouselPreview.innerHTML = "";
-        if(carouselInput.files) {
+        if(carouselInput.files && carouselInput.files.length > 0) {
+            // On ajoute les nouveaux fichiers dans notre tableau mémoire sans effacer les anciens
             Array.from(carouselInput.files).forEach(file => {
-                const r = new FileReader();
-                r.onload = (e) => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    carouselPreview.appendChild(img);
-                };
-                r.readAsDataURL(file);
+                photosAccumulees.push(file);
             });
+            
+            // On rafraîchit l'affichage visuel sur l'écran
+            afficherToutesLesPhotos();
+            
+            // On réinitialise l'input pour permettre de recliquer immédiatement sur le même fichier si besoin
+            carouselInput.value = "";
         }
     });
 
+    // Fonction pour afficher le cumul des images (anciennes + nouvelles en attente)
+    function afficherToutesLesPhotos() {
+        carouselPreview.innerHTML = "";
+        
+        // 1. Afficher d'abord les images déjà sauvegardées sur le serveur
+        imagesServeurActuelles.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            carouselPreview.appendChild(img);
+        });
+
+        // 2. Ajouter les nouvelles images locales en attente d'envoi
+        photosAccumulees.forEach(file => {
+            const r = new FileReader();
+            r.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.border = "2px dashed #0056b3"; // Bordure pointillée pour les nouvelles photos
+                carouselPreview.appendChild(img);
+            };
+            r.readAsDataURL(file);
+        });
+
+        // Mettre à jour le compteur global
+        photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
+    }
+
+    // Soumission et envoi de TOUT le bloc accumulé vers Cloudinary
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Mise à jour globale du site en cours...", true);
+        msg("Envoi et traitement de toutes les photos accumulées...", true);
 
         try {
+            // 1. Envoi du logo
             if(logoInput.files && logoInput.files[0]) {
                 const fd = new FormData();
                 fd.append('logoFile', logoInput.files[0]);
@@ -160,21 +196,29 @@
                 if(d.src) currentLogoSrc = d.src;
             }
 
-            if(carouselInput.files && carouselInput.files.length > 0) {
+            // 2. Envoi groupé de TOUTES les photos stockées dans notre tableau mémoire
+            let finalCarouselUrls = [...imagesServeurActuelles];
+
+            if(photosAccumulees.length > 0) {
                 const fd = new FormData();
-                Array.from(carouselInput.files).forEach(file => {
+                photosAccumulees.forEach(file => {
                     fd.append('carouselFiles', file);
                 });
+                
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
-                if(d.srcs) currentCarouselImages = d.srcs;
+                if(d.srcs) {
+                    // On fusionne les anciennes urls avec les nouvelles générées par Cloudinary
+                    finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
+                }
             }
 
+            // 3. Sauvegarde dans data.json
             const finalData = {
                 logoSrc: currentLogoSrc,
-                carouselImages: currentCarouselImages,
+                carouselImages: finalCarouselUrls,
                 texteAccueil: document.getElementById('texteAccueil').value,
-                vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
+                vieEgliseTexte: document.getElementById('vieEgliseTexte苔').value || document.getElementById('vieEgliseTexte').value,
                 lienYouTube: document.getElementById('lienYouTube').value,
                 lienFacebook: document.getElementById('lienFacebook').value,
                 coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
@@ -188,9 +232,13 @@
             });
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Le site a été mis à jour avec toutes vos images !", true);
+                msg("✅ Enregistrement réussi ! Toutes les photos ajoutées sont en ligne.", true);
+                // On met à jour la liste actuelle et on vide la mémoire temporaire
+                imagesServeurActuelles = finalCarouselUrls;
+                photosAccumulees = [];
+                afficherToutesLesPhotos();
             } else {
-                msg("❌ Erreur d'enregistrement.", false);
+                msg("❌ Erreur de sauvegarde.", false);
             }
         } catch (err) {
             msg("❌ Erreur réseau.", false);
