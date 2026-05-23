@@ -3,126 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panneau d'Administration - CMA</title>
-    <style>
-        :root {
-            --primary: #0056b3;
-            --dark: #1a1a1a;
-            --light: #f4f6f9;
-            --success: #28a745;
-            --white: #ffffff;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            padding: 30px 15px;
-        }
-
-        .admin-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--white);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        h1 { color: var(--primary); margin-bottom: 25px; font-size: 1.8rem; text-align: center; }
-        h2 { font-size: 1.2rem; margin: 20px 0 10px 0; color: #555; border-left: 4px solid var(--primary); padding-left: 8px; }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
-        input[type="text"], textarea {
-            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; font-family: inherit;
-        }
-        textarea { height: 120px; resize: vertical; }
-
-        .file-upload-zone {
-            background: #fafafa; border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 6px; cursor: pointer;
-        }
-        .file-upload-zone:hover { border-color: var(--primary); }
-
-        .preview-img { max-height: 100px; margin-top: 10px; display: block; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .gallery-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .gallery-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
-
-        .btn-submit {
-            display: block; width: 100%; padding: 15px; background-color: var(--primary); color: white;
-            border: none; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: background 0.2s; margin-top: 30px;
-        }
-        .btn-submit:hover { background-color: #004494; }
-
-        .status-msg {
-            padding: 12px; margin-top: 20px; border-radius: 6px; text-align: center; font-weight: 600; display: none;
-        }
-        .status-success { background-color: #d4edda; color: #155724; }
-        .status-error { background-color: #f8d7da; color: #721c24; }
-    </style>
+    <title>Panneau Admin - CMA</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="admin-body">
 
 <div class="admin-container">
-    <h1>⚙️ Gestion du Site CMA Acts 1:8</h1>
+    <div class="admin-header">
+        <div class="admin-logo-box">
+            <img id="logoPreview" src="" alt="Logo Église" style="display: none; max-height: 90px; margin: 0 auto 15px auto;">
+        </div>
+        <h1>⚙️ Panneau d'Administration</h1>
+        <p>Centre Missionnaire Actes 1:8</p>
+    </div>
     
     <div id="statusMessage" class="status-msg"></div>
 
     <form id="adminForm">
-        <h2>Logo de l'Église</h2>
-        <div class="form-group">
-            <label>Sélectionner le logo (JPEG/PNG)</label>
-            <input type="file" id="logoFile" accept="image/*">
-            <img id="logoPreview" class="preview-img" src="" alt="Aperçu du logo" style="display:none;">
+        <div class="form-section">
+            <h2>1. Identité visuelle</h2>
+            <div class="form-group">
+                <label>Changer le logo de l'église :</label>
+                <input type="file" id="logoFile" accept="image/*">
+            </div>
         </div>
 
-        <h2>Photos du Carrousel d'accueil</h2>
-        <div class="form-group">
-            <label>Sélectionner plusieurs photos en même temps (Maintenir Ctrl enfoncé)</label>
-            <input type="file" id="carouselFiles" accept="image/*" multiple>
-            <div id="carouselPreview" class="gallery-preview"></div>
+        <div class="form-section">
+            <h2>2. Galerie d'images défilantes (Carrousel)</h2>
+            <div class="form-group">
+                <label>Sélectionner plusieurs photos en même temps (Maintenir Ctrl ou Shift enfoncé) :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple>
+                <div id="carouselPreview" class="gallery-preview"></div>
+            </div>
         </div>
 
-        <h2>Contenus Textuels</h2>
-        <div class="form-group">
-            <label>Texte d'introduction de l'accueil</label>
-            <input type="text" id="texteAccueil" placeholder="Bienvenue au Centre Missionnaire Actes 1:8">
+        <div class="form-section">
+            <h2>3. Contenus Textuels</h2>
+            <div class="form-group">
+                <label>Grand titre d'accueil :</label>
+                <input type="text" id="texteAccueil">
+            </div>
+            <div class="form-group">
+                <label>Présentation de l'Église (Vie de l'Église) :</label>
+                <textarea id="vieEgliseTexte"></textarea>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Présentation (Vie de l'Église)</label>
-            <textarea id="vieEgliseTexte" placeholder="Décrivez les activités et la vie de la communauté..."></textarea>
+        <div class="form-section">
+            <h2>4. Réseaux Sociaux & Directs</h2>
+            <div class="form-group">
+                <label>Lien d'intégration Direct YouTube (URL de type embed) :</label>
+                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/...">
+            </div>
+            <div class="form-group">
+                <label>Lien complet de la page Facebook :</label>
+                <input type="text" id="lienFacebook" placeholder="https://facebook.com/...">
+            </div>
         </div>
 
-        <h2>Réseaux Sociaux & Liens</h2>
-        <div class="form-group">
-            <label>Lien d'intégration Direct YouTube (ex: https://www.youtube.com/embed/...) :</label>
-            <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/live_stream?channel=...">
+        <div class="form-section">
+            <h2>5. Coordonnées pour les Dons</h2>
+            <div class="form-group">
+                <label>Informations bancaires :</label>
+                <textarea id="coordonneesBancaires"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Comptes Mobile Money (M-Pesa, Orange Money, Airtel) :</label>
+                <textarea id="mobileMoney"></textarea>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Lien de votre Page Facebook :</label>
-            <input type="text" id="lienFacebook" placeholder="https://facebook.com/votrepage">
-        </div>
-
-        <h2>Informations de Dons</h2>
-        <div class="form-group">
-            <label>Coordonnées Bancaires :</label>
-            <textarea id="coordonneesBancaires" placeholder="Nom de la Banque : &#10;Numéro de Compte : &#10;IBAN : "></textarea>
-        </div>
-
-        <div class="form-group">
-            <label>Mobile Money (Orange, Airtel, M-Pesa...) :</label>
-            <textarea id="mobileMoney" placeholder="M-Pesa : +243... &#10;Airtel Money : +243..."></textarea>
-        </div>
-
-        <button type="submit" class="btn-submit">💾 Enregistrer toutes les modifications</button>
+        <button type="submit" class="btn-submit">💾 Sauvegarder et mettre le site à jour</button>
     </form>
 </div>
 
 <script>
-    // Variables globales pour stocker les liens des images déjà sur Cloudinary
     let currentLogoSrc = "";
     let currentCarouselImages = [];
 
@@ -132,19 +87,19 @@
     const carouselPreview = document.getElementById('carouselPreview');
     const statusMessage = document.getElementById('statusMessage');
 
-    function showStatus(text, isSuccess) {
+    function msg(text, success) {
         statusMessage.innerText = text;
-        statusMessage.className = `status-msg ${isSuccess ? 'status-success' : 'status-error'}`;
+        statusMessage.className = `status-msg ${success ? 'status-success' : 'status-error'}`;
         statusMessage.style.display = 'block';
-        window.scrollTo(0, 0);
+        window.scrollTo(0,0);
     }
 
-    // 1. CHARGER LES DONNÉES EXISTANTES AU DÉMARRAGE
+    // Charger les configurations actuelles
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
             .then(data => {
-                if (data) {
+                if(data) {
                     document.getElementById('texteAccueil').value = data.texteAccueil || "";
                     document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || "";
                     document.getElementById('lienYouTube').value = data.lienYouTube || "";
@@ -152,90 +107,76 @@
                     document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || "";
                     document.getElementById('mobileMoney').value = data.mobileMoney || "";
                     
-                    // Chargement et affichage du logo enregistré
-                    if (data.logoSrc) {
+                    if(data.logoSrc) {
                         currentLogoSrc = data.logoSrc;
                         logoPreview.src = data.logoSrc;
                         logoPreview.style.display = 'block';
                     }
-                    
-                    // Chargement et affichage des images de la galerie
-                    if (data.carouselImages && data.carouselImages.length > 0) {
+                    if(data.carouselImages && data.carouselImages.length > 0) {
                         currentCarouselImages = data.carouselImages;
                         carouselPreview.innerHTML = "";
-                        data.carouselImages.forEach(imgUrl => {
+                        data.carouselImages.forEach(url => {
                             const img = document.createElement('img');
-                            img.src = imgUrl;
+                            img.src = url;
                             carouselPreview.appendChild(img);
                         });
                     }
                 }
-            })
-            .catch(err => console.error("Erreur de chargement initial:", err));
+            });
     });
 
-    // Aperçu instantané local pour le logo lors de la sélection
+    // Aperçu instantané local logo
     logoInput.addEventListener('change', () => {
-        if (logoInput.files && logoInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                logoPreview.src = e.target.result;
-                logoPreview.style.display = 'block';
-            };
-            reader.readAsDataURL(logoInput.files[0]);
+        if(logoInput.files && logoInput.files[0]) {
+            const r = new FileReader();
+            r.onload = (e) => { logoPreview.src = e.target.result; logoPreview.style.display='block'; };
+            r.readAsDataURL(logoInput.files[0]);
         }
     });
 
-    // Aperçu instantané local de toutes les photos sélectionnées pour le carrousel
+    // Aperçu instantané local carrousel (multiple)
     carouselInput.addEventListener('change', () => {
         carouselPreview.innerHTML = "";
-        if (carouselInput.files) {
+        if(carouselInput.files) {
             Array.from(carouselInput.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
+                const r = new FileReader();
+                r.onload = (e) => {
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     carouselPreview.appendChild(img);
                 };
-                reader.readAsDataURL(file);
+                r.readAsDataURL(file);
             });
         }
     });
 
-    // 2. SOUMISSION ET ENVOI SÉCURISÉ DES DONNÉES
+    // Envoi du formulaire complet
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        showStatus("Téléchargement des images et sauvegarde en cours...", true);
+        msg("Envoi des données et des images vers le serveur...", true);
 
         try {
-            // Étape A : Si un nouveau logo est sélectionné, on l'envoie sur Cloudinary
-            if (logoInput.files && logoInput.files[0]) {
-                const logoFormData = new FormData();
-                logoFormData.append('logoFile', logoInput.files[0]);
-                
-                const logoRes = await fetch('/api/upload-logo', { method: 'POST', body: logoFormData });
-                const logoData = await logoRes.json();
-                if (logoData.src) {
-                    currentLogoSrc = logoData.src;
-                }
+            // 1. Traitement du logo
+            if(logoInput.files && logoInput.files[0]) {
+                const fd = new FormData();
+                fd.append('logoFile', logoInput.files[0]);
+                const res = await fetch('/api/upload-logo', { method: 'POST', body: fd });
+                const d = await res.json();
+                if(d.src) currentLogoSrc = d.src;
             }
 
-            // Étape B : Si de nouvelles photos de carrousel sont sélectionnées, on envoie TOUT LE LOT
-            if (carouselInput.files && carouselInput.files.length > 0) {
-                const carouselFormData = new FormData();
-                // Boucle impérative pour attacher chaque image sélectionnée au formulaire
+            // 2. Traitement du lot de photos
+            if(carouselInput.files && carouselInput.files.length > 0) {
+                const fd = new FormData();
                 for (let i = 0; i < carouselInput.files.length; i++) {
-                    carouselFormData.append('carouselFiles', carouselInput.files[i]);
+                    fd.append('carouselFiles', carouselInput.files[i]);
                 }
-
-                const carouselRes = await fetch('/api/upload-carousel', { method: 'POST', body: carouselFormData });
-                const carouselData = await carouselRes.json();
-                if (carouselData.srcs && carouselData.srcs.length > 0) {
-                    currentCarouselImages = carouselData.srcs;
-                }
+                const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
+                const d = await res.json();
+                if(d.srcs) currentCarouselImages = d.srcs;
             }
 
-            // Étape C : Envoi de tous les textes et des liens d'images mis à jour vers le serveur
+            // 3. Sauvegarde finale
             const finalData = {
                 logoSrc: currentLogoSrc,
                 carouselImages: currentCarouselImages,
@@ -252,20 +193,16 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(finalData)
             });
-
-            const saveResult = await saveRes.json();
-            if (saveResult.success) {
-                showStatus("✅ Le site public a été mis à jour avec succès !", true);
+            const r = await saveRes.json();
+            if(r.success) {
+                msg("✅ Changements enregistrés ! Le site public est à jour.", true);
             } else {
-                showStatus("❌ Erreur lors de l'enregistrement des textes.", false);
+                msg("❌ Erreur d'enregistrement.", false);
             }
-
-        } catch (error) {
-            console.error(error);
-            showStatus("❌ Une erreur réseau est survenue lors de la sauvegarde.", false);
+        } catch (err) {
+            msg("❌ Une erreur réseau est survenue.", false);
         }
     });
 </script>
-
 </body>
 </html>
