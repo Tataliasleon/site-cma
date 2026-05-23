@@ -6,11 +6,10 @@ const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuration de stockage pour les images
+// 1. Gestion du stockage des images (crée un dossier images à la racine si inexistant)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = path.join(__dirname, 'public', 'images');
-        // Crée le dossier s'il n'existe pas pour éviter le crash Render
+        const dir = path.join(__dirname, 'images');
         fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
     },
@@ -21,11 +20,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// CONFIGURATION CRUCIALE : On sert les fichiers directement depuis la racine du projet
+app.use(express.static(__dirname));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const dataPath = path.join(__dirname, 'data.json');
 
-// Initialiser data.json s'il est absent
+// Initialiser data.json s'il n'existe pas encore
 if (!fs.existsSync(dataPath)) {
     const initialData = {
         logoSrc: "/images/logo.jpeg",
@@ -40,7 +42,7 @@ if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath, JSON.stringify(initialData, null, 2));
 }
 
-// API : Récupérer toutes les données
+// Routes API
 app.get('/api/data', (req, res) => {
     fs.readFile(dataPath, 'utf8', (err, data) => {
         if (err) return res.status(500).json({ error: "Erreur de lecture" });
@@ -48,7 +50,6 @@ app.get('/api/data', (req, res) => {
     });
 });
 
-// API : Upload des photos de la galerie
 app.post('/api/upload-carousel', upload.array('carouselFiles'), (req, res) => {
     if (!req.files || req.files.length === 0) {
         return res.json({ srcs: [] });
@@ -57,7 +58,6 @@ app.post('/api/upload-carousel', upload.array('carouselFiles'), (req, res) => {
     res.json({ srcs: urls });
 });
 
-// API : Sauvegarde globale de TOUT le site (Textes, Réseaux, Dons, Images)
 app.post('/api/save-data', (req, res) => {
     fs.writeFile(dataPath, JSON.stringify(req.body, null, 2), (err) => {
         if (err) return res.status(500).json({ success: false });
@@ -65,4 +65,9 @@ app.post('/api/save-data', (req, res) => {
     });
 });
 
-app.listen(PORT, () => console.log(`Serveur actif sur le port ${PORT}`));
+// Redirection par défaut vers index.html si on tape juste l'URL de base
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
