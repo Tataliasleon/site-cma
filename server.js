@@ -1,53 +1,33 @@
 const express = require('express');
 const cors = require('cors');
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
-// Configuration de la taille limite pour éviter les blocages de requêtes
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Configuration Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dxi9v9f83',
+    api_key: process.env.CLOUDINARY_API_KEY || '236683861214214',
+    api_secret: process.env.CLOUDINARY_API_SECRET || 'fWw1_qE83j9_Mv9HwEwD_vK2w_o'
+});
+
+// Middlewares
 app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// Configuration du stockage temporaire Multer
+const upload = multer({ dest: '/tmp/' });
 
 const DATA_FILE = path.join(__dirname, 'data.json');
 
-// CONFIGURATION CLOUDINARY
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
-
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'cma_assets',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
-    }
-});
-const upload = multer({ storage: storage });
-
-// Servir les fichiers statiques du dossier racine
-app.use(express.static(__dirname));
-
-// ROUTE FORCEE POUR L'ADMINISTRATION (Évite la redirection vers l'accueil)
-app.get('/admin.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-// 1. OBTENIR LES DONNÉES (FORCE SANS CACHE)
-app.get('/api/data', (req, res) => {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    if (fs.existsSync(DATA_FILE)) {
-        const fileData = fs.readFileSync(DATA_FILE, 'utf-8');
-        return res.json(JSON.parse(fileData));
-    }
-    res.json({
+// Initialiser data.json s'il n'existe pas ou est vide
+if (!fs.existsSync(DATA_FILE) || fs.readFileSync(DATA_FILE, 'utf8').trim() === "") {
+    fs.writeFileSync(DATA_FILE, JSON.stringify({
         logoSrc: "",
         carouselImages: [],
         texteAccueil: "Bienvenue au Centre Missionnaire Actes 1:8",
@@ -56,59 +36,54 @@ app.get('/api/data', (req, res) => {
         lienFacebook: "",
         coordonneesBancaires: "",
         mobileMoney: ""
+    }, null, 2), 'utf8');
+}
+
+// Routes API
+app.get('/api/data', (req, res) => {
+    fs.readFile(DATA_FILE, 'utf8', (err, data) => {
+        if (err) return res.status(500).json({ error: "Erreur de lecture" });
+        res.json(JSON.parse(data));
     });
 });
 
-// 2. ENVOI DU LOGO UNIQUE
-app.post('/api/upload-logo', upload.single('logoFile'), (req, res) => {
-    if (req.file && req.file.path) {
-        return res.json({ src: req.file.path });
-    }
-    res.status(400).json({ error: "Échec upload logo" });
-});
-
-// 3. ENVOI MULTIPLE DES PHOTOS DU CARROUSEL
-app.post('/api/upload-carousel', upload.array('carouselFiles', 10), (req, res) => {
-    try {
-        if (req.files && req.files.length > 0) {
-            const filePaths = req.files.map(file => file.path);
-            return res.json({ srcs: filePaths });
-        }
-        res.json({ srcs: [] });
-    } catch (err) {
-        res.status(500).json({ error: "Erreur upload multiple" });
-    }
-});
-
-// 4. SAUVEGARDE GLOBALE DU FORMULAIRE ET DES LIENS
 app.post('/api/save-data', (req, res) => {
+    fs.writeFile(DATA_FILE, JSON.stringify(req.body, null, 2), 'utf8', (err) => {
+        if (err) return res.status(500).json({ success: false });
+        res.json({ success: true });
+    });
+});
+
+// Upload du Logo (Unique)
+app.post('/api/upload-logo', upload.single('logoFile'), async (req, res) => {
     try {
-        const { 
-            logoSrc, carouselImages, texteAccueil, vieEgliseTexte, 
-            lienYouTube, lienFacebook, coordonneesBancaires, mobileMoney 
-        } = req.body;
-
-        const newData = {
-            logoSrc: logoSrc || "",
-            carouselImages: carouselImages || [],
-            texteAccueil: texteAccueil || "",
-            vieEgliseTexte: vieEgliseTexte || "",
-            lienYouTube: lienYouTube || "",
-            lienFacebook: lienFacebook || "",
-            coordonneesBancaires: coordonneesBancaires || "",
-            mobileMoney: mobileMoney || ""
-        };
-
-        fs.writeFileSync(DATA_FILE, JSON.stringify(newData, null, 2), 'utf-8');
-        res.json({ success: true, data: newData });
-    } catch (err) {
-        res.status(500).json({ error: "Erreur écriture" });
+        if (!req.file) return res.status(400).json({ error: "Aucun fichier" });
+        const result = await cloudinary.uploader.upload(req.file.path, { folder: 'cma_logo' });
+        res.json({ src: result.secure_url });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
-// Redirection par défaut pour le public
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// Upload du Carrousel (Multiple)
+app.post('/api/upload-carousel', upload.array('carouselFiles', 10), async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) return res.status(400).json({ error: "Aucun fichier" });
+        
+        const uploadPromises = req.files.map(file => cloudinary.uploader.upload(file.path, { folder: 'cma_carrousel' }));
+        const results = await Promise.all(uploadPromises);
+        const urls = results.map(r => r.secure_url);
+        
+        res.json({ srcs: urls });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-app.listen(PORT, () => console.log(`SERVEUR CMA LIVE SUR LE PORT ${PORT}`));
+// Servir les pages HTML
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
+app.listen(PORT, () => {
+    console.log(`=== SERVEUR CMA LIVE SUR LE PORT ${PORT} ===`);
+});
