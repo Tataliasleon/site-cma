@@ -84,10 +84,7 @@
 
 <script>
     let currentLogoSrc = "/images/logo.jpeg";
-    
-    // TABLEAU MÉMOIRE INTERNE : C'est lui qui va garder TOUTES les photos accumulées
     let photosAccumulees = []; 
-    // Garde aussi les images déjà présentes sur le serveur
     let imagesServeurActuelles = [];
 
     const logoInput = document.getElementById('logoFile');
@@ -104,7 +101,7 @@
         window.scrollTo(0,0);
     }
 
-    // Charger les données du serveur au démarrage
+    // Chargement initial
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
@@ -126,10 +123,10 @@
                         afficherToutesLesPhotos();
                     }
                 }
-            }).catch(err => console.log("Attante du serveur..."));
+            }).catch(err => console.log("Attente du serveur..."));
     });
 
-    // Aperçu du logo
+    // Gestion du Logo
     logoInput.addEventListener('change', () => {
         if(logoInput.files && logoInput.files[0]) {
             const r = new FileReader();
@@ -138,56 +135,49 @@
         }
     });
 
-    // CAPTURE ET ACCUMULATION DES PHOTOS (L'élément magique)
+    // Accumulation des images
     carouselInput.addEventListener('change', () => {
         if(carouselInput.files && carouselInput.files.length > 0) {
-            // On ajoute les nouveaux fichiers dans notre tableau mémoire sans effacer les anciens
             Array.from(carouselInput.files).forEach(file => {
                 photosAccumulees.push(file);
             });
-            
-            // On rafraîchit l'affichage visuel sur l'écran
             afficherToutesLesPhotos();
-            
-            // On réinitialise l'input pour permettre de recliquer immédiatement sur le même fichier si besoin
-            carouselInput.value = "";
+            carouselInput.value = ""; // Permet de recliquer librement
         }
     });
 
-    // Fonction pour afficher le cumul des images (anciennes + nouvelles en attente)
     function afficherToutesLesPhotos() {
         carouselPreview.innerHTML = "";
         
-        // 1. Afficher d'abord les images déjà sauvegardées sur le serveur
+        // 1. Images déjà validées sur Cloudinary
         imagesServeurActuelles.forEach(url => {
             const img = document.createElement('img');
             img.src = url;
             carouselPreview.appendChild(img);
         });
 
-        // 2. Ajouter les nouvelles images locales en attente d'envoi
+        // 2. Nouvelles images locales accumulées
         photosAccumulees.forEach(file => {
             const r = new FileReader();
             r.onload = (e) => {
                 const img = document.createElement('img');
                 img.src = e.target.result;
-                img.style.border = "2px dashed #0056b3"; // Bordure pointillée pour les nouvelles photos
+                img.style.border = "2px dashed #0056b3";
                 carouselPreview.appendChild(img);
             };
             r.readAsDataURL(file);
         });
 
-        // Mettre à jour le compteur global
         photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
     }
 
-    // Soumission et envoi de TOUT le bloc accumulé vers Cloudinary
+    // Envoi et Sauvegarde définitive
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Envoi et traitement de toutes les photos accumulées...", true);
+        msg("Envoi des images et mise à jour de la page publique en cours...", true);
 
         try {
-            // 1. Envoi du logo
+            // 1. Upload Logo si modifié
             if(logoInput.files && logoInput.files[0]) {
                 const fd = new FormData();
                 fd.append('logoFile', logoInput.files[0]);
@@ -196,7 +186,7 @@
                 if(d.src) currentLogoSrc = d.src;
             }
 
-            // 2. Envoi groupé de TOUTES les photos stockées dans notre tableau mémoire
+            // 2. Upload de toutes les photos accumulées
             let finalCarouselUrls = [...imagesServeurActuelles];
 
             if(photosAccumulees.length > 0) {
@@ -208,17 +198,16 @@
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
                 if(d.srcs) {
-                    // On fusionne les anciennes urls avec les nouvelles générées par Cloudinary
                     finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
                 }
             }
 
-            // 3. Sauvegarde dans data.json
+            // 3. Sauvegarde propre dans data.json (Erreur corrigée ici !)
             const finalData = {
                 logoSrc: currentLogoSrc,
                 carouselImages: finalCarouselUrls,
                 texteAccueil: document.getElementById('texteAccueil').value,
-                vieEgliseTexte: document.getElementById('vieEgliseTexte苔').value || document.getElementById('vieEgliseTexte').value,
+                vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
                 lienYouTube: document.getElementById('lienYouTube').value,
                 lienFacebook: document.getElementById('lienFacebook').value,
                 coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
@@ -230,14 +219,19 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(finalData)
             });
+            
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Enregistrement réussi ! Toutes les photos ajoutées sont en ligne.", true);
-                // On met à jour la liste actuelle et on vide la mémoire temporaire
+                msg("✅ Félicitations ! Tout le site public a été synchronisé et mis à jour.", true);
                 imagesServeurActuelles = finalCarouselUrls;
                 photosAccumulees = [];
                 afficherToutesLesPhotos();
+            } else {
+                msg("❌ Le serveur a refusé d'enregistrer le fichier final.", false);
             }
+        } catch (err) {
+            msg("❌ Erreur de connexion avec le serveur Render.", false);
+        }
     });
 </script>
 </body>
