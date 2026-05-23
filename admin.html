@@ -3,92 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panneau Admin - CMA</title>
+    <title>Panneau Admin - Galerie Connectée</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles spécifiques pour la suppression des images */
+        .gallery-preview {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .image-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+        }
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-delete {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+    </style>
 </head>
 <body class="admin-body">
 
 <div class="admin-container">
     <div class="admin-header">
-        <div class="admin-logo-box">
-            <img id="logoPreview" src="/images/logo.jpeg" alt="Logo Église">
-        </div>
-        <h1>⚙️ Panneau d'Administration</h1>
-        <p>Centre Missionnaire Actes 1:8</p>
+        <h1>⚙️ Gestion de la Galerie Dynamique</h1>
+        <p>Ajoutez ou supprimez des photos en temps réel</p>
     </div>
     
     <div id="statusMessage" class="status-msg"></div>
 
     <form id="adminForm" enctype="multipart/form-data">
+        
         <div class="form-section">
-            <h2>1. Identité visuelle</h2>
+            <h2>Gestion du Carrousel d'images</h2>
             <div class="form-group">
-                <label>Changer le logo de l'église :</label>
-                <input type="file" id="logoFile" accept="image/*">
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h2>2. Galerie d'images défilantes (Carrousel)</h2>
-            <div class="form-group">
-                <label style="color: #0056b3; font-weight: bold;">Ajoutez vos photos (Elles s'accumulent automatiquement) :</label>
-                <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 15px; background: #eef2f7; border: 2px dashed #0056b3; border-radius: 6px; cursor: pointer;">
+                <label style="color: #3b82f6; font-weight: bold;">Choisir de nouvelles photos à ajouter :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 15px; background: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 6px; cursor: pointer;">
                 
-                <div style="margin-top: 10px; font-weight: 600; color: #555;">
-                    📸 Nombre de photos actives : <span id="photoCounter" style="color: #0056b3;">0</span>
+                <div style="margin-top: 10px; font-weight: 600; color: #475569;">
+                    📸 Nombre total de photos sur le site : <span id="photoCounter" style="color: #3b82f6;">0</span>
                 </div>
                 
                 <div id="carouselPreview" class="gallery-preview"></div>
             </div>
         </div>
 
-        <div class="form-section">
-            <h2>3. Contenus Textuels</h2>
-            <div class="form-group">
-                <label>Grand titre d'accueil :</label>
-                <input type="text" id="texteAccueil" value="">
-            </div>
-            <div class="form-group">
-                <label>Présentation de l'Église (Vie de l'Église) :</label>
-                <textarea id="vieEgliseTexte" rows="5"></textarea>
-            </div>
-        </div>
+        <input type="hidden" id="texteAccueil">
+        <input type="hidden" id="vieEgliseTexte">
+        <input type="hidden" id="lienYouTube">
+        <input type="hidden" id="lienFacebook">
+        <input type="hidden" id="coordonneesBancaires">
+        <input type="hidden" id="mobileMoney">
 
-        <div class="form-section">
-            <h2>4. Réseaux Sociaux & Directs</h2>
-            <div class="form-group">
-                <label>Lien d'intégration Direct YouTube (URL embed) :</label>
-                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/...">
-            </div>
-            <div class="form-group">
-                <label>Lien complet de la page Facebook :</label>
-                <input type="text" id="lienFacebook" placeholder="https://facebook.com/...">
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h2>5. Coordonnées pour les Dons</h2>
-            <div class="form-group">
-                <label>Informations bancaires :</label>
-                <textarea id="coordonneesBancaires" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Comptes Mobile Money :</label>
-                <textarea id="mobileMoney" rows="3"></textarea>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-submit">💾 Sauvegarder et mettre le site à jour</button>
+        <button type="submit" class="btn-submit">💾 Enregistrer les modifications de la galerie</button>
     </form>
 </div>
 
 <script>
-    let currentLogoSrc = "/images/logo.jpeg";
-    let photosAccumulees = []; 
-    let imagesServeurActuelles = [];
+    let photosAccumulees = []; // Fichiers locaux pas encore uploadés
+    let imagesServeurActuelles = []; // URLs déjà stockées sur Render / Cloud
 
-    const logoInput = document.getElementById('logoFile');
-    const logoPreview = document.getElementById('logoPreview');
     const carouselInput = document.getElementById('carouselFiles');
     const carouselPreview = document.getElementById('carouselPreview');
     const photoCounter = document.getElementById('photoCounter');
@@ -101,111 +102,122 @@
         window.scrollTo(0,0);
     }
 
-    // CHARGEMENT DYNAMIQUE : Remplace le contenu en dur par les vraies valeurs du serveur
+    // 1. CHARGEMENT INITIAL DES PHOTOS DU SERVEUR
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
             .then(data => {
                 if(data) {
-                    // Remplissage automatique des champs de texte
+                    // Garder les autres données intactes
                     document.getElementById('texteAccueil').value = data.texteAccueil || "";
                     document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || "";
                     document.getElementById('lienYouTube').value = data.lienYouTube || "";
                     document.getElementById('lienFacebook').value = data.lienFacebook || "";
                     document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || "";
                     document.getElementById('mobileMoney').value = data.mobileMoney || "";
-                    
-                    // Remplissage du Logo actuel
-                    if(data.logoSrc) {
-                        currentLogoSrc = data.logoSrc;
-                        logoPreview.src = data.logoSrc;
-                    }
-                    // Remplissage de la galerie avec les images existantes
-                    if(data.carouselImages && data.carouselImages.length > 0) {
+
+                    if(data.carouselImages) {
                         imagesServeurActuelles = data.carouselImages;
                         afficherToutesLesPhotos();
                     }
                 }
-            }).catch(err => console.log("Erreur de récupération des données serveur."));
+            }).catch(err => console.error("Erreur de récupération"));
     });
 
-    // Prévisualisation du Logo choisi
-    logoInput.addEventListener('change', () => {
-        if(logoInput.files && logoInput.files[0]) {
-            const r = new FileReader();
-            r.onload = (e) => { logoPreview.src = e.target.result; };
-            r.readAsDataURL(logoInput.files[0]);
-        }
-    });
-
-    // Accumulation des nouvelles images de la galerie
+    // 2. AJOUT DE NOUVELLES IMAGES (ACCUMULATION)
     carouselInput.addEventListener('change', () => {
         if(carouselInput.files && carouselInput.files.length > 0) {
             Array.from(carouselInput.files).forEach(file => {
                 photosAccumulees.push(file);
             });
             afficherToutesLesPhotos();
-            carouselInput.value = ""; // Reset de l'input pour pouvoir ré-ajouter
+            carouselInput.value = ""; // Permet de remettre le même fichier si besoin
         }
     });
 
-    // Rendu visuel dans le panneau de contrôle
+    // 3. FONCTION DE SUPPRESSION (RELIÉE AU BOUTON X)
+    function supprimerImageServeur(index) {
+        imagesServeurActuelles.splice(index, 1); // Retire de la liste du serveur
+        afficherToutesLesPhotos(); // Re-génère l'affichage
+    }
+
+    function supprimerImageLocale(index) {
+        photosAccumulees.splice(index, 1); // Retire de la liste locale avant envoi
+        afficherToutesLesPhotos(); // Re-génère l'affichage
+    }
+
+    // 4. RENDU VISUEL DYNAMIQUE DES DEUX LISTES
     function afficherToutesLesPhotos() {
         carouselPreview.innerHTML = "";
-        
-        // Afficher les images déjà enregistrées sur le cloud
-        imagesServeurActuelles.forEach(url => {
+
+        // Affichage des images existantes sur le serveur avec option suppression
+        imagesServeurActuelles.forEach((url, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-wrapper';
+
             const img = document.createElement('img');
             img.src = url;
-            carouselPreview.appendChild(img);
+
+            const btnDel = document.createElement('button');
+            btnDel.type = 'button';
+            btnDel.className = 'btn-delete';
+            btnDel.innerHTML = '✕';
+            btnDel.onclick = () => supprimerImageServeur(index);
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(btnDel);
+            carouselPreview.appendChild(wrapper);
         });
 
-        // Afficher les nouvelles images locales ajoutées
-        photosAccumulees.forEach(file => {
-            const r = new FileReader();
-            r.onload = (e) => {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.style.border = "2px dashed #3b82f6";
-                carouselPreview.appendChild(img);
-            };
-            r.readAsDataURL(file);
+        // Affichage des nouvelles images locales pas encore sauvegardées
+        photosAccumulees.forEach((file, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-wrapper';
+
+            const img = document.createElement('img');
+            img.style.border = "2px dashed #22c55e"; // Contour vert pour les nouvelles
+
+            const btnDel = document.createElement('button');
+            btnDel.type = 'button';
+            btnDel.className = 'btn-delete';
+            btnDel.innerHTML = '✕';
+            btnDel.onclick = () => supprimerImageLocale(index);
+
+            const reader = new FileReader();
+            reader.onload = (e) => { img.src = e.target.result; };
+            reader.readAsDataURL(file);
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(btnDel);
+            carouselPreview.appendChild(wrapper);
         });
 
         photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
     }
 
-    // Soumission globale et mise à jour du fichier data.json
+    // 5. ENVOI DES ACTIONS AU SERVEUR (SAUVEGARDE)
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Mise à jour et synchronisation en cours...", true);
+        msg("Synchronisation en cours...", true);
 
         try {
-            // 1. Upload du logo si modifié
-            if(logoInput.files && logoInput.files[0]) {
-                const fd = new FormData();
-                fd.append('logoFile', logoInput.files[0]);
-                const res = await fetch('/api/upload-logo', { method: 'POST', body: fd });
-                const d = await res.json();
-                if(d.src) currentLogoSrc = d.src;
-            }
-
-            // 2. Upload des nouvelles images de la galerie
             let finalCarouselUrls = [...imagesServeurActuelles];
 
+            // S'il y a de nouvelles images à uploader
             if(photosAccumulees.length > 0) {
                 const fd = new FormData();
-                photosAccumulees.forEach(file => {
-                    fd.append('carouselFiles', file);
-                });
+                photosAccumulees.forEach(file => { fd.append('carouselFiles', file); });
+                
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
-                if(d.srcs) finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
+                if(d.srcs) {
+                    finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
+                }
             }
 
-            // 3. Construction de l'objet de données dynamique final
+            // Création de l'objet data final sans les images supprimées
             const finalData = {
-                logoSrc: currentLogoSrc,
+                logoSrc: "/images/logo.jpeg", // Reste fixe ou selon tes variables
                 carouselImages: finalCarouselUrls,
                 texteAccueil: document.getElementById('texteAccueil').value,
                 vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
@@ -215,23 +227,22 @@
                 mobileMoney: document.getElementById('mobileMoney').value
             };
 
-            // Envoi au serveur pour écriture définitive
+            // Écriture définitive dans data.json
             const saveRes = await fetch('/api/save-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(finalData)
             });
+            
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Changements enregistrés ! Le site public et l'admin sont synchronisés.", true);
+                msg("✅ Galerie mise à jour ! Les suppressions et ajouts sont appliqués.", true);
                 imagesServeurActuelles = finalCarouselUrls;
-                photosAccumulees = [];
+                photosAccumulees = []; // Reset local
                 afficherToutesLesPhotos();
-            } else {
-                msg("❌ Erreur lors de la sauvegarde sur le serveur.", false);
             }
         } catch (err) {
-            msg("❌ Erreur de connexion avec l'API.", false);
+            msg("❌ Erreur lors de la communication réseau.", false);
         }
     });
 </script>
