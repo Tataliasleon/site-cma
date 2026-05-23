@@ -32,7 +32,13 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage: storage });
 
+// Servir les fichiers statiques du dossier racine
 app.use(express.static(__dirname));
+
+// ROUTE FORCEE POUR L'ADMINISTRATION (Évite la redirection vers l'accueil)
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
 
 // 1. OBTENIR LES DONNÉES (FORCE SANS CACHE)
 app.get('/api/data', (req, res) => {
@@ -61,7 +67,7 @@ app.post('/api/upload-logo', upload.single('logoFile'), (req, res) => {
     res.status(400).json({ error: "Échec upload logo" });
 });
 
-// 3. ENVOI MULTIPLE DES PHOTOS DU CARROUSEL (SANS BUG)
+// 3. ENVOI MULTIPLE DES PHOTOS DU CARROUSEL
 app.post('/api/upload-carousel', upload.array('carouselFiles', 10), (req, res) => {
     try {
         if (req.files && req.files.length > 0) {
@@ -100,8 +106,9 @@ app.post('/api/save-data', (req, res) => {
     }
 });
 
+// Redirection par défaut pour le public
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`Serveur actif sur le port ${PORT}`));
+app.listen(PORT, () => console.log(`SERVEUR CMA LIVE SUR LE PORT ${PORT}`));
