@@ -5,21 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre Missionnaire Actes 1:8</title>
     <style>
-        :root {
-            --primary: #0056b3;
-            --dark: #1a1a1a;
-            --light: #f4f6f9;
-            --text: #333;
-        }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--text);
-            background-color: var(--light);
-        }
+        :root { --primary: #0056b3; --dark: #1a1a1a; --light: #f4f6f9; --text: #333; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; color: var(--text); background-color: var(--light); }
         
-        /* EN-TÊTE FORCE POUR ÉVITER LE CACHE */
         header {
             background: white !important;
             padding: 15px 20px;
@@ -30,184 +18,53 @@
             position: relative;
             z-index: 1000;
         }
-        .logo-container img {
-            max-height: 55px;
-            display: block;
-        }
-        .nav-brand {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 5px;
-        }
-        .menu-toggle span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--dark);
-            border-radius: 2px;
-        }
-        .nav-menu {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .nav-menu a {
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        /* CARROUSEL SANS TEXTE CONFLUENT */
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            height: 420px;
-            overflow: hidden;
-            background-color: #111;
-        }
-        .carousel-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            background-size: cover;
-            background-position: center;
-            z-index: 1;
-        }
-        .carousel-slide.active {
-            opacity: 1;
-            z-index: 2;
-        }
-
-        /* SECTION ACCUEIL DISSOCIÉE */
-        .hero-text-section {
-            background: white;
-            text-align: center;
-            padding: 45px 20px;
-            border-bottom: 1px solid #eee;
-        }
-        .hero-text-section h1 {
-            color: var(--dark);
-            font-size: 2.4rem;
-            margin: 0 0 15px 0;
-        }
-        .hero-text-section p {
-            font-size: 1.2rem;
-            color: #555;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .section {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        h2 {
-            color: var(--primary);
-            border-bottom: 3px solid var(--light);
-            padding-bottom: 12px;
-            margin-top: 0;
-        }
-        .media-grid { text-align: center; padding: 15px 0; }
-        iframe {
-            width: 100%;
-            max-width: 640px;
-            height: 360px;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
-        }
+        .logo-container img { max-height: 55px; display: block; }
+        .nav-brand { font-weight: bold; color: var(--primary); font-size: 1.2rem; }
         
-        .social-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+        .menu-toggle { display: flex; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
+        .menu-toggle span { width: 25px; height: 3px; background-color: var(--dark); border-radius: 2px; }
+        
+        .nav-menu { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; gap: 15px; box-sizing: border-box; list-style: none; margin: 0; }
+        .nav-menu.open { display: flex !important; }
+        .nav-menu a { text-decoration: none; color: var(--text); font-weight: 600; display: block; }
+
+        @media (min-width: 769px) {
+            .menu-toggle { display: none; }
+            .nav-menu { display: flex; flex-direction: row; position: static; box-shadow: none; padding: 0; width: auto; gap: 20px; }
         }
-        .btn-social {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 24px;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: opacity 0.2s;
-        }
+
+        .carousel-container { position: relative; width: 100%; height: 420px; overflow: hidden; background-color: #111; }
+        .carousel-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; background-size: cover; background-position: center; z-index: 1; }
+        .carousel-slide.active { opacity: 1; z-index: 2; }
+
+        .hero-text-section { background: white; text-align: center; padding: 45px 20px; border-bottom: 1px solid #eee; }
+        .hero-text-section h1 { color: var(--dark); font-size: 2.4rem; margin: 0 0 15px 0; }
+        .hero-text-section p { font-size: 1.2rem; color: #555; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+
+        .section { max-width: 1000px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { color: var(--primary); border-bottom: 3px solid var(--light); padding-bottom: 12px; margin-top: 0; }
+        .media-grid { text-align: center; padding: 15px 0; }
+        iframe { width: 100%; max-width: 640px; height: 360px; border: none; border-radius: 8px; margin-bottom: 25px; }
+        
+        .social-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .btn-social { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; color: white; border-radius: 6px; text-decoration: none; font-weight: bold; transition: opacity 0.2s; }
         .btn-facebook { background-color: #1877F2; }
         .btn-youtube { background-color: #FF0000; }
-        .btn-social:hover { opacity: 0.9; }
 
-        .don-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-top: 20px;
-        }
-        .don-card {
-            background: var(--light);
-            padding: 25px;
-            border-radius: 8px;
-            border-top: 4px solid var(--primary);
-        }
+        .don-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .don-card { background: var(--light); padding: 25px; border-radius: 8px; border-top: 4px solid var(--primary); }
         .don-card p { white-space: pre-line; font-size: 1.05rem; margin: 0; }
-
         footer { background: var(--dark); color: white; text-align: center; padding: 25px; margin-top: 50px; }
 
-        /* INTERFACE MOBILE BURGER FORCEE SUR NAVIGATEUR NORMAL */
-        @media (max-width: 768px) {
-            .menu-toggle { display: flex !important; }
-            .nav-menu {
-                display: none !important;
-                flex-direction: column !important;
-                position: absolute !important;
-                top: 100% !important;
-                left: 0 !important;
-                width: 100% !important;
-                background: white !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
-                padding: 20px !important;
-                box-sizing: border-box !important;
-                gap: 15px !important;
-            }
-            .nav-menu.open { display: flex !important; }
-            .carousel-container { height: 280px; }
-            .don-grid { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 768px) { .carousel-container { height: 280px; } .don-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-container">
-            <img id="publicLogo" src="https://images.unsplash.com/photo-1544427920-c49ccfb85579?q=80&w=150" alt="Logo">
-        </div>
+        <div class="logo-container"><img id="publicLogo" src="/images/logo.jpeg" alt="Logo"></div>
         <div class="nav-brand">CMA Actes 1:8</div>
-        <button class="menu-toggle" id="menuToggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <button class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></button>
         <ul class="nav-menu" id="navMenu">
             <li><a href="#">Accueil</a></li>
             <li><a href="#vie-eglise">Vie de l'Église</a></li>
@@ -227,22 +84,16 @@
 
     <section class="section" id="vie-eglise">
         <h2>Vie de l'Église</h2>
-        <p id="vieEgliseText">Chargement...</p>
+        <p id="vieEgliseText">Chargement des données...</p>
     </section>
 
     <section class="section" id="direct">
         <h2>Média & Direct</h2>
         <div class="media-container media-grid">
             <iframe id="publicYouTube" src="" title="Direct YouTube" allowfullscreen></iframe>
-            
             <div class="social-buttons">
-                <a class="btn-social btn-youtube" href="https://youtube.com" target="_blank">
-                    📺 Notre Chaîne YouTube
-                </a>
-                
-                <a id="publicFacebook" class="btn-social btn-facebook" href="#" target="_blank" style="display: none;">
-                    🔹 Rejoignez-nous sur Facebook
-                </a>
+                <a class="btn-social btn-youtube" href="https://youtube.com" target="_blank">📺 Notre Chaîne YouTube</a>
+                <a id="publicFacebook" class="btn-social btn-facebook" href="#" target="_blank" style="display: none;">🔹 Notre Page Facebook</a>
             </div>
         </div>
     </section>
@@ -252,11 +103,11 @@
         <div class="don-grid">
             <div class="don-card">
                 <h3>Coordonnées Bancaires</h3>
-                <p id="coordonneesBancairesText">Chargement...</p>
+                <p id="coordonneesBancairesText">En attente...</p>
             </div>
             <div class="don-card">
                 <h3>Mobile Money</h3>
-                <p id="mobileMoneyText">Chargement...</p>
+                <p id="mobileMoneyText">En attente...</p>
             </div>
         </div>
     </section>
@@ -264,7 +115,6 @@
     <footer><p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p></footer>
 
     <script>
-        // Gestion stable du burger menu
         const menuToggle = document.getElementById('menuToggle');
         const navMenu = document.getElementById('navMenu');
         if (menuToggle && navMenu) {
@@ -280,7 +130,6 @@
             if (carouselInterval) clearInterval(carouselInterval);
             const slides = document.querySelectorAll('.carousel-slide');
             if (slides.length <= 1) return;
-            
             carouselInterval = setInterval(() => {
                 slides[currentSlideIndex].classList.remove('active');
                 currentSlideIndex = (currentSlideIndex + 1) % slides.length;
@@ -289,7 +138,6 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // L'ajout du '?t=' détruit définitivement la mémoire cache du navigateur normal
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
                 .then(data => {
@@ -298,25 +146,18 @@
                         if (data.vieEgliseTexte) document.getElementById('vieEgliseText').innerText = data.vieEgliseTexte;
                         if (data.coordonneesBancaires) document.getElementById('coordonneesBancairesText').innerText = data.coordonneesBancaires;
                         if (data.mobileMoney) document.getElementById('mobileMoneyText').innerText = data.mobileMoney;
+                        if (data.logoSrc) document.getElementById('publicLogo').src = data.logoSrc;
+                        if (data.lienYouTube) document.getElementById('publicYouTube').src = data.lienYouTube;
 
-                        const logoImg = document.getElementById('publicLogo');
-                        if (logoImg && data.logoSrc) logoImg.src = data.logoSrc;
-
-                        const ytIframe = document.getElementById('publicYouTube');
-                        if (ytIframe && data.lienYouTube) ytIframe.src = data.lienYouTube;
-
-                        // Gestion et affichage propre du lien Facebook
                         const fbBtn = document.getElementById('publicFacebook');
                         if (fbBtn && data.lienFacebook) {
                             fbBtn.href = data.lienFacebook;
                             fbBtn.style.setProperty('display', 'inline-flex', 'important');
                         }
 
-                        // Chargement des multiples photos envoyées par l'admin
                         if (data.carouselImages && data.carouselImages.length > 0) {
                             const container = document.getElementById('carouselContainer');
                             container.innerHTML = "";
-
                             data.carouselImages.forEach((imageSrc, index) => {
                                 const slideDiv = document.createElement('div');
                                 slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
@@ -327,10 +168,7 @@
                         startCarouselAnimation();
                     }
                 })
-                .catch(err => {
-                    console.error(err);
-                    startCarouselAnimation();
-                });
+                .catch(() => startCarouselAnimation());
         });
     </script>
 </body>
