@@ -3,201 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration - CMA Actes 1:8</title>
+    <title>Panneau d'Administration - CMA</title>
     <style>
-        :root { --primary: #0056b3; --bg: #f4f6f9; --text: #333; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
-        .container { max-width: 700px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { color: var(--primary); text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 8px; border-left: 4px solid var(--primary); }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
-        textarea, input[type="text"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        textarea { min-height: 80px; resize: vertical; }
-        .preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .preview { max-height: 100px; border-radius: 6px; border: 1px solid #ddd; padding: 4px; object-fit: cover; }
-        .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
-        .status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 6px; display: none; font-weight: bold; }
-        .success { background: #d4edda; color: #155724; }
+        :root {
+            --primary: #0056b3;
+            --dark: #1a1a1a;
+            --light: #f4f6f9;
+            --success: #28a745;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            padding: 30px 15px;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 { color: var(--primary); margin-bottom: 25px; font-size: 1.8rem; text-align: center; }
+        h2 { font-size: 1.2rem; margin: 20px 0 10px 0; color: #555; border-left: 4px solid var(--primary); padding-left: 8px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+        input[type="text"], textarea {
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; font-family: inherit;
+        }
+        textarea { height: 120px; resize: vertical; }
+
+        .file-upload-zone {
+            background: #fafafa; border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 6px; cursor: pointer;
+        }
+        .file-upload-zone:hover { border-color: var(--primary); }
+
+        .preview-img { max-height: 100px; margin-top: 10px; display: block; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .gallery-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .gallery-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+
+        .btn-submit {
+            display: block; width: 100%; padding: 15px; background-color: var(--primary); color: white;
+            border: none; border-radius: 6px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: background 0.2s; margin-top: 30px;
+        }
+        .btn-submit:hover { background-color: #004494; }
+
+        .status-msg {
+            padding: 12px; margin-top: 20px; border-radius: 6px; text-align: center; font-weight: 600; display: none;
+        }
+        .status-success { background-color: #d4edda; color: #155724; }
+        .status-error { background-color: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🛠️ Panneau Administrateur</h1>
-        <div id="statusMessage" class="status success"></div>
 
-        <form id="adminForm">
-            <div class="form-group">
-                <label>Logo de l'Église :</label>
-                <input type="file" id="logoFile" accept="image/*">
-                <div class="preview-container"><img id="logoPreview" class="preview" style="display:none;"></div>
-            </div>
+<div class="admin-container">
+    <h1>⚙️ Gestion du Site CMA Acts 1:8</h1>
+    
+    <div id="statusMessage" class="status-msg"></div>
 
-            <div class="form-group">
-                <label>Photos du Carrousel (Sélectionnez plusieurs images d'un coup) :</label>
-                <input type="file" id="carouselFiles" accept="image/*" multiple>
-                <div id="carouselPreviews" class="preview-container"></div>
-            </div>
+    <form id="adminForm">
+        <h2>Logo de l'Église</h2>
+        <div class="form-group">
+            <label>Sélectionner le logo (JPEG/PNG)</label>
+            <input type="file" id="logoFile" accept="image/*">
+            <img id="logoPreview" class="preview-img" src="" alt="Aperçu du logo" style="display:none;">
+        </div>
 
-            <div class="form-group">
-                <label for="texteAccueil">Texte d'accueil principal :</label>
-                <textarea id="texteAccueil"></textarea>
-            </div>
+        <h2>Photos du Carrousel d'accueil</h2>
+        <div class="form-group">
+            <label>Sélectionner plusieurs photos en même temps (Maintenir Ctrl enfoncé)</label>
+            <input type="file" id="carouselFiles" accept="image/*" multiple>
+            <div id="carouselPreview" class="gallery-preview"></div>
+        </div>
 
-            <div class="form-group">
-                <label for="vieEgliseTexte">Section "Vie de l'Église" :</label>
-                <textarea id="vieEgliseTexte"></textarea>
-            </div>
+        <h2>Contenus Textuels</h2>
+        <div class="form-group">
+            <label>Texte d'introduction de l'accueil</label>
+            <input type="text" id="texteAccueil" placeholder="Bienvenue au Centre Missionnaire Actes 1:8">
+        </div>
 
-            <div class="form-group">
-                <label for="lienYouTube">Lien du Direct YouTube :</label>
-                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/...">
-            </div>
+        <div class="form-group">
+            <label>Présentation (Vie de l'Église)</label>
+            <textarea id="vieEgliseTexte" placeholder="Décrivez les activités et la vie de la communauté..."></textarea>
+        </div>
 
-            <div class="form-group">
-                <label for="lienFacebook">Lien de la Page Facebook :</label>
-                <input type="text" id="lienFacebook" placeholder="https://facebook.com/votre-page">
-            </div>
+        <h2>Réseaux Sociaux & Liens</h2>
+        <div class="form-group">
+            <label>Lien d'intégration Direct YouTube (ex: https://www.youtube.com/embed/...) :</label>
+            <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/live_stream?channel=...">
+        </div>
 
-            <div class="form-group">
-                <label for="coordonneesBancaires">Coordonnées Bancaires :</label>
-                <textarea id="coordonneesBancaires"></textarea>
-            </div>
+        <div class="form-group">
+            <label>Lien de votre Page Facebook :</label>
+            <input type="text" id="lienFacebook" placeholder="https://facebook.com/votrepage">
+        </div>
 
-            <div class="form-group">
-                <label for="mobileMoney">Numéros Mobile Money :</label>
-                <textarea id="mobileMoney"></textarea>
-            </div>
+        <h2>Informations de Dons</h2>
+        <div class="form-group">
+            <label>Coordonnées Bancaires :</label>
+            <textarea id="coordonneesBancaires" placeholder="Nom de la Banque : &#10;Numéro de Compte : &#10;IBAN : "></textarea>
+        </div>
 
-            <button type="submit" class="btn">Enregistrer et Mettre à jour</button>
-        </form>
-    </div>
+        <div class="form-group">
+            <label>Mobile Money (Orange, Airtel, M-Pesa...) :</label>
+            <textarea id="mobileMoney" placeholder="M-Pesa : +243... &#10;Airtel Money : +243..."></textarea>
+        </div>
 
-    <script>
-        const statusDiv = document.getElementById('statusMessage');
-        let currentLogoSrc = "";
-        let currentCarouselImages = [];
+        <button type="submit" class="btn-submit">💾 Enregistrer toutes les modifications</button>
+    </form>
+</div>
 
-        document.getElementById('logoFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (el) => {
-                    document.getElementById('logoPreview').src = el.target.result;
-                    document.getElementById('logoPreview').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+<script>
+    // Variables globales pour stocker les liens des images déjà sur Cloudinary
+    let currentLogoSrc = "";
+    let currentCarouselImages = [];
 
-        document.getElementById('carouselFiles').addEventListener('change', function(e) {
-            const container = document.getElementById('carouselPreviews');
-            container.innerHTML = "";
-            Array.from(e.target.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (el) => {
-                    const img = document.createElement('img');
-                    img.src = el.target.result;
-                    img.className = 'preview';
-                    container.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
+    const logoInput = document.getElementById('logoFile');
+    const logoPreview = document.getElementById('logoPreview');
+    const carouselInput = document.getElementById('carouselFiles');
+    const carouselPreview = document.getElementById('carouselPreview');
+    const statusMessage = document.getElementById('statusMessage');
 
-        async function loadCurrentData() {
-            try {
-                const res = await fetch('/api/data?t=' + Date.now());
-                const data = await res.json();
-                if(data) {
-                    document.getElementById('texteAccueil').value = data.texteAccueil || '';
-                    document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || '';
-                    document.getElementById('lienYouTube').value = data.lienYouTube || '';
-                    document.getElementById('lienFacebook').value = data.lienFacebook || '';
-                    document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || '';
-                    document.getElementById('mobileMoney').value = data.mobileMoney || '';
+    function showStatus(text, isSuccess) {
+        statusMessage.innerText = text;
+        statusMessage.className = `status-msg ${isSuccess ? 'status-success' : 'status-error'}`;
+        statusMessage.style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+
+    // 1. CHARGER LES DONNÉES EXISTANTES AU DÉMARRAGE
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch('/api/data?t=' + Date.now())
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    document.getElementById('texteAccueil').value = data.texteAccueil || "";
+                    document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || "";
+                    document.getElementById('lienYouTube').value = data.lienYouTube || "";
+                    document.getElementById('lienFacebook').value = data.lienFacebook || "";
+                    document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || "";
+                    document.getElementById('mobileMoney').value = data.mobileMoney || "";
                     
+                    // Chargement et affichage du logo enregistré
                     if (data.logoSrc) {
-                        document.getElementById('logoPreview').src = data.logoSrc;
-                        document.getElementById('logoPreview').style.display = 'block';
                         currentLogoSrc = data.logoSrc;
+                        logoPreview.src = data.logoSrc;
+                        logoPreview.style.display = 'block';
                     }
-                    if (data.carouselImages) {
+                    
+                    // Chargement et affichage des images de la galerie
+                    if (data.carouselImages && data.carouselImages.length > 0) {
                         currentCarouselImages = data.carouselImages;
-                        const container = document.getElementById('carouselPreviews');
-                        container.innerHTML = "";
-                        currentCarouselImages.forEach(src => {
+                        carouselPreview.innerHTML = "";
+                        data.carouselImages.forEach(imgUrl => {
                             const img = document.createElement('img');
-                            img.src = src;
-                            img.className = 'preview';
-                            container.appendChild(img);
+                            img.src = imgUrl;
+                            carouselPreview.appendChild(img);
                         });
                     }
                 }
-            } catch (err) {}
-        }
+            })
+            .catch(err => console.error("Erreur de chargement initial:", err));
+    });
 
-        function showStatus(msg) {
-            statusDiv.textContent = msg;
-            statusDiv.style.display = 'block';
-            window.scrollTo(0, 0);
+    // Aperçu instantané local pour le logo lors de la sélection
+    logoInput.addEventListener('change', () => {
+        if (logoInput.files && logoInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                logoPreview.src = e.target.result;
+                logoPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(logoInput.files[0]);
         }
+    });
 
-        document.getElementById('adminForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showStatus("Mise à jour en cours...");
-            
-            try {
-                if (document.getElementById('logoFile').files.length > 0) {
-                    const formData = new FormData();
-                    formData.append('logoFile', document.getElementById('logoFile').files[0]);
-                    const res = await fetch('/api/upload-logo', { method: 'POST', body: formData });
-                    const resData = await res.json();
-                    if (resData.src) currentLogoSrc = resData.src;
+    // Aperçu instantané local de toutes les photos sélectionnées pour le carrousel
+    carouselInput.addEventListener('change', () => {
+        carouselPreview.innerHTML = "";
+        if (carouselInput.files) {
+            Array.from(carouselInput.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    carouselPreview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+
+    // 2. SOUMISSION ET ENVOI SÉCURISÉ DES DONNÉES
+    document.getElementById('adminForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showStatus("Téléchargement des images et sauvegarde en cours...", true);
+
+        try {
+            // Étape A : Si un nouveau logo est sélectionné, on l'envoie sur Cloudinary
+            if (logoInput.files && logoInput.files[0]) {
+                const logoFormData = new FormData();
+                logoFormData.append('logoFile', logoInput.files[0]);
+                
+                const logoRes = await fetch('/api/upload-logo', { method: 'POST', body: logoFormData });
+                const logoData = await logoRes.json();
+                if (logoData.src) {
+                    currentLogoSrc = logoData.src;
+                }
+            }
+
+            // Étape B : Si de nouvelles photos de carrousel sont sélectionnées, on envoie TOUT LE LOT
+            if (carouselInput.files && carouselInput.files.length > 0) {
+                const carouselFormData = new FormData();
+                // Boucle impérative pour attacher chaque image sélectionnée au formulaire
+                for (let i = 0; i < carouselInput.files.length; i++) {
+                    carouselFormData.append('carouselFiles', carouselInput.files[i]);
                 }
 
-                const carouselInput = document.getElementById('carouselFiles');
-const formData = new FormData();
-
-// Cette boucle prend TOUTES les photos sélectionnées (grâce au "multiple")
-for (let i = 0; i < carouselInput.files.length; i++) {
-    formData.append('carouselFiles', carouselInput.files[i]);
-}
-
-// Envoi vers ton serveur de manière groupée
-fetch('/api/upload-carousel', {
-    method: 'POST',
-    body: formData
-})
-.then(res => res.json())
-.then(uploadedImages => {
-    // uploadedImages.srcs contiendra la liste de tous tes liens Cloudinary !
-});
-
-                const payload = {
-                    logoSrc: currentLogoSrc,
-                    carouselImages: currentCarouselImages,
-                    texteAccueil: document.getElementById('texteAccueil').value,
-                    vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
-                    lienYouTube: document.getElementById('lienYouTube').value,
-                    lienFacebook: document.getElementById('lienFacebook').value,
-                    coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
-                    mobileMoney: document.getElementById('mobileMoney').value
-                };
-
-                await fetch('/api/save-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                showStatus("Enregistrement réussi !");
-                loadCurrentData();
-            } catch (err) {
-                showStatus("Erreur lors de la sauvegarde.");
+                const carouselRes = await fetch('/api/upload-carousel', { method: 'POST', body: carouselFormData });
+                const carouselData = await carouselRes.json();
+                if (carouselData.srcs && carouselData.srcs.length > 0) {
+                    currentCarouselImages = carouselData.srcs;
+                }
             }
-        });
 
-        window.onload = loadCurrentData;
-    </script>
+            // Étape C : Envoi de tous les textes et des liens d'images mis à jour vers le serveur
+            const finalData = {
+                logoSrc: currentLogoSrc,
+                carouselImages: currentCarouselImages,
+                texteAccueil: document.getElementById('texteAccueil').value,
+                vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
+                lienYouTube: document.getElementById('lienYouTube').value,
+                lienFacebook: document.getElementById('lienFacebook').value,
+                coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
+                mobileMoney: document.getElementById('mobileMoney').value
+            };
+
+            const saveRes = await fetch('/api/save-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(finalData)
+            });
+
+            const saveResult = await saveRes.json();
+            if (saveResult.success) {
+                showStatus("✅ Le site public a été mis à jour avec succès !", true);
+            } else {
+                showStatus("❌ Erreur lors de l'enregistrement des textes.", false);
+            }
+
+        } catch (error) {
+            console.error(error);
+            showStatus("❌ Une erreur réseau est survenue lors de la sauvegarde.", false);
+        }
+    });
+</script>
+
 </body>
 </html>
