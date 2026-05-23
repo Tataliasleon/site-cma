@@ -1,9 +1,9 @@
-/* DESIGN ET CORRECTIONS STRUCTURELLES */
+/* RESET ET BASES DE DESIGN */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
@@ -18,7 +18,7 @@ body {
     margin: 0 auto;
 }
 
-/* NAVBAR & LOGO PARFAITS */
+/* EN-TÊTE & NAVIGATION (PUBLIC) */
 .main-header {
     background-color: #0f172a;
     color: white;
@@ -26,15 +26,13 @@ body {
     position: sticky;
     top: 0;
     z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 90%;
-    max-width: 1100px;
-    margin: 0 auto;
 }
 
 .logo-area {
@@ -52,7 +50,7 @@ body {
 }
 
 .site-title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
 }
 
@@ -65,9 +63,15 @@ body {
     color: #cbd5e1;
     text-decoration: none;
     font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s;
 }
 
-/* BURGER NAV STYLE */
+.main-nav a:hover {
+    color: #3b82f6;
+}
+
+/* MENU BURGER (MOBILE) */
 .burger-menu-btn {
     display: none;
     flex-direction: column;
@@ -77,6 +81,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
+    z-index: 1100;
 }
 
 .burger-menu-btn span {
@@ -87,35 +92,35 @@ body {
     transition: all 0.3s ease;
 }
 
-/* REDIMENSIONNEMENT DE LA ZONE HERO D'ACCUEIL */
+/* ZONE ACCUEIL & TITRE */
 .hero-welcome {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: white;
     text-align: center;
-    padding: 35px 15px; /* Proportions plus compactes et élégantes */
+    padding: 40px 20px;
 }
 
 .hero-welcome h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 800;
 }
 
-/* REDIMENSIONNEMENT DE LA GALERIE D'ACCUEIL */
+/* GALERIE PHOTO (CARROUSEL) DYNAMIQUE */
 .gallery-section {
     width: 100%;
-    max-width: 850px; /* Taille optimale centrée */
-    margin: 25px auto;
+    max-width: 900px;
+    margin: 30px auto;
     padding: 0 15px;
 }
 
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 400px; /* Hauteur harmonieuse et fixe */
-    border-radius: 12px;
+    height: 450px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    background-color: #cbd5e1;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    background-color: #e2e8f0;
 }
 
 .carousel-track {
@@ -137,7 +142,9 @@ body {
     transition: opacity 0.6s ease-in-out;
 }
 
-.carousel-slide.active { opacity: 1; }
+.carousel-slide.active {
+    opacity: 1;
+}
 
 .carousel-btn {
     position: absolute;
@@ -147,40 +154,47 @@ body {
     color: white;
     border: none;
     font-size: 18px;
-    padding: 10px 14px;
+    padding: 12px 15px;
     cursor: pointer;
     border-radius: 50%;
     z-index: 10;
 }
 
-.prev-btn { left: 12px; }
-.next-btn { right: 12px; }
+.prev-btn { left: 15px; }
+.next-btn { right: 15px; }
 
-/* SECTIONS GÉNÉRALES */
+/* SECTIONS DE CONTENU Générales */
 .content-section {
     background: white;
-    padding: 45px 20px;
-    margin: 20px auto;
+    padding: 50px 20px;
+    margin: 25px auto;
     max-width: 1100px;
     border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .content-section h2 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     color: #0f172a;
     margin-bottom: 20px;
+    padding-bottom: 6px;
     border-bottom: 3px solid #3b82f6;
     display: inline-block;
-    padding-bottom: 4px;
 }
 
-/* DESIGN FLUIDE DES MÉDIAS SANS SAUT DE PAGE */
+.text-presentation {
+    font-size: 1.05rem;
+    color: #475569;
+    white-space: pre-wrap;
+}
+
+/* STRUCTURE EN GRILLE POUR MÉDIAS (YOUTUBE & FACEBOOK) */
 .media-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 25px;
-    margin-top: 10px;
+    gap: 30px;
+    align-items: stretch;
+    margin-top: 15px;
 }
 
 .video-card-box, .facebook-card-box {
@@ -192,18 +206,18 @@ body {
     font-size: 1.1rem;
     margin-bottom: 12px;
     color: #475569;
+    font-weight: 600;
 }
 
-/* CONTENEUR YOUTUBE MAXIMUM RIGIDE */
 .video-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* Ratio 16:9 strict */
+    padding-bottom: 56.25%; /* Ratio 16:9 fluide */
     height: 0;
     border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     background: #000;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .video-container iframe {
@@ -215,7 +229,6 @@ body {
     border: 0;
 }
 
-/* Message si pas de Live */
 .fallback-message {
     position: absolute;
     top: 0;
@@ -237,7 +250,7 @@ body {
     background: #f1f5f9;
     padding: 25px;
     border-radius: 10px;
-    flex-grow: 1;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -253,23 +266,134 @@ body {
     font-weight: 600;
     text-align: center;
     margin-top: 15px;
+    transition: background 0.2s;
 }
 
-/* SECTION DONS GRID */
+.btn-social:hover { background-color: #145dbf; }
+
+/* SECTIONS DONS */
 .dons-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 25px;
 }
 
 .don-card {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
 }
 
-/* ADAPTATION MOBILE */
+.card-icon { font-size: 2rem; margin-bottom: 10px; }
+
+/* PANNEAU D'ADMINISTRATION STYLE STRUCTURÉ */
+.admin-body {
+    background-color: #f1f5f9;
+    padding: 40px 0;
+}
+
+.admin-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 35px;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 35px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 25px;
+}
+
+.admin-logo-box img {
+    height: 70px;
+    width: 70px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+    margin-bottom: 12px;
+}
+
+.form-section {
+    background: #f8fafc;
+    padding: 22px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    border-left: 4px solid #3b82f6;
+}
+
+.form-section h2 {
+    font-size: 1.15rem;
+    color: #1e293b;
+    margin-bottom: 18px;
+}
+
+.form-group { margin-bottom: 18px; }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.form-group input[type="text"], .form-group textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #fff;
+    color: #1e293b;
+}
+
+.gallery-preview {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.gallery-preview img {
+    width: 85px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover { background: #2563eb; }
+
+.status-msg {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+    text-align: center;
+    font-weight: 600;
+}
+.status-success { background: #dcfce7; color: #166534; }
+.status-error { background: #fee2e2; color: #991b1b; }
+
+/* RESPONSIVE RESPONSABLE MOBILE */
 @media (max-width: 850px) {
     .burger-menu-btn { display: flex; }
     .main-nav {
@@ -279,17 +403,19 @@ body {
         width: 100%;
         background-color: #0f172a;
         flex-direction: column;
-        padding: 20px;
-        gap: 15px;
+        padding: 24px;
+        gap: 18px;
         display: none;
+        border-top: 1px solid #1e293b;
     }
     .main-nav.open { display: flex; }
-    .media-grid, .dons-grid { grid-template-columns: 1fr; }
-    .carousel-container { height: 250px; }
-    
     .burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .burger-menu-btn.active span:nth-child(2) { opacity: 0; }
     .burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+    
+    .media-grid, .dons-grid { grid-template-columns: 1fr; gap: 20px; }
+    .carousel-container { height: 260px; }
+    .hero-welcome h1 { font-size: 1.5rem; }
 }
 
-.main-footer { text-align: center; padding: 30px; color: #64748b; font-size: 0.85rem; }
+.main-footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem; }
