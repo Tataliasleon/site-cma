@@ -56,14 +56,23 @@
         <div class="container">
             <h2>Suivez nos Directs & Cultes</h2>
             <div class="media-grid">
-                <div class="video-container" id="containerYouTube">
-                    <iframe id="affichageYouTube" src="" frameborder="0" allowfullscreen placeholder="En attente du flux direct..."></iframe>
+                
+                <div class="video-card-box">
+                    <h3>Direct YouTube</h3>
+                    <div class="video-container" id="containerYouTube">
+                        <iframe id="affichageYouTube" src="" frameborder="0" allowfullscreen></iframe>
+                        <div id="youtubeFallback" class="fallback-message">Aucun direct programmé pour le moment.</div>
+                    </div>
                 </div>
-                <div class="facebook-box">
+
+                <div class="facebook-card-box">
                     <h3>Suivez-nous sur les Réseaux</h3>
-                    <p>Retrouvez également toutes nos publications en temps réel sur notre page officielle.</p>
-                    <a id="affichageFacebook" href="#" target="_blank" class="btn-social fb-btn">👉 Accéder à notre page Facebook</a>
+                    <div class="facebook-box">
+                        <p>Retrouvez nos enseignements, cultes et communiqués en direct sur notre page officielle.</p>
+                        <a id="affichageFacebook" href="#" target="_blank" class="btn-social fb-btn">👉 Accéder à notre page Facebook</a>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -94,17 +103,15 @@
         let currentIndex = 0;
         let carouselImages = [];
         const track = document.getElementById('carouselTrack');
-
-        // Gestion de l'ouverture/fermeture du Menu Burger mobile
         const burgerBtn = document.getElementById('burgerBtn');
         const mainNav = document.getElementById('mainNav');
 
+        // Menu Burger Logic
         burgerBtn.addEventListener('click', () => {
             mainNav.classList.toggle('open');
             burgerBtn.classList.toggle('active');
         });
 
-        // Fermer le menu automatiquement quand on clique sur un lien
         document.querySelectorAll('.main-nav a').forEach(link => {
             link.addEventListener('click', () => {
                 mainNav.classList.remove('open');
@@ -112,7 +119,7 @@
             });
         });
 
-        // Chargement et liaison temps réel avec data.json
+        // Fetch Data
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
@@ -125,44 +132,45 @@
                         if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
                         if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
                         
-                        if(data.lienYouTube) {
-                            document.getElementById('affichageYouTube').src = data.lienYouTube;
-                            document.getElementById('containerYouTube').style.display = "block";
+                        // Gestion propre du lien YouTube pour éviter le saut
+                        const iframe = document.getElementById('affichageYouTube');
+                        const fallback = document.getElementById('youtubeFallback');
+                        if(data.lienYouTube && data.lienYouTube.trim() !== "") {
+                            iframe.src = data.lienYouTube;
+                            iframe.style.display = "block";
+                            fallback.style.display = "none";
                         } else {
-                            document.getElementById('containerYouTube').style.display = "none";
+                            iframe.style.display = "none";
+                            fallback.style.display = "flex";
                         }
 
-                        // Construction et injection de la galerie liée
+                        // Galerie dynamique
                         if(data.carouselImages && data.carouselImages.length > 0) {
                             carouselImages = data.carouselImages;
                             track.innerHTML = "";
-                            
                             carouselImages.forEach((url, index) => {
                                 const slide = document.createElement('div');
                                 slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
                                 slide.style.backgroundImage = `url('${url}')`;
                                 track.appendChild(slide);
                             });
-
                             if(carouselImages.length > 1) {
-                                setInterval(nextSlide, 5000); // Défilement fluide toutes les 5s
+                                setInterval(nextSlide, 5000);
                             }
                         } else {
-                            track.innerHTML = `<div class="carousel-slide active" style="background: #eef2f7; display: flex; align-items: center; justify-content: center; color: #7f8c8d;"><h3>Aucune image disponible dans la galerie</h3></div>`;
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #eef2f7; display: flex; align-items: center; justify-content: center; color: #7f8c8d;"><h3>Aucune image dans la galerie</h3></div>`;
                         }
                     }
-                }).catch(err => console.error("Erreur de synchronisation"));
+                }).catch(err => console.error("Erreur synchro"));
         });
 
         function showSlide(index) {
             const slides = document.querySelectorAll('.carousel-slide');
             if(slides.length === 0) return;
-            
             slides[currentIndex].classList.remove('active');
             currentIndex = (index + slides.length) % slides.length;
             slides[currentIndex].classList.add('active');
         }
-
         function nextSlide() { showSlide(currentIndex + 1); }
         function prevSlide() { showSlide(currentIndex - 1); }
 
