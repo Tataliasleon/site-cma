@@ -31,11 +31,11 @@
         <div class="form-section">
             <h2>2. Galerie d'images défilantes (Carrousel)</h2>
             <div class="form-group">
-                <label style="color: #0056b3; font-weight: bold;">Ajoutez vos photos une par une ou plusieurs à la fois :</label>
+                <label style="color: #0056b3; font-weight: bold;">Ajoutez vos photos (Elles s'accumulent automatiquement) :</label>
                 <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 15px; background: #eef2f7; border: 2px dashed #0056b3; border-radius: 6px; cursor: pointer;">
                 
                 <div style="margin-top: 10px; font-weight: 600; color: #555;">
-                    📸 Nombre de photos prêtes à être envoyées : <span id="photoCounter" style="color: #0056b3;">0</span>
+                    📸 Nombre de photos actives : <span id="photoCounter" style="color: #0056b3;">0</span>
                 </div>
                 
                 <div id="carouselPreview" class="gallery-preview"></div>
@@ -46,7 +46,7 @@
             <h2>3. Contenus Textuels</h2>
             <div class="form-group">
                 <label>Grand titre d'accueil :</label>
-                <input type="text" id="texteAccueil">
+                <input type="text" id="texteAccueil" value="">
             </div>
             <div class="form-group">
                 <label>Présentation de l'Église (Vie de l'Église) :</label>
@@ -101,11 +101,13 @@
         window.scrollTo(0,0);
     }
 
+    // CHARGEMENT DYNAMIQUE : Remplace le contenu en dur par les vraies valeurs du serveur
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
             .then(data => {
                 if(data) {
+                    // Remplissage automatique des champs de texte
                     document.getElementById('texteAccueil').value = data.texteAccueil || "";
                     document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || "";
                     document.getElementById('lienYouTube').value = data.lienYouTube || "";
@@ -113,18 +115,21 @@
                     document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || "";
                     document.getElementById('mobileMoney').value = data.mobileMoney || "";
                     
+                    // Remplissage du Logo actuel
                     if(data.logoSrc) {
                         currentLogoSrc = data.logoSrc;
                         logoPreview.src = data.logoSrc;
                     }
+                    // Remplissage de la galerie avec les images existantes
                     if(data.carouselImages && data.carouselImages.length > 0) {
                         imagesServeurActuelles = data.carouselImages;
                         afficherToutesLesPhotos();
                     }
                 }
-            }).catch(err => console.log("Liaison serveur"));
+            }).catch(err => console.log("Erreur de récupération des données serveur."));
     });
 
+    // Prévisualisation du Logo choisi
     logoInput.addEventListener('change', () => {
         if(logoInput.files && logoInput.files[0]) {
             const r = new FileReader();
@@ -133,31 +138,35 @@
         }
     });
 
+    // Accumulation des nouvelles images de la galerie
     carouselInput.addEventListener('change', () => {
         if(carouselInput.files && carouselInput.files.length > 0) {
             Array.from(carouselInput.files).forEach(file => {
                 photosAccumulees.push(file);
             });
             afficherToutesLesPhotos();
-            carouselInput.value = "";
+            carouselInput.value = ""; // Reset de l'input pour pouvoir ré-ajouter
         }
     });
 
+    // Rendu visuel dans le panneau de contrôle
     function afficherToutesLesPhotos() {
         carouselPreview.innerHTML = "";
         
+        // Afficher les images déjà enregistrées sur le cloud
         imagesServeurActuelles.forEach(url => {
             const img = document.createElement('img');
             img.src = url;
             carouselPreview.appendChild(img);
         });
 
+        // Afficher les nouvelles images locales ajoutées
         photosAccumulees.forEach(file => {
             const r = new FileReader();
             r.onload = (e) => {
                 const img = document.createElement('img');
                 img.src = e.target.result;
-                img.style.border = "2px dashed #0056b3";
+                img.style.border = "2px dashed #3b82f6";
                 carouselPreview.appendChild(img);
             };
             r.readAsDataURL(file);
@@ -166,11 +175,13 @@
         photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
     }
 
+    // Soumission globale et mise à jour du fichier data.json
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Mise à jour globale en cours...", true);
+        msg("Mise à jour et synchronisation en cours...", true);
 
         try {
+            // 1. Upload du logo si modifié
             if(logoInput.files && logoInput.files[0]) {
                 const fd = new FormData();
                 fd.append('logoFile', logoInput.files[0]);
@@ -179,6 +190,7 @@
                 if(d.src) currentLogoSrc = d.src;
             }
 
+            // 2. Upload des nouvelles images de la galerie
             let finalCarouselUrls = [...imagesServeurActuelles];
 
             if(photosAccumulees.length > 0) {
@@ -191,6 +203,7 @@
                 if(d.srcs) finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
             }
 
+            // 3. Construction de l'objet de données dynamique final
             const finalData = {
                 logoSrc: currentLogoSrc,
                 carouselImages: finalCarouselUrls,
@@ -202,6 +215,7 @@
                 mobileMoney: document.getElementById('mobileMoney').value
             };
 
+            // Envoi au serveur pour écriture définitive
             const saveRes = await fetch('/api/save-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -209,15 +223,15 @@
             });
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Site synchronisé et mis à jour avec succès !", true);
+                msg("✅ Changements enregistrés ! Le site public et l'admin sont synchronisés.", true);
                 imagesServeurActuelles = finalCarouselUrls;
                 photosAccumulees = [];
                 afficherToutesLesPhotos();
             } else {
-                msg("❌ Erreur serveur.", false);
+                msg("❌ Erreur lors de la sauvegarde sur le serveur.", false);
             }
         } catch (err) {
-            msg("❌ Erreur réseau.", false);
+            msg("❌ Erreur de connexion avec l'API.", false);
         }
     });
 </script>
