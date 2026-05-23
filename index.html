@@ -8,138 +8,139 @@
 </head>
 <body>
 
-    <header>
-        <div class="logo-container">
-            <img id="publicLogo" src="" alt="Logo" style="display: none;">
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <img id="siteLogo" src="/images/logo.jpeg" alt="Logo CMA">
+                <span class="site-title">CMA Actes 1:8</span>
+            </div>
+            <nav class="main-nav">
+                <a href="#accueil">Accueil</a>
+                <a href="#presentation">Notre Église</a>
+                <a href="#direct">Direct & Médias</a>
+                <a href="#dons">Dons</a>
+            </nav>
         </div>
-        <div class="nav-brand">CMA Actes 1:8</div>
-        
-        <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">
-            <span></span><span></span><span></span>
-        </button>
-        
-        <ul class="nav-menu" id="navMenu">
-            <li><a href="#">Accueil</a></li>
-            <li><a href="#vie-eglise">Vie de l'Église</a></li>
-            <li><a href="#direct">Média</a></li>
-            <li><a href="#dons">Dons</a></li>
-        </ul>
     </header>
 
-    <div class="carousel-container" id="carouselContainer">
-        <div class="carousel-slide active" style="background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?q=80&w=1200');"></div>
-    </div>
+    <section id="accueil" class="hero-section">
+        <div class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                </div>
+            <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
+            <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
+        </div>
 
-    <section class="hero-text-section">
-        <h1 id="texteAccueilText">Bienvenue au Centre Missionnaire Actes 1:8</h1>
-        <p>Une communauté pour annoncer la parole et manifester la puissance de Dieu.</p>
+        <div class="hero-overlay-text">
+            <h1 id="affichageTexteAccueil">Bienvenue au Centre Missionnaire Actes 1:8</h1>
+        </div>
     </section>
 
-    <section class="section" id="vie-eglise">
-        <h2>Vie de l'Église</h2>
-        <p id="vieEgliseText">Chargement du contenu...</p>
+    <section id="presentation" class="content-section">
+        <div class="container">
+            <h2>Notre Église (Vie de l'Église)</h2>
+            <p id="affichageVieEglise" class="text-presentation">Chargement de la présentation...</p>
+        </div>
     </section>
 
-    <section class="section" id="direct">
-        <h2>Média & Direct</h2>
-        <div class="media-grid">
-            <iframe id="publicYouTube" src="" title="Direct YouTube" allowfullscreen></iframe>
-            <div class="social-buttons">
-                <a id="publicYouTubeBtn" class="btn-social btn-youtube" href="https://youtube.com" target="_blank">📺 Notre Chaîne YouTube</a>
-                <a id="publicFacebook" class="btn-social btn-facebook" href="#" target="_blank" style="display: none;">🔹 Notre Page Facebook</a>
+    <section id="direct" class="content-section live-section">
+        <div class="container">
+            <h2>Suivez nos Directs & Cultes</h2>
+            <div class="media-grid">
+                <div class="video-container" id="containerYouTube" style="display: none;">
+                    <iframe id="affichageYouTube" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="facebook-box">
+                    <a id="affichageFacebook" href="#" target="_blank" class="btn-social fb-btn">👉 Rejoignez-nous sur Facebook</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="section" id="dons">
-        <h2>Faire un Don</h2>
-        <div class="don-grid">
-            <div class="don-card">
-                <h3>Coordonnées Bancaires</h3>
-                <p id="coordonneesBancairesText">En attente des données...</p>
-            </div>
-            <div class="don-card">
-                <h3>Mobile Money</h3>
-                <p id="mobileMoneyText">En attente des données...</p>
+    <section id="dons" class="content-section dons-section">
+        <div class="container">
+            <h2>Soutenir l'Œuvre de Dieu (Dons & Offrandes)</h2>
+            <div class="dons-grid">
+                <div class="don-card">
+                    <h3>Coordonnées Bancaires</h3>
+                    <p id="affichageBanque" style="white-space: pre-wrap;">Chargement...</p>
+                </div>
+                <div class="don-card">
+                    <h3>Mobile Money</h3>
+                    <p id="affichageMobileMoney" style="white-space: pre-wrap;">Chargement...</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer>
+    <footer class="main-footer">
         <p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p>
     </footer>
 
     <script>
-        const menuToggle = document.getElementById('menuToggle');
-        const navMenu = document.getElementById('navMenu');
-        
-        if (menuToggle && navMenu) {
-            menuToggle.addEventListener('click', () => {
-                menuToggle.classList.toggle('open');
-                navMenu.classList.toggle('open');
-            });
-        }
+        let currentIndex = 0;
+        let carouselImages = [];
+        const track = document.getElementById('carouselTrack');
 
-        document.querySelectorAll('.nav-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('open');
-                navMenu.classList.remove('open');
-            });
-        });
-
-        let currentSlideIndex = 0;
-        let carouselInterval;
-
-        function startCarouselAnimation() {
-            if (carouselInterval) clearInterval(carouselInterval);
-            const slides = document.querySelectorAll('.carousel-slide');
-            if (slides.length <= 1) return;
-            
-            carouselInterval = setInterval(() => {
-                slides[currentSlideIndex].classList.remove('active');
-                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
-                slides[currentSlideIndex].classList.add('active');
-            }, 4000);
-        }
-
+        // 1. Récupérer les modifications enregistrées dans l'admin
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
                 .then(data => {
                     if (data) {
-                        if (data.texteAccueil) document.getElementById('texteAccueilText').innerText = data.texteAccueil;
-                        if (data.vieEgliseTexte) document.getElementById('vieEgliseText').innerText = data.vieEgliseTexte;
-                        if (data.coordonneesBancaires) document.getElementById('coordonneesBancairesText').innerText = data.coordonneesBancaires;
-                        if (data.mobileMoney) document.getElementById('mobileMoneyText').innerText = data.mobileMoney;
-                        
-                        if (data.logoSrc) {
-                            const pLogo = document.getElementById('publicLogo');
-                            pLogo.src = data.logoSrc;
-                            pLogo.style.display = 'block';
-                        }
-                        if (data.lienYouTube) document.getElementById('publicYouTube').src = data.lienYouTube;
+                        // Appliquer le Logo et les Textes
+                        if(data.logoSrc) document.getElementById('siteLogo').src = data.logoSrc;
+                        if(data.texteAccueil) document.getElementById('affichageTexteAccueil').innerText = data.texteAccueil;
+                        if(data.vieEgliseTexte) document.getElementById('affichageVieEglise').innerText = data.vieEgliseTexte;
+                        if(data.coordonneesBancaires) document.getElementById('affichageBanque').innerText = data.coordonneesBancaires;
+                        if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
 
-                        const fbBtn = document.getElementById('publicFacebook');
-                        if (fbBtn && data.lienFacebook) {
-                            fbBtn.href = data.lienFacebook;
-                            fbBtn.style.setProperty('display', 'inline-flex', 'important');
+                        // Liens Réseaux Sociaux
+                        if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
+                        if(data.lienYouTube) {
+                            document.getElementById('affichageYouTube').src = data.lienYouTube;
+                            document.getElementById('containerYouTube').style.display = "block";
                         }
 
-                        if (data.carouselImages && data.carouselImages.length > 0) {
-                            const container = document.getElementById('carouselContainer');
-                            container.innerHTML = "";
-                            data.carouselImages.forEach((imageSrc, index) => {
-                                const slideDiv = document.createElement('div');
-                                slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-                                slideDiv.style.backgroundImage = `url('${imageSrc}')`;
-                                container.appendChild(slideDiv);
+                        // Construire la galerie défilante avec les images de l'admin
+                        if(data.carouselImages && data.carouselImages.length > 0) {
+                            carouselImages = data.carouselImages;
+                            track.innerHTML = ""; // Supprime tout contenu résiduel
+                            
+                            carouselImages.forEach((url, index) => {
+                                const slide = document.createElement('div');
+                                slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
+                                slide.style.backgroundImage = `url('${url}')`;
+                                track.appendChild(slide);
                             });
+
+                            // Activer le défilement automatique toutes les 4 secondes si plusieurs images
+                            if(carouselImages.length > 1) {
+                                setInterval(nextSlide, 4000);
+                            }
+                        } else {
+                            // Image de secours si l'admin n'a encore mis aucune photo
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #2c3e50; display: flex; align-items: center; justify-content: center; color: white;"><h3>Aucune photo dans la galerie. Ajoutez-en depuis l'admin !</h3></div>`;
                         }
-                        startCarouselAnimation();
                     }
-                })
-                .catch(() => startCarouselAnimation());
+                }).catch(err => console.error("Erreur de synchronisation"));
         });
+
+        // 2. Fonctions de mouvement du Carrousel
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            if(slides.length === 0) return;
+            
+            slides[currentIndex].classList.remove('active');
+            currentIndex = (index + slides.length) % slides.length;
+            slides[currentIndex].classList.add('active');
+        }
+
+        function nextSlide() { showSlide(currentIndex + 1); }
+        function prevSlide() { showSlide(currentIndex - 1); }
+
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
     </script>
 </body>
 </html>
