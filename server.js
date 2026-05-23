@@ -257,7 +257,103 @@ app.post('/api/upload-carousel', upload.single('carouselFile'), (req, res) => {
     res.status(400).json({ error: "Échec du téléchargement de l'image" });
 });
 
-
+// ROUTE DE SECOURS ABSOLUE (Nouvelle adresse pour éviter les blocages)
+app.get('/gestion', (req, res) => {
+    res.send(`
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panneau d'Administration - CMA Actes 1:8</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #333; padding: 20px; }
+        .container { max-width: 700px; margin: 30px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #0056b3; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        textarea, input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        textarea { min-height: 100px; resize: vertical; }
+        .btn { background: #0056b3; color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
+        .btn:hover { background: #004085; }
+        .status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 6px; display: none; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ Espace Gestion - CMA Actes 1:8</h1>
+        <div id="statusMessage" class="status success">Contenu mis à jour avec succès !</div>
+        <form id="adminForm">
+            <div class="form-group">
+                <label>Texte d'accueil principal :</label>
+                <textarea id="texteAccueil"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Section "Vie de l'Église" :</label>
+                <textarea id="vieEgliseTexte"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Lien du Direct YouTube :</label>
+                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/...">
+            </div>
+            <div class="form-group">
+                <label>Lien de la Page Facebook :</label>
+                <input type="text" id="lienFacebook">
+            </div>
+            <div class="form-group">
+                <label>Coordonnées Bancaires :</label>
+                <textarea id="coordonneesBancaires"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Mobile Money :</label>
+                <textarea id="mobileMoney"></textarea>
+            </div>
+            <button type="submit" class="btn">Enregistrer les modifications</button>
+        </form>
+    </div>
+    <script>
+        async function loadData() {
+            try {
+                const res = await fetch('/api/data');
+                const data = await res.json();
+                if(data) {
+                    document.getElementById('texteAccueil').value = data.texteAccueil || '';
+                    document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || '';
+                    document.getElementById('lienYouTube').value = data.lienYouTube || '';
+                    document.getElementById('lienFacebook').value = data.lienFacebook || '';
+                    document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || '';
+                    document.getElementById('mobileMoney').value = data.mobileMoney || '';
+                }
+            } catch (e) {}
+        }
+        document.getElementById('adminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                texteAccueil: document.getElementById('texteAccueil').value,
+                vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
+                lienYouTube: document.getElementById('lienYouTube').value,
+                lienFacebook: document.getElementById('lienFacebook').value,
+                coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
+                mobileMoney: document.getElementById('mobileMoney').value
+            };
+            const response = await fetch('/api/save-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if(response.ok) {
+                const div = document.getElementById('statusMessage');
+                div.style.display = 'block';
+                setTimeout(() => div.style.display = 'none', 4000);
+            }
+        });
+        window.onload = loadData;
+    </script>
+</body>
+</html>
+    `);
+});
 // Lancement du serveur
 app.listen(PORT, () => {
     console.log(`\n=== SERVEUR CMA OPÉRATIONNEL SUR LE PORT ${PORT} ===`);
