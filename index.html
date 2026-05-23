@@ -14,7 +14,14 @@
                 <img id="siteLogo" src="/images/logo.jpeg" alt="Logo CMA">
                 <span class="site-title">CMA Actes 1:8</span>
             </div>
-            <nav class="main-nav">
+            
+            <button class="burger-menu-btn" id="burgerBtn" aria-label="Ouvrir le menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="main-nav" id="mainNav">
                 <a href="#accueil">Accueil</a>
                 <a href="#presentation">Notre Église</a>
                 <a href="#direct">Direct & Médias</a>
@@ -23,20 +30,20 @@
         </div>
     </header>
 
-    <main id="accueil">
-        <div class="hero-text-block">
+    <section class="hero-welcome">
+        <div class="container">
             <h1 id="affichageTexteAccueil">Bienvenue au Centre Missionnaire Actes 1:8</h1>
         </div>
+    </section>
 
-        <div class="gallery-section">
-            <div class="carousel-container">
-                <div class="carousel-track" id="carouselTrack">
-                    </div>
-                <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
-                <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
-            </div>
+    <section id="accueil" class="gallery-section">
+        <div class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+                </div>
+            <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
+            <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
         </div>
-    </main>
+    </section>
 
     <section id="presentation" class="content-section">
         <div class="container">
@@ -49,11 +56,13 @@
         <div class="container">
             <h2>Suivez nos Directs & Cultes</h2>
             <div class="media-grid">
-                <div class="video-container" id="containerYouTube" style="display: none;">
-                    <iframe id="affichageYouTube" src="" frameborder="0" allowfullscreen></iframe>
+                <div class="video-container" id="containerYouTube">
+                    <iframe id="affichageYouTube" src="" frameborder="0" allowfullscreen placeholder="En attente du flux direct..."></iframe>
                 </div>
                 <div class="facebook-box">
-                    <a id="affichageFacebook" href="#" target="_blank" class="btn-social fb-btn">👉 Rejoignez-nous sur Facebook</a>
+                    <h3>Suivez-nous sur les Réseaux</h3>
+                    <p>Retrouvez également toutes nos publications en temps réel sur notre page officielle.</p>
+                    <a id="affichageFacebook" href="#" target="_blank" class="btn-social fb-btn">👉 Accéder à notre page Facebook</a>
                 </div>
             </div>
         </div>
@@ -61,15 +70,17 @@
 
     <section id="dons" class="content-section dons-section">
         <div class="container">
-            <h2>Soutenir l'Œuvre de Dieu</h2>
+            <h2>Soutenir l'Œuvre de Dieu (Dons & Offrandes)</h2>
             <div class="dons-grid">
                 <div class="don-card">
+                    <div class="card-icon">🏦</div>
                     <h3>Coordonnées Bancaires</h3>
-                    <p id="affichageBanque" style="white-space: pre-wrap;">Chargement...</p>
+                    <p id="affichageBanque" style="white-space: pre-wrap;">Chargement des données...</p>
                 </div>
                 <div class="don-card">
+                    <div class="card-icon">📱</div>
                     <h3>Mobile Money</h3>
-                    <p id="affichageMobileMoney" style="white-space: pre-wrap;">Chargement...</p>
+                    <p id="affichageMobileMoney" style="white-space: pre-wrap;">Chargement des données...</p>
                 </div>
             </div>
         </div>
@@ -84,6 +95,24 @@
         let carouselImages = [];
         const track = document.getElementById('carouselTrack');
 
+        // Gestion de l'ouverture/fermeture du Menu Burger mobile
+        const burgerBtn = document.getElementById('burgerBtn');
+        const mainNav = document.getElementById('mainNav');
+
+        burgerBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('open');
+            burgerBtn.classList.toggle('active');
+        });
+
+        // Fermer le menu automatiquement quand on clique sur un lien
+        document.querySelectorAll('.main-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mainNav.classList.remove('open');
+                burgerBtn.classList.remove('active');
+            });
+        });
+
+        // Chargement et liaison temps réel avec data.json
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
@@ -94,13 +123,16 @@
                         if(data.vieEgliseTexte) document.getElementById('affichageVieEglise').innerText = data.vieEgliseTexte;
                         if(data.coordonneesBancaires) document.getElementById('affichageBanque').innerText = data.coordonneesBancaires;
                         if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
-
                         if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
+                        
                         if(data.lienYouTube) {
                             document.getElementById('affichageYouTube').src = data.lienYouTube;
                             document.getElementById('containerYouTube').style.display = "block";
+                        } else {
+                            document.getElementById('containerYouTube').style.display = "none";
                         }
 
+                        // Construction et injection de la galerie liée
                         if(data.carouselImages && data.carouselImages.length > 0) {
                             carouselImages = data.carouselImages;
                             track.innerHTML = "";
@@ -113,10 +145,10 @@
                             });
 
                             if(carouselImages.length > 1) {
-                                setInterval(nextSlide, 4500);
+                                setInterval(nextSlide, 5000); // Défilement fluide toutes les 5s
                             }
                         } else {
-                            track.innerHTML = `<div class="carousel-slide active" style="background: #f4f6f9; display: flex; align-items: center; justify-content: center; color: #666;"><h3>Aucune photo dans la galerie.</h3></div>`;
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #eef2f7; display: flex; align-items: center; justify-content: center; color: #7f8c8d;"><h3>Aucune image disponible dans la galerie</h3></div>`;
                         }
                     }
                 }).catch(err => console.error("Erreur de synchronisation"));
