@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panneau d'Administration - CMA</title>
+    <title>Panneau d'Administration - CMA Actes 1:8</title>
     <style>
         :root { --primary: #0056b3; --bg: #f4f6f9; --text: #333; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
@@ -13,7 +13,8 @@
         label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
         textarea, input[type="text"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: white; }
         textarea { min-height: 80px; resize: vertical; }
-        .preview { margin-top: 10px; max-height: 120px; display: none; border-radius: 6px; border: 1px dashed #ccc; padding: 4px; }
+        .preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .preview { max-height: 100px; border-radius: 6px; border: 1px dashed #ccc; padding: 4px; }
         .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: background 0.2s; }
         .btn:hover { background: #004085; }
         .status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 6px; display: none; font-weight: bold; }
@@ -23,20 +24,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>🛠️ Gestion du Contenu - CMA Actes 1:8</h1>
+        <h1>🛠️ Panneau Administrateur - CMA</h1>
         <div id="statusMessage" class="status"></div>
 
         <form id="adminForm">
             <div class="form-group">
                 <label>Logo de l'Église :</label>
                 <input type="file" id="logoFile" accept="image/*">
-                <img id="logoPreview" class="preview" alt="Aperçu logo">
+                <div class="preview-container">
+                    <img id="logoPreview" class="preview" style="display:none;" alt="Aperçu logo">
+                </div>
             </div>
 
             <div class="form-group">
-                <label>Image pour le Carrousel :</label>
-                <input type="file" id="carouselFile" accept="image/*">
-                <img id="carouselPreview" class="preview" alt="Aperçu carrousel">
+                <label>Photos pour le Carrousel (Vous pouvez en sélectionner plusieurs) :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple>
+                <div id="carouselPreviews" class="preview-container"></div>
             </div>
 
             <div class="form-group">
@@ -56,7 +59,7 @@
 
             <div class="form-group">
                 <label for="lienFacebook">Lien de la Page Facebook :</label>
-                <input type="text" id="lienFacebook" placeholder="https://facebook.com/...">
+                <input type="text" id="lienFacebook" placeholder="https://facebook.com/votre-page">
             </div>
 
             <div class="form-group">
@@ -69,7 +72,7 @@
                 <textarea id="mobileMoney"></textarea>
             </div>
 
-            <button type="submit" class="btn">Enregistrer les modifications</button>
+            <button type="submit" class="btn">Enregistrer et Mettre à jour le Site</button>
         </form>
     </div>
 
@@ -78,24 +81,37 @@
         let currentLogoSrc = "";
         let currentCarouselImages = [];
 
-        // Fonction d'aperçu d'image générique et propre
-        function setupPreview(inputId, previewId) {
-            document.getElementById(inputId).addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const img = document.getElementById(previewId);
-                        img.src = event.target.result;
-                        img.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-        setupPreview('logoFile', 'logoPreview');
-        setupPreview('carouselFile', 'carouselPreview');
+        // Aperçu du logo
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (el) => {
+                    const img = document.getElementById('logoPreview');
+                    img.src = el.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
+        // Aperçu de multiples images pour le carrousel
+        document.getElementById('carouselFiles').addEventListener('change', function(e) {
+            const container = document.getElementById('carouselPreviews');
+            container.innerHTML = ""; // Vide les anciens aperçus locaux
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (el) => {
+                    const img = document.createElement('img');
+                    img.src = el.target.result;
+                    img.className = 'preview';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Charger les données existantes au démarrage
         async function loadCurrentData() {
             try {
                 const res = await fetch('/api/data');
@@ -114,7 +130,17 @@
                         img.style.display = 'block';
                         currentLogoSrc = data.logoSrc;
                     }
-                    if (data.carouselImages) currentCarouselImages = data.carouselImages;
+                    if (data.carouselImages) {
+                        currentCarouselImages = data.carouselImages;
+                        const container = document.getElementById('carouselPreviews');
+                        container.innerHTML = "";
+                        currentCarouselImages.forEach(src => {
+                            const img = document.createElement('img');
+                            img.src = src;
+                            img.className = 'preview';
+                            container.appendChild(img);
+                        });
+                    }
                 }
             } catch (err) {}
         }
@@ -126,54 +152,65 @@
             window.scrollTo(0, 0);
         }
 
-        async function uploadFile(inputId, apiUrl) {
-            const input = document.getElementById(inputId);
-            if (input.files.length > 0) {
-                const formData = new FormData();
-                formData.append(inputId, input.files[0]);
-                const res = await fetch(apiUrl, { method: 'POST', body: formData });
-                const data = await res.json();
-                return data.src || null;
-            }
-            return null;
-        }
-
+        // Soumission globale
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            showStatus("Synchronisation en ligne en cours...", true);
+            showStatus("Téléchargement et synchronisation des données en cours...", true);
             
             try {
-                const newLogo = await uploadFile('logoFile', '/api/upload-logo');
-                if (newLogo) currentLogoSrc = newLogo;
+                // 1. Upload Logo si modifié
+                const logoInput = document.getElementById('logoFile');
+                if (logoInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('logoFile', logoInput.files[0]);
+                    const res = await fetch('/api/upload-logo', { method: 'POST', body: formData });
+                    const resData = await res.json();
+                    if (resData.src) currentLogoSrc = resData.src;
+                }
 
-                const newCarousel = await uploadFile('carouselFile', '/api/upload-carousel');
-                if (newCarousel) currentCarouselImages.push(newCarousel);
+                // 2. Upload de multiples photos pour le carrousel
+                const carouselInput = document.getElementById('carouselFiles');
+                if (carouselInput.files.length > 0) {
+                    // Si l'utilisateur envoie de nouvelles photos, on peut choisir d'écraser ou d'ajouter.
+                    // Ici on ajoute les nouvelles à la liste existante pour créer le défilement complet.
+                    for (let i = 0; i < carouselInput.files.length; i++) {
+                        const formData = new FormData();
+                        formData.append('carouselFile', carouselInput.files[i]);
+                        const res = await fetch('/api/upload-carousel', { method: 'POST', body: formData });
+                        const resData = await res.json();
+                        if (resData.src) currentCarouselImages.push(resData.src);
+                    }
+                }
 
-                const formData = {
+                // 3. Envoi du JSON final au serveur Render
+                const formDataFinal = {
                     logoSrc: currentLogoSrc,
                     carouselImages: currentCarouselImages,
                     texteAccueil: document.getElementById('texteAccueil').value,
                     vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
                     lienYouTube: document.getElementById('lienYouTube').value,
                     lienFacebook: document.getElementById('lienFacebook').value,
-                    coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
+                    coordonneesBancaires: document.getElementById('coordonneesBancairesText') ? "" : document.getElementById('coordonneesBancaires').value,
                     mobileMoney: document.getElementById('mobileMoney').value
                 };
+
+                // Petit correctif de sécurité pour l'envoi de données propres
+                formDataFinal.coordonneesBancaires = document.getElementById('coordonneesBancaires').value;
 
                 const response = await fetch('/api/save-data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(formDataFinal)
                 });
                 
                 if(response.ok) {
-                    showStatus("Tout a été mis à jour avec succès !", true);
+                    showStatus("Mise à jour réussie ! Tout est en ligne.", true);
                     loadCurrentData();
                 } else {
-                    showStatus("Erreur lors de la sauvegarde", false);
+                    showStatus("Erreur lors de la sauvegarde sur Render", false);
                 }
             } catch (err) {
-                showStatus("Erreur de connexion avec le serveur", false);
+                showStatus("Erreur réseau avec le serveur", false);
             }
         });
 

@@ -19,7 +19,7 @@
             background-color: var(--light);
         }
         
-        /* EN-TÊTE & NAVIGATION */
+        /* EN-TÊTE ET MENU BURGER VISIBLE PARTOUT */
         header {
             background: white;
             padding: 15px 20px;
@@ -39,8 +39,6 @@
             color: var(--primary);
             font-size: 1.2rem;
         }
-        
-        /* MENU BURGER (STYLE FORCE POUR EVITER LES BUGS) */
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -55,7 +53,6 @@
             height: 3px;
             background-color: var(--dark);
             border-radius: 2px;
-            transition: 0.3s;
         }
         .nav-menu {
             display: flex;
@@ -68,19 +65,15 @@
             text-decoration: none;
             color: var(--text);
             font-weight: 600;
-            transition: color 0.2s;
-        }
-        .nav-menu a:hover {
-            color: var(--primary);
         }
 
-        /* 1. CARROUSEL DE PHOTOS PUR ET EXCLUSIF (SANS TEXTE PAR-DESSUS) */
+        /* LE CARROUSEL DE IMAGES DÉFILANTES SANS TEXTE INTERNE */
         .carousel-container {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 420px;
             overflow: hidden;
-            background-color: #000;
+            background-color: #111;
         }
         .carousel-slide {
             position: absolute;
@@ -99,16 +92,16 @@
             z-index: 2;
         }
 
-        /* 2. SECTION D'ACCUEIL TEXTUELLE COMPLÈTEMENT DISSOCIÉE */
+        /* SECTION TEXTE D'ACCUEIL TOTALEMENT DISSOCIÉE */
         .hero-text-section {
             background: white;
             text-align: center;
-            padding: 40px 20px;
-            border-bottom: 1px solid #ddd;
+            padding: 45px 20px;
+            border-bottom: 1px solid #eee;
         }
         .hero-text-section h1 {
             color: var(--dark);
-            font-size: 2.3rem;
+            font-size: 2.4rem;
             margin: 0 0 15px 0;
         }
         .hero-text-section p {
@@ -119,7 +112,7 @@
             line-height: 1.6;
         }
 
-        /* SECTIONS DE CONTENU GENERALES */
+        /* BLOCS GÉNÉRAUX */
         .section {
             max-width: 1000px;
             margin: 40px auto;
@@ -134,10 +127,7 @@
             padding-bottom: 12px;
             margin-top: 0;
         }
-        .media-grid {
-            text-align: center;
-            padding: 15px 0;
-        }
+        .media-grid { text-align: center; padding: 15px 0; }
         iframe {
             width: 100%;
             max-width: 640px;
@@ -148,7 +138,7 @@
             margin-bottom: 25px;
         }
         
-        /* BOUTONS RESEAUX SOCIAUX */
+        /* ZONE SOCIALE AVEC BOUTON FACEBOOK */
         .social-buttons {
             display: flex;
             justify-content: center;
@@ -164,17 +154,13 @@
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 1rem;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-        .btn-social:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
+            transition: opacity 0.2s;
         }
         .btn-facebook { background-color: #1877F2; }
         .btn-youtube { background-color: #FF0000; }
+        .btn-social:hover { opacity: 0.9; }
 
-        /* GRILLE POUR LES DONS */
+        /* DONS */
         .don-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -187,23 +173,15 @@
             border-radius: 8px;
             border-top: 4px solid var(--primary);
         }
-        .don-card h3 { margin: 0 0 15px 0; color: var(--dark); }
-        .don-card p { white-space: pre-line; font-size: 1.05rem; line-height: 1.5; margin: 0; }
+        .don-card p { white-space: pre-line; font-size: 1.05rem; margin: 0; }
 
-        footer {
-            background: var(--dark);
-            color: rgba(255,255,255,0.8);
-            text-align: center;
-            padding: 25px;
-            margin-top: 50px;
-            font-size: 0.95rem;
-        }
+        footer { background: var(--dark); color: white; text-align: center; padding: 25px; margin-top: 50px; }
 
-        /* RESPONSIVE DESIGN FORCÉ POUR LE BURGER */
+        /* CODE MEDIA RESPONSIVE EXPLICITE POUR RENDRE LE BURGER PUBLIC */
         @media (max-width: 768px) {
-            .menu-toggle { display: flex; }
+            .menu-toggle { display: flex !important; }
             .nav-menu {
-                display: none;
+                display: none !important;
                 flex-direction: column;
                 position: absolute;
                 top: 100%;
@@ -215,9 +193,8 @@
                 box-sizing: border-box;
                 gap: 15px;
             }
-            .nav-menu.open { display: flex; }
-            .carousel-container { height: 300px; }
-            .hero-text-section h1 { font-size: 1.8rem; }
+            .nav-menu.open { display: flex !important; }
+            .carousel-container { height: 280px; }
             .don-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -254,7 +231,7 @@
 
     <section class="section" id="vie-eglise">
         <h2>Vie de l'Église</h2>
-        <p id="vieEgliseText" style="line-height: 1.7; font-size: 1.1rem; margin: 0;">Chargement des données en cours...</p>
+        <p id="vieEgliseText">Chargement...</p>
     </section>
 
     <section class="section" id="direct">
@@ -279,21 +256,19 @@
         <div class="don-grid">
             <div class="don-card">
                 <h3>Coordonnées Bancaires</h3>
-                <p id="coordonneesBancairesText">Chargement des données...</p>
+                <p id="coordonneesBancairesText">Chargement...</p>
             </div>
             <div class="don-card">
                 <h3>Mobile Money</h3>
-                <p id="mobileMoneyText">Chargement des numéros...</p>
+                <p id="mobileMoneyText">Chargement...</p>
             </div>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p>
-    </footer>
+    <footer><p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p></footer>
 
     <script>
-        // 1. MENU BURGER MOBILE RESPONSIVE
+        // Menu burger public réactif
         const menuToggle = document.getElementById('menuToggle');
         const navMenu = document.getElementById('navMenu');
         if (menuToggle && navMenu) {
@@ -302,7 +277,7 @@
             });
         }
 
-        // 2. LOGIQUE ET ANIMATION DU CARROUSEL DE IMAGES DÉFILANTES
+        // Système de défilement pour les multiples photos injectées
         let currentSlideIndex = 0;
         let carouselInterval;
 
@@ -315,45 +290,38 @@
                 slides[currentSlideIndex].classList.remove('active');
                 currentSlideIndex = (currentSlideIndex + 1) % slides.length;
                 slides[currentSlideIndex].classList.add('active');
-            }, 4000); // Défilement automatique toutes les 4 secondes
+            }, 4000); // Fait défiler toutes les 4 secondes
         }
 
-        // 3. RECUPERATION ET LIAISON COMPLETE DES DONNEES ADMIN
+        // Chargement des données synchronisées
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data')
                 .then(res => res.json())
                 .then(data => {
                     if (data) {
-                        // Injection des textes dans leurs zones dédiées
                         if (data.texteAccueil) document.getElementById('texteAccueilText').innerText = data.texteAccueil;
                         if (data.vieEgliseTexte) document.getElementById('vieEgliseText').innerText = data.vieEgliseTexte;
                         if (data.coordonneesBancaires) document.getElementById('coordonneesBancairesText').innerText = data.coordonneesBancaires;
                         if (data.mobileMoney) document.getElementById('mobileMoneyText').innerText = data.mobileMoney;
 
-                        // Injection du Logo
                         const logoImg = document.getElementById('publicLogo');
                         if (logoImg && data.logoSrc) logoImg.src = data.logoSrc;
 
-                        // Injection de l'iFrame YouTube
                         const ytIframe = document.getElementById('publicYouTube');
                         if (ytIframe && data.lienYouTube) ytIframe.src = data.lienYouTube;
 
-                        // Liaison du Bouton Facebook Dynamique
+                        // Affiche et met à jour le lien Facebook
                         const fbBtn = document.getElementById('publicFacebook');
                         if (fbBtn && data.lienFacebook) {
                             fbBtn.href = data.lienFacebook;
                             fbBtn.style.display = 'inline-flex';
                         }
 
-                        // CHARGEMENT EXCLUSIF DES PHOTOS EN CARROUSEL SANS LES TEXTES
+                        // Injecte la liste complète de tes multiples photos du carrousel
                         if (data.carouselImages && data.carouselImages.length > 0) {
                             const container = document.getElementById('carouselContainer');
-                            
-                            // Suppression des photos d'exemple temporaires
-                            const oldSlides = container.querySelectorAll('.carousel-slide');
-                            oldSlides.forEach(slide => slide.remove());
+                            container.innerHTML = ""; // Vide les images par défaut
 
-                            // Génération des photos issues de ton espace administrateur
                             data.carouselImages.forEach((imageSrc, index) => {
                                 const slideDiv = document.createElement('div');
                                 slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
@@ -361,12 +329,11 @@
                                 container.appendChild(slideDiv);
                             });
                         }
-                        
                         startCarouselAnimation();
                     }
                 })
                 .catch(err => {
-                    console.error("Erreur d'actualisation :", err);
+                    console.error(err);
                     startCarouselAnimation();
                 });
         });
