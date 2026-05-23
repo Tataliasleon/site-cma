@@ -156,15 +156,22 @@
                 }
 
                 const carouselInput = document.getElementById('carouselFiles');
-                if (carouselInput.files.length > 0) {
-                    const formData = new FormData();
-                    Array.from(carouselInput.files).forEach(file => {
-                        formData.append('carouselFiles', file);
-                    });
-                    const res = await fetch('/api/upload-carousel', { method: 'POST', body: formData });
-                    const resData = await res.json();
-                    if (resData.srcs) currentCarouselImages = resData.srcs;
-                }
+const formData = new FormData();
+
+// Cette boucle prend TOUTES les photos sélectionnées (grâce au "multiple")
+for (let i = 0; i < carouselInput.files.length; i++) {
+    formData.append('carouselFiles', carouselInput.files[i]);
+}
+
+// Envoi vers ton serveur de manière groupée
+fetch('/api/upload-carousel', {
+    method: 'POST',
+    body: formData
+})
+.then(res => res.json())
+.then(uploadedImages => {
+    // uploadedImages.srcs contiendra la liste de tous tes liens Cloudinary !
+});
 
                 const payload = {
                     logoSrc: currentLogoSrc,
