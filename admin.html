@@ -19,7 +19,7 @@
     
     <div id="statusMessage" class="status-msg"></div>
 
-    <form id="adminForm">
+    <form id="adminForm" enctype="multipart/form-data">
         <div class="form-section">
             <h2>1. Identité visuelle</h2>
             <div class="form-group">
@@ -31,8 +31,8 @@
         <div class="form-section">
             <h2>2. Galerie d'images défilantes (Carrousel)</h2>
             <div class="form-group">
-                <label>Sélectionnez plusieurs photos en même temps :</label>
-                <input type="file" id="carouselFiles" accept="image/*" multiple name="carouselFiles">
+                <label style="color: #0056b3; font-weight: bold;">Cliquez ici pour sélectionner TOUTES vos photos en une seule fois :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple="multiple" name="carouselFiles[]" style="display: block; width: 100%; padding: 10px; background: #eef2f7; border: 2px dashed #0056b3; border-radius: 6px; cursor: pointer;">
                 <div id="carouselPreview" class="gallery-preview"></div>
             </div>
         </div>
@@ -149,7 +149,7 @@
 
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Téléchargement et mise à jour en cours...", true);
+        msg("Mise à jour globale du site en cours...", true);
 
         try {
             if(logoInput.files && logoInput.files[0]) {
@@ -188,7 +188,7 @@
             });
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Site mis à jour avec succès !", true);
+                msg("✅ Le site a été mis à jour avec toutes vos images !", true);
             } else {
                 msg("❌ Erreur d'enregistrement.", false);
             }
