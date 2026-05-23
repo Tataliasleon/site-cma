@@ -1,14 +1,14 @@
-/* RESET & BASES */
+/* DESIGN ET BASES GLOBALES */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    background-color: #f4f7f6;
-    color: #2c3e50;
+    background-color: #f8fafc;
+    color: #334155;
     line-height: 1.6;
 }
 
@@ -16,18 +16,17 @@ body {
     width: 90%;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 20px 0;
 }
 
-/* EN-TÊTE DU SITE PUBLIC */
+/* EN-TÊTE ET BARRE DE NAVIGATION FLUIDE */
 .main-header {
-    background-color: #1a252f;
+    background-color: #0f172a;
     color: white;
-    padding: 15px 0;
+    padding: 12px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
@@ -45,51 +44,75 @@ body {
     gap: 12px;
 }
 
-/* TAILLE DU LOGO PUBLIQUE CONFIGURÉE */
 #siteLogo {
-    height: 50px;
-    width: 50px;
+    height: 48px;
+    width: 48px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid #3498db;
+    border: 2px solid #3b82f6;
 }
 
 .site-title {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.main-nav {
+    display: flex;
+    gap: 24px;
 }
 
 .main-nav a {
-    color: #b4c4d4;
+    color: #cbd5e1;
     text-decoration: none;
-    margin-left: 20px;
     font-weight: 500;
-    transition: color 0.3s;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
 }
 
 .main-nav a:hover {
-    color: #3498db;
+    color: #3b82f6;
 }
 
-/* BLOC TEXTE ACCUEIL PUBLIC */
-.hero-text-block {
-    text-align: center;
-    padding: 50px 20px;
-    background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+/* LE MENU BURGER TECHNIQUE */
+.burger-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 26px;
+    height: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.burger-menu-btn span {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* BANNER DE BIENVENUE */
+.hero-welcome {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: white;
+    text-align: center;
+    padding: 40px 20px;
 }
 
-.hero-text-block h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
+.hero-welcome h1 {
+    font-size: 2rem;
+    font-weight: 800;
 }
 
-/* RECADRAGE DE LA GALERIE PHOTO */
+/* LA ZONE DE GALERIE ASSURÉE */
 .gallery-section {
     width: 100%;
-    max-width: 900px;
+    max-width: 950px;
     margin: 30px auto;
     padding: 0 15px;
 }
@@ -97,11 +120,11 @@ body {
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 450px;
-    border-radius: 12px;
+    height: 480px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-    background-color: #e5e9f0;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    background-color: #e2e8f0;
 }
 
 .carousel-track {
@@ -120,7 +143,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
-    transition: opacity 0.8s ease-in-out;
+    transition: opacity 0.6s ease-in-out;
 }
 
 .carousel-slide.active {
@@ -131,145 +154,156 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(15, 23, 42, 0.7);
     color: white;
     border: none;
-    font-size: 20px;
-    padding: 10px 15px;
+    font-size: 18px;
+    padding: 12px 15px;
     cursor: pointer;
     border-radius: 50%;
     z-index: 10;
+    user-select: none;
 }
 
 .prev-btn { left: 15px; }
 .next-btn { right: 15px; }
 
-/* SECTIONS DE CONTENU GENERALES */
+/* SECTIONS DE TEXTE FLUIDES */
 .content-section {
-    padding: 60px 0;
     background: white;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    padding: 50px 20px;
+    margin: 25px auto;
+    max-width: 1100px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .content-section h2 {
-    color: #1a252f;
+    font-size: 1.5rem;
+    color: #0f172a;
     margin-bottom: 20px;
-    border-bottom: 3px solid #3498db;
+    padding-bottom: 6px;
+    border-bottom: 3px solid #3b82f6;
     display: inline-block;
-    padding-bottom: 5px;
 }
 
-/* DESIGN DU COMPTE ADMIN COMPLETS */
-.admin-body {
-    background-color: #eef2f5;
-    padding: 40px 10px;
+.text-presentation {
+    font-size: 1.05rem;
+    color: #475569;
+    white-space: pre-wrap;
 }
 
-.admin-container {
-    max-width: 750px;
-    margin: 0 auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-
-.admin-header {
-    text-align: center;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eef2f5;
-    padding-bottom: 20px;
-}
-
-/* LOGO PETIT ET PROPORTIONNÉ DANS L'ADMIN */
-.admin-logo-box img {
-    height: 80px !important;
-    width: 80px !important;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid #0056b3;
-    margin-bottom: 10px;
-}
-
-.form-section {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border-left: 4px solid #0056b3;
-}
-
-.form-section h2 {
-    font-size: 1.1rem;
-    color: #1a252f;
-    margin-bottom: 15px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.form-group input[type="text"], .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #c8d6e5;
-    border-radius: 6px;
-    font-size: 0.95rem;
-}
-
-/* APERÇU DE LA GALERIE DANS L'ADMIN */
-.gallery-preview {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+/* GRILLE SÉCURISÉE DES MÉDIAS & YOUTUBE */
+.media-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
     margin-top: 15px;
 }
 
-.gallery-preview img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-
-/* BOUTON ADMIN SUBMIT */
-.btn-submit {
-    display: block;
+.video-container {
+    position: relative;
     width: 100%;
-    padding: 14px;
-    background: #0056b3;
+    padding-bottom: 56.25%; /* Ratio fluide 16:9 moderne */
+    height: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background: #000;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.facebook-box {
+    background: #f1f5f9;
+    padding: 25px;
+    border-radius: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.facebook-box h3 {
+    margin-bottom: 10px;
+    color: #1e293b;
+}
+
+.btn-social {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: #1877f2;
     color: white;
-    border: none;
+    text-decoration: none;
     border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.btn-submit:hover {
-    background: #004182;
-}
-
-.status-msg {
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    display: none;
-    text-align: center;
     font-weight: 600;
+    text-align: center;
+    transition: background 0.2s;
 }
-.status-success { background: #d4edda; color: #155724; }
-.status-error { background: #f8d7da; color: #721c24; }
 
-.main-footer { text-align: center; padding: 30px; color: #7f8c8d; }
+/* GRILLE POUR LES DONS */
+.dons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.don-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* RESPONSIVE MOBILE ET CRÉATION DU BURGER DE DEPLOY */
+@media (max-width: 850px) {
+    .burger-menu-btn {
+        display: flex;
+    }
+
+    .main-nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #0f172a;
+        flex-direction: column;
+        padding: 20px;
+        gap: 16px;
+        display: none;
+        border-top: 1px solid #1e293b;
+    }
+
+    .main-nav.open {
+        display: flex;
+    }
+
+    /* Animation du bouton Burger */
+    .burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .burger-menu-btn.active span:nth-child(2) { opacity: 0; }
+    .burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    .media-grid, .dons-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .carousel-container {
+        height: 280px;
+    }
+}
+
+.main-footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem; }
