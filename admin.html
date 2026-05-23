@@ -3,93 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panneau Admin - Galerie Connectée</title>
+    <title>Direction Générale du Site - CMA</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Styles spécifiques pour la suppression des images */
-        .gallery-preview {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-        .image-wrapper {
-            position: relative;
-            width: 90px;
-            height: 90px;
-        }
-        .image-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-        }
-        .btn-delete {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: background 0.2s;
-        }
-        .btn-delete:hover {
-            background: #dc2626;
-        }
+        .gallery-preview { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
+        .image-wrapper { position: relative; width: 100px; height: 100px; }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .btn-delete { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
     </style>
 </head>
 <body class="admin-body">
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1>⚙️ Gestion de la Galerie Dynamique</h1>
-        <p>Ajoutez ou supprimez des photos en temps réel</p>
+        <h1>⚙️ Contrôle Total du Site Public</h1>
+        <p>Modifiez les textes, médias, dons et photos en temps réel</p>
     </div>
     
     <div id="statusMessage" class="status-msg"></div>
 
-    <form id="adminForm" enctype="multipart/form-data">
+    <form id="adminForm">
         
         <div class="form-section">
-            <h2>Gestion du Carrousel d'images</h2>
+            <h2>1. Textes de la Page d'Accueil</h2>
             <div class="form-group">
-                <label style="color: #3b82f6; font-weight: bold;">Choisir de nouvelles photos à ajouter :</label>
-                <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 15px; background: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 6px; cursor: pointer;">
+                <label>Message de bienvenue (Grand titre d'accueil) :</label>
+                <input type="text" id="texteAccueil" required>
+            </div>
+            <div class="form-group">
+                <label>Présentation officielle (Vie de l'Église) :</label>
+                <textarea id="vieEgliseTexte" rows="6" required></textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>2. Galerie d'images (Carrousel)</h2>
+            <div class="form-group">
+                <label>Ajouter de nouvelles photos au défilement :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 12px; background: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 6px; cursor: pointer;">
                 
-                <div style="margin-top: 10px; font-weight: 600; color: #475569;">
-                    📸 Nombre total de photos sur le site : <span id="photoCounter" style="color: #3b82f6;">0</span>
+                <div style="margin-top: 12px; font-weight: 600; color: #475569;">
+                    📸 Photos actuellement en ligne : <span id="photoCounter" style="color: #3b82f6;">0</span>
                 </div>
-                
                 <div id="carouselPreview" class="gallery-preview"></div>
             </div>
         </div>
 
-        <input type="hidden" id="texteAccueil">
-        <input type="hidden" id="vieEgliseTexte">
-        <input type="hidden" id="lienYouTube">
-        <input type="hidden" id="lienFacebook">
-        <input type="hidden" id="coordonneesBancaires">
-        <input type="hidden" id="mobileMoney">
+        <div class="form-section">
+            <h2>3. Flux Médias & Réseaux Sociaux</h2>
+            <div class="form-group">
+                <label>Lien d'intégration du Direct YouTube (URL /embed/) :</label>
+                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/Exemple">
+                <small style="color:#64748b; display:block; margin-top:4px;">Laissez vide s'il n'y a pas de culte en direct.</small>
+            </div>
+            <div class="form-group">
+                <label>Lien de la page Facebook officielle :</label>
+                <input type="text" id="lienFacebook" placeholder="https://facebook.com/nomdelapage">
+            </div>
+        </div>
 
-        <button type="submit" class="btn-submit">💾 Enregistrer les modifications de la galerie</button>
+        <div class="form-section">
+            <h2>4. Gestion des Dons & Offrandes</h2>
+            <div class="form-group">
+                <label>Coordonnées Bancaires (Banque, IBAN, Swift...) :</label>
+                <textarea id="coordonneesBancaires" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Numéros Mobile Money (M-Pesa, Orange, Airtel...) :</label>
+                <textarea id="mobileMoney" rows="3"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">💾 Enregistrer et Publier sur le Site</button>
     </form>
 </div>
 
 <script>
-    let photosAccumulees = []; // Fichiers locaux pas encore uploadés
-    let imagesServeurActuelles = []; // URLs déjà stockées sur Render / Cloud
-
+    let photosAccumulees = []; 
+    let imagesServeurActuelles = [];
     const carouselInput = document.getElementById('carouselFiles');
     const carouselPreview = document.getElementById('carouselPreview');
     const photoCounter = document.getElementById('photoCounter');
@@ -102,123 +93,87 @@
         window.scrollTo(0,0);
     }
 
-    // 1. CHARGEMENT INITIAL DES PHOTOS DU SERVEUR
+    // Récupérer la totalité des données du site pour remplir les champs automatiquement
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
             .then(data => {
                 if(data) {
-                    // Garder les autres données intactes
                     document.getElementById('texteAccueil').value = data.texteAccueil || "";
                     document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || "";
                     document.getElementById('lienYouTube').value = data.lienYouTube || "";
                     document.getElementById('lienFacebook').value = data.lienFacebook || "";
                     document.getElementById('coordonneesBancaires').value = data.coordonneesBancaires || "";
                     document.getElementById('mobileMoney').value = data.mobileMoney || "";
-
+                    
                     if(data.carouselImages) {
                         imagesServeurActuelles = data.carouselImages;
-                        afficherToutesLesPhotos();
+                        afficherPhotos();
                     }
                 }
-            }).catch(err => console.error("Erreur de récupération"));
+            }).catch(() => msg("Erreur de connexion avec la base de données.", false));
     });
 
-    // 2. AJOUT DE NOUVELLES IMAGES (ACCUMULATION)
+    // Écouter l'ajout de photos locales
     carouselInput.addEventListener('change', () => {
-        if(carouselInput.files && carouselInput.files.length > 0) {
-            Array.from(carouselInput.files).forEach(file => {
-                photosAccumulees.push(file);
-            });
-            afficherToutesLesPhotos();
-            carouselInput.value = ""; // Permet de remettre le même fichier si besoin
+        if(carouselInput.files.length > 0) {
+            Array.from(carouselInput.files).forEach(file => photosAccumulees.push(file));
+            afficherPhotos();
+            carouselInput.value = "";
         }
     });
 
-    // 3. FONCTION DE SUPPRESSION (RELIÉE AU BOUTON X)
-    function supprimerImageServeur(index) {
-        imagesServeurActuelles.splice(index, 1); // Retire de la liste du serveur
-        afficherToutesLesPhotos(); // Re-génère l'affichage
-    }
+    function supprimerServeur(index) { imagesServeurActuelles.splice(index, 1); afficherPhotos(); }
+     SusieLocale(index) { photosAccumulees.splice(index, 1); afficherPhotos(); }
+    function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPhotos(); }
 
-    function supprimerImageLocale(index) {
-        photosAccumulees.splice(index, 1); // Retire de la liste locale avant envoi
-        afficherToutesLesPhotos(); // Re-génère l'affichage
-    }
-
-    // 4. RENDU VISUEL DYNAMIQUE DES DEUX LISTES
-    function afficherToutesLesPhotos() {
+    // Rendu de la galerie de gestion
+    function afficherPhotos() {
         carouselPreview.innerHTML = "";
-
-        // Affichage des images existantes sur le serveur avec option suppression
-        imagesServeurActuelles.forEach((url, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'image-wrapper';
-
-            const img = document.createElement('img');
-            img.src = url;
-
-            const btnDel = document.createElement('button');
-            btnDel.type = 'button';
-            btnDel.className = 'btn-delete';
-            btnDel.innerHTML = '✕';
-            btnDel.onclick = () => supprimerImageServeur(index);
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(btnDel);
-            carouselPreview.appendChild(wrapper);
+        
+        imagesServeurActuelles.forEach((url, idx) => {
+            const div = document.createElement('div');
+            div.className = 'image-wrapper';
+            div.innerHTML = `<img src="${url}"><button type="button" class="btn-delete" onclick="supprimerServeur(${idx})">✕</button>`;
+            carouselPreview.appendChild(div);
         });
 
-        // Affichage des nouvelles images locales pas encore sauvegardées
-        photosAccumulees.forEach((file, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'image-wrapper';
-
+        photosAccumulees.forEach((file, idx) => {
+            const div = document.createElement('div');
+            div.className = 'image-wrapper';
             const img = document.createElement('img');
-            img.style.border = "2px dashed #22c55e"; // Contour vert pour les nouvelles
-
-            const btnDel = document.createElement('button');
-            btnDel.type = 'button';
-            btnDel.className = 'btn-delete';
-            btnDel.innerHTML = '✕';
-            btnDel.onclick = () => supprimerImageLocale(index);
+            img.style.border = "2px dashed #22c55e";
+            div.appendChild(img);
+            div.innerHTML += `<button type="button" class="btn-delete" onclick="supprimerLocale(${idx})">✕</button>`;
+            carouselPreview.appendChild(div);
 
             const reader = new FileReader();
-            reader.onload = (e) => { img.src = e.target.result; };
+            reader.onload = (e) => div.querySelector('img').src = e.target.result;
             reader.readAsDataURL(file);
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(btnDel);
-            carouselPreview.appendChild(wrapper);
         });
-
         photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
     }
 
-    // 5. ENVOI DES ACTIONS AU SERVEUR (SAUVEGARDE)
+    // Validation et envoi synchrone de TOUS les changements
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Synchronisation en cours...", true);
+        msg("Publication et synchronisation en cours...", true);
 
         try {
-            let finalCarouselUrls = [...imagesServeurActuelles];
+            let finalUrls = [...imagesServeurActuelles];
 
-            // S'il y a de nouvelles images à uploader
             if(photosAccumulees.length > 0) {
                 const fd = new FormData();
-                photosAccumulees.forEach(file => { fd.append('carouselFiles', file); });
-                
+                photosAccumulees.forEach(file => fd.append('carouselFiles', file));
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
-                if(d.srcs) {
-                    finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
-                }
+                if(d.srcs) finalUrls = [...finalUrls, ...d.srcs];
             }
 
-            // Création de l'objet data final sans les images supprimées
-            const finalData = {
-                logoSrc: "/images/logo.jpeg", // Reste fixe ou selon tes variables
-                carouselImages: finalCarouselUrls,
+            // Regroupement complet de toutes les valeurs modifiées
+            const packageData = {
+                logoSrc: "/images/logo.jpeg",
+                carouselImages: finalUrls,
                 texteAccueil: document.getElementById('texteAccueil').value,
                 vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
                 lienYouTube: document.getElementById('lienYouTube').value,
@@ -227,22 +182,21 @@
                 mobileMoney: document.getElementById('mobileMoney').value
             };
 
-            // Écriture définitive dans data.json
             const saveRes = await fetch('/api/save-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(finalData)
+                body: JSON.stringify(packageData)
             });
-            
+
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Galerie mise à jour ! Les suppressions et ajouts sont appliqués.", true);
-                imagesServeurActuelles = finalCarouselUrls;
-                photosAccumulees = []; // Reset local
-                afficherToutesLesPhotos();
+                msg("✅ Félicitations ! Tout le site a été mis à jour avec succès.", true);
+                imagesServeurActuelles = finalUrls;
+                photosAccumulees = [];
+                afficherPhotos();
             }
         } catch (err) {
-            msg("❌ Erreur lors de la communication réseau.", false);
+            msg("❌ Échec de l'enregistrement.", false);
         }
     });
 </script>
