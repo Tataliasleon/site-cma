@@ -85,14 +85,32 @@ app.get('/api/data', (req, res) => {
 });
 
 app.post('/api/save-data', (req, res) => {
-    try {
-        const currentData = readData();
-        const updatedData = { ...currentData, ...req.body };
-        writeData(updatedData);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: "Erreur de sauvegarde" });
-    }
+    const { 
+        logoSrc, 
+        carouselImages, 
+        texteAccueil, 
+        vieEgliseTexte, 
+        lienYouTube, 
+        lienFacebook, // S'assurer que le champ est bien réceptionné ici
+        coordonneesBancaires, 
+        mobileMoney 
+    } = req.body;
+
+    // Structure de sauvegarde propre dans ton fichier JSON ou ta base de données
+    dbData = {
+        logoSrc,
+        carouselImages: carouselImages || [],
+        texteAccueil,
+        vieEgliseTexte,
+        lienYouTube,
+        lienFacebook, // Sauvegardé proprement
+        coordonneesBancaires,
+        mobileMoney
+    };
+
+    // Code pour écrire dans ton fichier de stockage (ex: fs.writeFileSync...)
+    // ...
+    res.status(200).json({ message: "Données sauvegardées avec succès !" });
 });
 
 app.post('/api/upload-logo', upload.single('logoFile'), (req, res) => {

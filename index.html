@@ -19,14 +19,14 @@
             background-color: var(--light);
         }
         
-        /* EN-TÊTE ET MENU BURGER VISIBLE PARTOUT */
+        /* EN-TÊTE FORCE POUR ÉVITER LE CACHE */
         header {
-            background: white;
+            background: white !important;
             padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
             position: relative;
             z-index: 1000;
         }
@@ -67,7 +67,7 @@
             font-weight: 600;
         }
 
-        /* LE CARROUSEL DE IMAGES DÉFILANTES SANS TEXTE INTERNE */
+        /* CARROUSEL SANS TEXTE CONFLUENT */
         .carousel-container {
             position: relative;
             width: 100%;
@@ -92,7 +92,7 @@
             z-index: 2;
         }
 
-        /* SECTION TEXTE D'ACCUEIL TOTALEMENT DISSOCIÉE */
+        /* SECTION ACCUEIL DISSOCIÉE */
         .hero-text-section {
             background: white;
             text-align: center;
@@ -112,7 +112,6 @@
             line-height: 1.6;
         }
 
-        /* BLOCS GÉNÉRAUX */
         .section {
             max-width: 1000px;
             margin: 40px auto;
@@ -138,7 +137,6 @@
             margin-bottom: 25px;
         }
         
-        /* ZONE SOCIALE AVEC BOUTON FACEBOOK */
         .social-buttons {
             display: flex;
             justify-content: center;
@@ -160,7 +158,6 @@
         .btn-youtube { background-color: #FF0000; }
         .btn-social:hover { opacity: 0.9; }
 
-        /* DONS */
         .don-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -177,21 +174,21 @@
 
         footer { background: var(--dark); color: white; text-align: center; padding: 25px; margin-top: 50px; }
 
-        /* CODE MEDIA RESPONSIVE EXPLICITE POUR RENDRE LE BURGER PUBLIC */
+        /* INTERFACE MOBILE BURGER FORCEE SUR NAVIGATEUR NORMAL */
         @media (max-width: 768px) {
             .menu-toggle { display: flex !important; }
             .nav-menu {
                 display: none !important;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: white;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                padding: 20px;
-                box-sizing: border-box;
-                gap: 15px;
+                flex-direction: column !important;
+                position: absolute !important;
+                top: 100% !important;
+                left: 0 !important;
+                width: 100% !important;
+                background: white !important;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+                padding: 20px !important;
+                box-sizing: border-box !important;
+                gap: 15px !important;
             }
             .nav-menu.open { display: flex !important; }
             .carousel-container { height: 280px; }
@@ -221,7 +218,6 @@
 
     <div class="carousel-container" id="carouselContainer">
         <div class="carousel-slide active" style="background-image: url('https://images.unsplash.com/photo-1438032005730-c779502df39b?q=80&w=1200');"></div>
-        <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1515162305285-0293e4767cc2?q=80&w=1200');"></div>
     </div>
 
     <section class="hero-text-section">
@@ -268,7 +264,7 @@
     <footer><p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p></footer>
 
     <script>
-        // Menu burger public réactif
+        // Gestion stable du burger menu
         const menuToggle = document.getElementById('menuToggle');
         const navMenu = document.getElementById('navMenu');
         if (menuToggle && navMenu) {
@@ -277,7 +273,6 @@
             });
         }
 
-        // Système de défilement pour les multiples photos injectées
         let currentSlideIndex = 0;
         let carouselInterval;
 
@@ -290,12 +285,12 @@
                 slides[currentSlideIndex].classList.remove('active');
                 currentSlideIndex = (currentSlideIndex + 1) % slides.length;
                 slides[currentSlideIndex].classList.add('active');
-            }, 4000); // Fait défiler toutes les 4 secondes
+            }, 4000);
         }
 
-        // Chargement des données synchronisées
         document.addEventListener("DOMContentLoaded", () => {
-            fetch('/api/data')
+            // L'ajout du '?t=' détruit définitivement la mémoire cache du navigateur normal
+            fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
                 .then(data => {
                     if (data) {
@@ -310,17 +305,17 @@
                         const ytIframe = document.getElementById('publicYouTube');
                         if (ytIframe && data.lienYouTube) ytIframe.src = data.lienYouTube;
 
-                        // Affiche et met à jour le lien Facebook
+                        // Gestion et affichage propre du lien Facebook
                         const fbBtn = document.getElementById('publicFacebook');
                         if (fbBtn && data.lienFacebook) {
                             fbBtn.href = data.lienFacebook;
-                            fbBtn.style.display = 'inline-flex';
+                            fbBtn.style.setProperty('display', 'inline-flex', 'important');
                         }
 
-                        // Injecte la liste complète de tes multiples photos du carrousel
+                        // Chargement des multiples photos envoyées par l'admin
                         if (data.carouselImages && data.carouselImages.length > 0) {
                             const container = document.getElementById('carouselContainer');
-                            container.innerHTML = ""; // Vide les images par défaut
+                            container.innerHTML = "";
 
                             data.carouselImages.forEach((imageSrc, index) => {
                                 const slideDiv = document.createElement('div');

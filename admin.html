@@ -14,7 +14,7 @@
         textarea, input[type="text"], input[type="file"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background: white; }
         textarea { min-height: 80px; resize: vertical; }
         .preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .preview { max-height: 100px; border-radius: 6px; border: 1px dashed #ccc; padding: 4px; }
+        .preview { max-height: 100px; border-radius: 6px; border: 1px solid #ddd; padding: 4px; object-fit: cover; }
         .btn { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: background 0.2s; }
         .btn:hover { background: #004085; }
         .status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 6px; display: none; font-weight: bold; }
@@ -37,7 +37,7 @@
             </div>
 
             <div class="form-group">
-                <label>Photos pour le Carrousel (Vous pouvez en sélectionner plusieurs) :</label>
+                <label>Photos pour le Carrousel (Sélectionnez plusieurs images d'un coup) :</label>
                 <input type="file" id="carouselFiles" accept="image/*" multiple>
                 <div id="carouselPreviews" class="preview-container"></div>
             </div>
@@ -81,7 +81,7 @@
         let currentLogoSrc = "";
         let currentCarouselImages = [];
 
-        // Aperçu du logo
+        // Gestion de l'aperçu du logo
         document.getElementById('logoFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -95,26 +95,29 @@
             }
         });
 
-        // Aperçu de multiples images pour le carrousel
+        // Gestion propre de l'aperçu multiple sans casser les images
         document.getElementById('carouselFiles').addEventListener('change', function(e) {
             const container = document.getElementById('carouselPreviews');
-            container.innerHTML = ""; // Vide les anciens aperçus locaux
-            Array.from(e.target.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (el) => {
-                    const img = document.createElement('img');
-                    img.src = el.target.result;
-                    img.className = 'preview';
-                    container.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
+            container.innerHTML = ""; 
+            
+            if (e.target.files.length > 0) {
+                Array.from(e.target.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (el) => {
+                        const img = document.createElement('img');
+                        img.src = el.target.result;
+                        img.className = 'preview';
+                        container.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
         });
 
-        // Charger les données existantes au démarrage
+        // Charger les données courantes depuis le serveur
         async function loadCurrentData() {
             try {
-                const res = await fetch('/api/data');
+                const res = await fetch('/api/data?t=' + Date.now());
                 const data = await res.json();
                 if(data) {
                     document.getElementById('texteAccueil').value = data.texteAccueil || '';
@@ -130,7 +133,7 @@
                         img.style.display = 'block';
                         currentLogoSrc = data.logoSrc;
                     }
-                    if (data.carouselImages) {
+                    if (data.carouselImages && data.carouselImages.length > 0) {
                         currentCarouselImages = data.carouselImages;
                         const container = document.getElementById('carouselPreviews');
                         container.innerHTML = "";
@@ -142,7 +145,9 @@
                         });
                     }
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error("Erreur de chargement initial:", err);
+            }
         }
 
         function showStatus(msg, isSuccess) {
@@ -152,13 +157,13 @@
             window.scrollTo(0, 0);
         }
 
-        // Soumission globale
+        // Envoi global sans bug
         document.getElementById('adminForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            showStatus("Téléchargement et synchronisation des données en cours...", true);
+            showStatus("Synchronisation et envoi vers Cloudinary / Render...", true);
             
             try {
-                // 1. Upload Logo si modifié
+                // 1. Envoi du logo si changé
                 const logoInput = document.getElementById('logoFile');
                 if (logoInput.files.length > 0) {
                     const formData = new FormData();
@@ -168,11 +173,11 @@
                     if (resData.src) currentLogoSrc = resData.src;
                 }
 
-                // 2. Upload de multiples photos pour le carrousel
+                // 2. Envoi des images du carrousel multiple
                 const carouselInput = document.getElementById('carouselFiles');
                 if (carouselInput.files.length > 0) {
-                    // Si l'utilisateur envoie de nouvelles photos, on peut choisir d'écraser ou d'ajouter.
-                    // Ici on ajoute les nouvelles à la liste existante pour créer le défilement complet.
+                    // On réinitialise le tableau pour mettre uniquement les nouvelles images choisies
+                    currentCarouselImages = []; 
                     for (let i = 0; i < carouselInput.files.length; i++) {
                         const formData = new FormData();
                         formData.append('carouselFile', carouselInput.files[i]);
@@ -182,35 +187,32 @@
                     }
                 }
 
-                // 3. Envoi du JSON final au serveur Render
-                const formDataFinal = {
+                // 3. Envoi de l'objet JSON complet vers la base de données
+                const payload = {
                     logoSrc: currentLogoSrc,
                     carouselImages: currentCarouselImages,
                     texteAccueil: document.getElementById('texteAccueil').value,
                     vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
                     lienYouTube: document.getElementById('lienYouTube').value,
-                    lienFacebook: document.getElementById('lienFacebook').value,
-                    coordonneesBancaires: document.getElementById('coordonneesBancairesText') ? "" : document.getElementById('coordonneesBancaires').value,
+                    lienFacebook: document.getElementById('lienFacebook').value, // S'assure que Facebook est envoyé
+                    coordonneesBancaires: document.getElementById('coordonneesBancaires').value,
                     mobileMoney: document.getElementById('mobileMoney').value
                 };
-
-                // Petit correctif de sécurité pour l'envoi de données propres
-                formDataFinal.coordonneesBancaires = document.getElementById('coordonneesBancaires').value;
 
                 const response = await fetch('/api/save-data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formDataFinal)
+                    body: JSON.stringify(payload)
                 });
                 
                 if(response.ok) {
-                    showStatus("Mise à jour réussie ! Tout est en ligne.", true);
+                    showStatus("Modifications enregistrées ! Le site public est à jour.", true);
                     loadCurrentData();
                 } else {
-                    showStatus("Erreur lors de la sauvegarde sur Render", false);
+                    showStatus("Erreur lors de la sauvegarde.", false);
                 }
             } catch (err) {
-                showStatus("Erreur réseau avec le serveur", false);
+                showStatus("Impossible de joindre le serveur.", false);
             }
         });
 
