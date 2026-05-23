@@ -13,7 +13,7 @@
         <div class="admin-logo-box">
             <img id="logoPreview" src="" alt="Logo Église" style="display: none; max-height: 90px; margin: 0 auto 15px auto;">
         </div>
-        <h1> Panneau d'Administration</h1>
+        <h1>⚙️ Panneau d'Administration</h1>
         <p>Centre Missionnaire Actes 1:8</p>
     </div>
     
@@ -29,13 +29,13 @@
         </div>
 
         <div class="form-section">
-    <h2>2. Galerie d'images défilantes (Carrousel)</h2>
-    <div class="form-group">
-        <label>Ajouter vos photos (Glissez-déposez ou sélectionnez plusieurs images en même temps) :</label>
-        <input type="file" id="carouselFiles" accept="image/*" multiple name="carouselFiles">
-        <div id="carouselPreview" class="gallery-preview"></div>
-    </div>
-</div>
+            <h2>2. Galerie d'images défilantes (Carrousel)</h2>
+            <div class="form-group">
+                <label>Sélectionnez toutes vos photos en une seule fois :</label>
+                <input type="file" id="carouselFiles" accept="image/*" multiple name="carouselFiles">
+                <div id="carouselPreview" class="gallery-preview"></div>
+            </div>
+        </div>
 
         <div class="form-section">
             <h2>3. Contenus Textuels</h2>
@@ -94,7 +94,7 @@
         window.scrollTo(0,0);
     }
 
-    // Charger les configurations actuelles
+    // Charger les configurations actuelles au démarrage
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
@@ -125,7 +125,7 @@
             });
     });
 
-    // Aperçu instantané local logo
+    // Aperçu visuel immédiat du logo
     logoInput.addEventListener('change', () => {
         if(logoInput.files && logoInput.files[0]) {
             const r = new FileReader();
@@ -134,7 +134,7 @@
         }
     });
 
-    // Aperçu instantané local carrousel (multiple)
+    // Aperçu visuel immédiat de TOUTES les photos sélectionnées en même temps
     carouselInput.addEventListener('change', () => {
         carouselPreview.innerHTML = "";
         if(carouselInput.files) {
@@ -150,13 +150,13 @@
         }
     });
 
-    // Envoi du formulaire complet
+    // Envoi global sécurisé vers Render et Cloudinary
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Envoi des données et des images vers le serveur...", true);
+        msg("Téléchargement et mise à jour du site en cours...", true);
 
         try {
-            // 1. Traitement du logo
+            // 1. Envoi du logo s'il a changé
             if(logoInput.files && logoInput.files[0]) {
                 const fd = new FormData();
                 fd.append('logoFile', logoInput.files[0]);
@@ -165,18 +165,18 @@
                 if(d.src) currentLogoSrc = d.src;
             }
 
-            // 2. Traitement du lot de photos
+            // 2. Traitement et envoi groupé de la sélection multiple
             if(carouselInput.files && carouselInput.files.length > 0) {
                 const fd = new FormData();
-                for (let i = 0; i < carouselInput.files.length; i++) {
-                    fd.append('carouselFiles', carouselInput.files[i]);
-                }
+                Array.from(carouselInput.files).forEach(file => {
+                    fd.append('carouselFiles', file);
+                });
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
                 if(d.srcs) currentCarouselImages = d.srcs;
             }
 
-            // 3. Sauvegarde finale
+            // 3. Sauvegarde finale dans data.json
             const finalData = {
                 logoSrc: currentLogoSrc,
                 carouselImages: currentCarouselImages,
@@ -195,12 +195,12 @@
             });
             const r = await saveRes.json();
             if(r.success) {
-                msg("✅ Changements enregistrés ! Le site public est à jour.", true);
+                msg("✅ Félicitations ! Tout le site a été mis à jour avec succès.", true);
             } else {
-                msg("❌ Erreur d'enregistrement.", false);
+                msg("❌ Une erreur est survenue pendant l'enregistrement.", false);
             }
         } catch (err) {
-            msg("❌ Une erreur réseau est survenue.", false);
+            msg("❌ Erreur réseau lors de la communication avec le serveur.", false);
         }
     });
 </script>
