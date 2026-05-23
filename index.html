@@ -9,7 +9,7 @@
 <body>
 
     <header class="main-header">
-        <div class="header-container">
+        <div class="container header-container">
             <div class="logo-area">
                 <img id="siteLogo" src="/images/logo.jpeg" alt="Logo CMA">
                 <span class="site-title">CMA Actes 1:8</span>
@@ -38,8 +38,7 @@
 
     <section id="accueil" class="gallery-section">
         <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-                </div>
+            <div class="carousel-track" id="carouselTrack"></div>
             <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
             <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
         </div>
@@ -52,7 +51,7 @@
         </div>
     </section>
 
-    <section id="direct" class="content-section live-section">
+    <section id="direct" class="content-section">
         <div class="container">
             <h2>Suivez nos Directs & Cultes</h2>
             <div class="media-grid">
@@ -77,7 +76,7 @@
         </div>
     </section>
 
-    <section id="dons" class="content-section dons-section">
+    <section id="dons" class="content-section">
         <div class="container">
             <h2>Soutenir l'Œuvre de Dieu (Dons & Offrandes)</h2>
             <div class="dons-grid">
@@ -106,7 +105,6 @@
         const burgerBtn = document.getElementById('burgerBtn');
         const mainNav = document.getElementById('mainNav');
 
-        // Menu Burger Logic
         burgerBtn.addEventListener('click', () => {
             mainNav.classList.toggle('open');
             burgerBtn.classList.toggle('active');
@@ -119,7 +117,6 @@
             });
         });
 
-        // Fetch Data
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
@@ -132,7 +129,6 @@
                         if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
                         if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
                         
-                        // Gestion propre du lien YouTube pour éviter le saut
                         const iframe = document.getElementById('affichageYouTube');
                         const fallback = document.getElementById('youtubeFallback');
                         if(data.lienYouTube && data.lienYouTube.trim() !== "") {
@@ -144,7 +140,6 @@
                             fallback.style.display = "flex";
                         }
 
-                        // Galerie dynamique
                         if(data.carouselImages && data.carouselImages.length > 0) {
                             carouselImages = data.carouselImages;
                             track.innerHTML = "";
@@ -158,10 +153,10 @@
                                 setInterval(nextSlide, 5000);
                             }
                         } else {
-                            track.innerHTML = `<div class="carousel-slide active" style="background: #eef2f7; display: flex; align-items: center; justify-content: center; color: #7f8c8d;"><h3>Aucune image dans la galerie</h3></div>`;
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #eef2f7; display: flex; align-items: center; justify-content: center; color: #7f8c8d;"><h3>Aucune image disponible</h3></div>`;
                         }
                     }
-                }).catch(err => console.error("Erreur synchro"));
+                }).catch(err => console.error("Erreur de synchronisation"));
         });
 
         function showSlide(index) {
