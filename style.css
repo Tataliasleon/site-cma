@@ -12,7 +12,7 @@ body {
     background-color: #f8fafc;
     color: #0f172a;
     line-height: 1.6;
-    overflow-x: hidden; /* Empêche le défilement horizontal sur mobile */
+    overflow-x: hidden; /* Empêche les bugs de défilement horizontal */
 }
 
 .container {
@@ -23,7 +23,7 @@ body {
 }
 
 /* ==========================================================================
-   2. EN-TÊTE (HEADER) & NAVIGATION STABLE
+   2. EN-TÊTE (HEADER) & MENU BURGER PAR DÉFAUT (POUR PC ET MOBILE)
    ========================================================================== */
 .main-header {
     background-color: #ffffff;
@@ -61,27 +61,9 @@ body {
     color: #1e3a8a;
 }
 
-/* Navigation PC */
-.main-nav {
-    display: flex;
-    gap: 30px;
-}
-
-.main-nav a {
-    text-decoration: none;
-    color: #334155;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: color 0.2s;
-}
-
-.main-nav a:hover {
-    color: #2563eb;
-}
-
-/* BOUTON BURGER (Caché sur PC) */
+/* BOUTON BURGER (Désormais visible sur ordinateur ET mobile) */
 .burger-menu-btn {
-    display: none;
+    display: flex; /* Toujours activé */
     flex-direction: column;
     justify-content: space-between;
     width: 28px;
@@ -89,7 +71,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 2000; /* Toujours visible au-dessus du volet mobile */
+    z-index: 2000; /* Reste visible au-dessus du volet quand il s'ouvre */
     padding: 0;
 }
 
@@ -99,6 +81,49 @@ body {
     background-color: #1e293b;
     border-radius: 3px;
     transition: all 0.3s ease-in-out;
+}
+
+/* Animation des barres en croix 'X' au clic (géré par le JS) */
+.burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.burger-menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(-15px); }
+.burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+/* VOLET DE NAVIGATION COULISSANT (Pour tout le monde) */
+.main-nav {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Complètement caché à droite de l'écran par défaut */
+    width: 350px;  /* Largeur fixe et élégante sur ordinateur */
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    transition: right 0.4s ease-in-out;
+    z-index: 1500; /* Glisse par-dessus le site et le carrousel sans les casser */
+}
+
+/* Déploiement du volet quand on clique sur le burger */
+.main-nav.open {
+    right: 0;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #334155;
+    font-weight: 600;
+    font-size: 1.2rem;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    transition: color 0.2s;
+}
+
+.main-nav a:hover {
+    color: #2563eb;
 }
 
 /* ==========================================================================
@@ -119,7 +144,7 @@ body {
 }
 
 /* ==========================================================================
-   4. ZONE DU CARROUSEL COMPLÈTEMENT ISOLÉE
+   4. ZONE DU CARROUSEL ISOLE ET PARFAITEMENT PROTEGÉ
    ========================================================================== */
 .gallery-section {
     width: 100%;
@@ -127,13 +152,13 @@ body {
     margin: 30px auto;
     padding: 0 15px;
     position: relative;
-    z-index: 10; /* Inférieur au header pour éviter les chevauchements */
+    z-index: 10; /* Niveau bas pour que le menu passe par-dessus sans l'écraser */
 }
 
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 450px; /* Hauteur par défaut pour PC */
+    height: 450px; /* Conserve sa belle hauteur sur ordinateur */
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -167,7 +192,7 @@ body {
     z-index: 2;
 }
 
-/* Flèches de navigation */
+/* Flèches de contrôle */
 .carousel-btn {
     position: absolute;
     top: 50%;
@@ -183,10 +208,7 @@ body {
     transition: background 0.2s;
 }
 
-.carousel-btn:hover {
-    background: rgba(37, 99, 235, 0.9);
-}
-
+.carousel-btn:hover { background: rgba(37, 99, 235, 0.9); }
 .prev-btn { left: 15px; }
 .next-btn { right: 15px; }
 
@@ -219,58 +241,16 @@ body {
 }
 
 /* ==========================================================================
-   6. RESPONSIVE DESIGN (ADAPTATION MOBILE & SMARTPHONE)
+   6. RESPONSIVE DESIGN (ADAPTATION PETITS ÉCRANS SMARTPHONES)
    ========================================================================== */
 @media (max-width: 768px) {
-    /* 1. Redimensionnement fluide de la Galerie sur mobile sans casser l'affichage */
     .carousel-container {
-        height: 260px; /* Hauteur plus petite et adaptée aux écrans de smartphones */
+        height: 260px; /* Devient plus compact uniquement sur petit téléphone */
     }
-
-    .hero-welcome {
-        padding: 35px 15px;
+    .main-nav {
+        width: 75%; /* Prend les 3/4 de la largeur sur petit téléphone */
     }
-
     .hero-welcome h1 {
         font-size: 1.5rem;
-    }
-
-    /* 2. Activation du menu Burger visuel */
-    .burger-menu-btn {
-        display: flex;
-    }
-
-    /* Animation des barres au clic (Devient une croix 'X') */
-    .burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-    .burger-menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(-15px); }
-    .burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
-
-    /* 3. Transformation de la barre de navigation en volet mobile coulissant */
-    .main-nav {
-        position: fixed;
-        top: 0;
-        right: -100%; /* Totalement invisible et masqué à droite au départ */
-        width: 75%;  /* Prend les 3/4 de la largeur de l'écran */
-        height: 100vh;
-        background-color: #ffffff;
-        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 30px;
-        transition: right 0.4s ease-in-out;
-        z-index: 1500; /* S'affiche au-dessus du carrousel et du reste du site */
-    }
-
-    /* Déploiement fluide du volet mobile quand on clique (.open) */
-    .main-nav.open {
-        right: 0;
-    }
-
-    .main-nav a {
-        font-size: 1.2rem;
-        width: 100%;
-        text-align: center;
-        padding: 8px 0;
     }
 }
