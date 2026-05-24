@@ -1,38 +1,43 @@
-/* RESET ET BASES DE DESIGN */
+/* ==========================================================================
+   1. STYLES GENERAUX & CONFIGURATION DE BASE
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 body {
     background-color: #f8fafc;
-    color: #334155;
+    color: #0f172a;
     line-height: 1.6;
 }
 
 .container {
-    width: 90%;
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* EN-TÊTE & NAVIGATION (PUBLIC) */
+/* ==========================================================================
+   2. EN-TÊTE (HEADER) & NAVIGATION INTERACTIVE
+   ========================================================================== */
 .main-header {
-    background-color: #0f172a;
-    color: white;
-    padding: 12px 0;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 75px;
 }
 
 .logo-area {
@@ -41,86 +46,95 @@ body {
     gap: 12px;
 }
 
-#siteLogo {
-    height: 45px;
-    width: 45px;
+.logo-area img {
+    height: 50px;
+    width: 50px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid #3b82f6;
 }
 
 .site-title {
-    font-size: 1.25rem;
     font-weight: 700;
+    font-size: 1.25rem;
+    color: #1e3a8a;
 }
 
+/* Navigation sur Ordinateur (PC) */
 .main-nav {
     display: flex;
-    gap: 24px;
+    gap: 30px;
 }
 
 .main-nav a {
-    color: #cbd5e1;
     text-decoration: none;
-    font-weight: 500;
+    color: #334155;
+    font-weight: 600;
     font-size: 0.95rem;
     transition: color 0.2s;
 }
 
 .main-nav a:hover {
-    color: #3b82f6;
+    color: #2563eb;
 }
 
-/* MENU BURGER (MOBILE) */
+/* BOUTON BURGER (Caché sur ordinateur par défaut) */
 .burger-menu-btn {
     display: none;
     flex-direction: column;
     justify-content: space-between;
-    width: 26px;
+    width: 28px;
     height: 20px;
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 1100;
+    z-index: 1010;
+    padding: 0;
 }
 
 .burger-menu-btn span {
     width: 100%;
     height: 3px;
-    background-color: white;
-    border-radius: 2px;
-    transition: all 0.3s ease;
+    background-color: #1e293b;
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
 }
 
-/* ZONE ACCUEIL & TITRE */
+/* ==========================================================================
+   3. SECTION DU HERO / BIENVENUE
+   ========================================================================== */
 .hero-welcome {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
     color: white;
     text-align: center;
-    padding: 40px 20px;
+    padding: 60px 20px;
 }
 
 .hero-welcome h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-/* GALERIE PHOTO (CARROUSEL) DYNAMIQUE */
+/* ==========================================================================
+   4. PROTECTION ABSOLUE DE LA GALERIE PHOTO (CARROUSEL DYNAMIQUE)
+   ========================================================================== */
 .gallery-section {
     width: 100%;
     max-width: 900px;
-    margin: 30px auto;
+    margin: 40px auto;
     padding: 0 15px;
+    display: block !important; /* Force la visibilité de la section */
 }
 
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 450px;
+    height: 480px;
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-    background-color: #e2e8f0;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    background-color: #0f172a;
 }
 
 .carousel-track {
@@ -129,376 +143,145 @@ body {
     position: relative;
 }
 
+/* IMPORTANT : Assure le bon comportement des slides injectées par le JS */
 .carousel-slide {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0;
-    transition: opacity 0.6s ease-in-out;
+    visibility: hidden;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+    z-index: 1;
 }
 
+/* Déclenchement de l'affichage de l'image active */
 .carousel-slide.active {
     opacity: 1;
+    visibility: visible;
+    z-index: 5;
 }
 
+/* Boutons de navigation Flèches */
 .carousel-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(15, 23, 42, 0.7);
-    color: white;
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff;
     border: none;
-    font-size: 18px;
-    padding: 12px 15px;
+    font-size: 22px;
+    padding: 12px 18px;
     cursor: pointer;
     border-radius: 50%;
-    z-index: 10;
+    z-index: 20;
+    transition: background 0.2s, scale 0.2s;
 }
 
-.prev-btn { left: 15px; }
-.next-btn { right: 15px; }
+.carousel-btn:hover {
+    background: rgba(37, 99, 235, 0.9);
+    scale: 1.05;
+}
 
-/* SECTIONS DE CONTENU Générales */
+.prev-btn { left: 20px; }
+.next-btn { right: 20px; }
+
+/* ==========================================================================
+   5. AUTRES SECTIONS DE CONTENU (TEXTES, MEDIAS, DONS)
+   ========================================================================== */
 .content-section {
-    background: white;
-    padding: 50px 20px;
-    margin: 25px auto;
-    max-width: 1100px;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 60px 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .content-section h2 {
-    font-size: 1.5rem;
-    color: #0f172a;
-    margin-bottom: 20px;
-    padding-bottom: 6px;
-    border-bottom: 3px solid #3b82f6;
-    display: inline-block;
-}
-
-.text-presentation {
-    font-size: 1.05rem;
-    color: #475569;
-    white-space: pre-wrap;
-}
-
-/* STRUCTURE EN GRILLE POUR MÉDIAS (YOUTUBE & FACEBOOK) */
-.media-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    align-items: stretch;
-    margin-top: 15px;
-}
-
-.video-card-box, .facebook-card-box {
-    display: flex;
-    flex-direction: column;
-}
-
-.video-card-box h3, .facebook-card-box h3 {
-    font-size: 1.1rem;
-    margin-bottom: 12px;
-    color: #475569;
-    font-weight: 600;
-}
-
-.video-container {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%; /* Ratio 16:9 fluide */
-    height: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    background: #000;
-}
-
-.video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
-
-.fallback-message {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #94a3b8;
-    background: #1e293b;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 20px;
-    text-align: center;
-}
-
-.facebook-box {
-    background: #f1f5f9;
-    padding: 25px;
-    border-radius: 10px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.btn-social {
-    display: block;
-    padding: 12px;
-    background-color: #1877f2;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: 600;
-    text-align: center;
-    margin-top: 15px;
-    transition: background 0.2s;
-}
-
-.btn-social:hover { background-color: #145dbf; }
-
-/* SECTIONS DONS */
-.dons-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 25px;
-}
-
-.don-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 25px;
-    border-radius: 10px;
-}
-
-.card-icon { font-size: 2rem; margin-bottom: 10px; }
-
-/* PANNEAU D'ADMINISTRATION STYLE STRUCTURÉ */
-.admin-body {
-    background-color: #f1f5f9;
-    padding: 40px 0;
-}
-
-.admin-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    padding: 35px;
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.admin-header {
-    text-align: center;
-    margin-bottom: 35px;
-    border-bottom: 2px solid #f1f5f9;
-    padding-bottom: 25px;
-}
-
-.admin-logo-box img {
-    height: 70px;
-    width: 70px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid #3b82f6;
-    margin-bottom: 12px;
-}
-
-.form-section {
-    background: #f8fafc;
-    padding: 22px;
-    border-radius: 10px;
+    font-size: 1.75rem;
+    color: #1e3a8a;
     margin-bottom: 25px;
-    border-left: 4px solid #3b82f6;
+    position: relative;
+    padding-bottom: 10px;
 }
 
-.form-section h2 {
-    font-size: 1.15rem;
-    color: #1e293b;
-    margin-bottom: 18px;
+.content-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 4px;
+    background-color: #2563eb;
+    border-radius: 2px;
 }
 
-.form-group { margin-bottom: 18px; }
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #475569;
+/* Grilles Responsive */
+.media-grid, .dons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
 }
 
-.form-group input[type="text"], .form-group textarea {
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background-color: #fff;
-    color: #1e293b;
-}
-
-.gallery-preview {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 15px;
-}
-
-.gallery-preview img {
-    width: 85px;
-    height: 85px;
-    object-fit: cover;
-    border-radius: 8px;
+.don-card, .video-card-box, .facebook-card-box {
+    background: #f8fafc;
+    padding: 30px;
+    border-radius: 12px;
     border: 1px solid #e2e8f0;
 }
 
-.btn-submit {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-submit:hover { background: #2563eb; }
-
-.status-msg {
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: none;
-    text-align: center;
-    font-weight: 600;
-}
-.status-success { background: #dcfce7; color: #166534; }
-.status-error { background: #fee2e2; color: #991b1b; }
-
-/* RESPONSIVE RESPONSABLE MOBILE */
-@media (max-width: 850px) {
-    .burger-menu-btn { display: flex; }
-    .main-nav {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: #0f172a;
-        flex-direction: column;
-        padding: 24px;
-        gap: 18px;
-        display: none;
-        border-top: 1px solid #1e293b;
-    }
-    .main-nav.open { display: flex; }
-    .burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-    .burger-menu-btn.active span:nth-child(2) { opacity: 0; }
-    .burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
-    
-    .media-grid, .dons-grid { grid-template-columns: 1fr; gap: 20px; }
-    .carousel-container { height: 260px; }
-    .hero-welcome h1 { font-size: 1.5rem; }
-}
-
-.main-footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem; }
-/* ==========================================
-   VARIABLES ET STYLE DU MENU BURGER (MOBILE)
-   ========================================== */
-
-/* Bouton Burger par défaut (caché sur PC) */
-.burger-menu-btn {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 21px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 1001;
-    padding: 0;
-}
-
-.burger-menu-btn span {
-    width: 100%;
-    height: 3px;
-    background-color: #1e293b; /* Couleur des barres du menu */
-    border-radius: 3px;
-    transition: all 0.3s ease-in-out;
-}
-
-/* --- RESPONSIVE : MODE MOBILE (Écrans inférieurs à 768px) --- */
+/* ==========================================================================
+   6. ADAPTATION RESPONSIVE & BREAKPOINTS DESIGN (MOBILE)
+   ========================================================================== */
 @media (max-width: 768px) {
+    /* Ajustement de la Galerie sur Téléphone */
+    .carousel-container {
+        height: 300px; /* Réduction de la hauteur pour petits écrans */
+    }
+    
+    .carousel-btn {
+        padding: 8px 14px;
+        font-size: 18px;
+    }
+
+    /* Activation du Bouton Burger */
     .burger-menu-btn {
-        display: flex; /* On affiche le bouton sur mobile */
+        display: flex;
     }
 
-    /* Transformation des barres en "X" quand le menu est ouvert */
-    .burger-menu-btn.active span:nth-child(1) {
-        transform: translateY(9px) rotate(45deg);
-    }
+    /* Animation du bouton Burger au clic (.active) */
+    .burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .burger-menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(-15px); }
+    .burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-    .burger-menu-btn.active span:nth-child(2) {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-
-    .burger-menu-btn.active span:nth-child(3) {
-        transform: translateY(-9px) rotate(-45deg);
-    }
-
-    /* Adaptation de la navigation sur mobile */
+    /* Volet du menu coulissant */
     .main-nav {
         position: fixed;
         top: 0;
-        right: -100%; /* Caché à droite par défaut */
-        width: 75%;
+        right: -100%;
+        width: 80%;
         height: 100vh;
         background-color: #ffffff;
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-        display: flex;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        gap: 25px;
+        align-items: center;
+        gap: 35px;
         transition: right 0.4s ease-in-out;
-        z-index: 1000;
+        z-index: 1005;
     }
 
-    /* Quand le menu reçoit la classe .open via le JavaScript */
+    /* Déploiement du volet mobile menu au clic (.open) */
     .main-nav.open {
-        right: 0; /* Il glisse vers l'écran */
+        right: 0;
     }
 
     .main-nav a {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #1e293b;
-        text-decoration: none;
+        font-size: 1.25rem;
         width: 100%;
         text-align: center;
-        padding: 10px 0;
-    }
-    
-    .main-nav a:hover {
-        color: #3b82f6;
     }
 }
