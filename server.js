@@ -6,7 +6,14 @@ const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 1. Gestion du stockage des images (crée un dossier images à la racine si inexistant)
+// AUTORISATION CRUCIALE : On configure les en-têtes pour permettre à YouTube de s'afficher
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "frame-src 'self' https://www.youtube.com https://youtube.com https://web.facebook.com https://facebook.com;");
+    res.removeHeader("X-Frame-Options"); // Supprime le blocage strict des cadres
+    next();
+});
+
+// Gestion du stockage des images locales
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, 'images');
@@ -20,8 +27,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use(express.json());
-
-// CONFIGURATION CRUCIALE : On sert les fichiers directement depuis la racine du projet
 app.use(express.static(__dirname));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
@@ -65,7 +70,7 @@ app.post('/api/save-data', (req, res) => {
     });
 });
 
-// Redirection par défaut vers index.html si on tape juste l'URL de base
+// Redirection par défaut vers index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
