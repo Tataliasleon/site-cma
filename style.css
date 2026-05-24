@@ -419,3 +419,86 @@ body {
 }
 
 .main-footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem; }
+/* ==========================================
+   VARIABLES ET STYLE DU MENU BURGER (MOBILE)
+   ========================================== */
+
+/* Bouton Burger par défaut (caché sur PC) */
+.burger-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 0;
+}
+
+.burger-menu-btn span {
+    width: 100%;
+    height: 3px;
+    background-color: #1e293b; /* Couleur des barres du menu */
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* --- RESPONSIVE : MODE MOBILE (Écrans inférieurs à 768px) --- */
+@media (max-width: 768px) {
+    .burger-menu-btn {
+        display: flex; /* On affiche le bouton sur mobile */
+    }
+
+    /* Transformation des barres en "X" quand le menu est ouvert */
+    .burger-menu-btn.active span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .burger-menu-btn.active span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    .burger-menu-btn.active span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    /* Adaptation de la navigation sur mobile */
+    .main-nav {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Caché à droite par défaut */
+        width: 75%;
+        height: 100vh;
+        background-color: #ffffff;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+        transition: right 0.4s ease-in-out;
+        z-index: 1000;
+    }
+
+    /* Quand le menu reçoit la classe .open via le JavaScript */
+    .main-nav.open {
+        right: 0; /* Il glisse vers l'écran */
+    }
+
+    .main-nav a {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        text-decoration: none;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+    
+    .main-nav a:hover {
+        color: #3b82f6;
+    }
+}
