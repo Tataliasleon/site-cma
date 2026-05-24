@@ -5,88 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre Missionnaire Actes 1:8</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Styles de secours pour garantir la visibilité et la fluidité du carrousel */
-        .gallery-section {
-            width: 100%;
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 15px;
-        }
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            height: 450px;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-            background-color: #1e293b;
-        }
-        .carousel-track {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        .carousel-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .carousel-slide.active {
-            opacity: 1;
-            z-index: 2;
-        }
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(15, 23, 42, 0.6);
-            color: white;
-            border: none;
-            font-size: 24px;
-            padding: 10px 16px;
-            cursor: pointer;
-            border-radius: 50%;
-            z-index: 10;
-            transition: background 0.2s;
-        }
-        .carousel-btn:hover { background: rgba(59, 130, 246, 0.8); }
-        .prev-btn { left: 20px; }
-        .next-btn { right: 20px; }
-        @media (max-width: 768px) { .carousel-container { height: 280px; } }
-    </style>
 </head>
 <body>
 
     <header class="main-header">
-    <div class="container header-container">
-        <div class="logo-area">
-            <img id="siteLogo" src="/images/logo.jpeg" alt="Logo CMA">
-            <span class="site-title">CMA Actes 1:8</span>
-        </div>
-        
-        <button class="burger-menu-btn" id="burgerBtn" aria-label="Ouvrir le menu">
-            <span></span><span></span><span></span>
-        </button>
+        <div class="container header-container">
+            <div class="logo-area">
+                <img id="siteLogo" src="/images/logo.jpeg" alt="Logo CMA">
+                <span class="site-title">CMA Actes 1:8</span>
+            </div>
+            
+            <button class="burger-menu-btn" id="burgerBtn" aria-label="Ouvrir le menu">
+                <span></span><span></span><span></span>
+            </button>
 
-        <nav class="main-nav" id="mainNav">
-            <a href="#accueil">Accueil</a>
-            <a href="#presentation">Notre Église</a>
-            <a href="#direct">Direct & Médias</a>
-            <a href="#dons">Dons</a>
-        </nav>
-    </div>
-</header>
+            <nav class="main-nav" id="mainNav">
+                <a href="#accueil">Accueil</a>
+                <a href="#presentation">Notre Église</a>
+                <a href="#direct">Direct & Médias</a>
+                <a href="#dons">Dons</a>
+            </nav>
+        </div>
+    </header>
+
     <section class="hero-welcome">
         <div class="container">
             <h1 id="affichageTexteAccueil">Bienvenue au Centre Missionnaire Actes 1:8</h1>
@@ -96,7 +37,10 @@
     <section id="accueil" class="gallery-section">
         <div class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
+                <div class="carousel-slide active" style="background: #0f172a; display: flex; align-items: center; justify-content: center;">
+                    <h3 style="color:#64748b;">Connexion à la galerie...</h3>
                 </div>
+            </div>
             <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
             <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
         </div>
@@ -105,7 +49,7 @@
     <section id="presentation" class="content-section">
         <div class="container">
             <h2>Notre Église (Vie de l'Église)</h2>
-            <p id="affichageVieEglise" class="text-presentation">Chargement de la présentation...</p>
+            <p id="affichageVieEglise" style="white-space: pre-wrap;">Chargement de la présentation...</p>
         </div>
     </section>
 
@@ -115,16 +59,16 @@
             <div class="media-grid">
                 <div class="video-card-box">
                     <h3>Direct YouTube</h3>
-                    <div class="video-container" id="containerYouTube">
-                        <iframe id="affichageYouTube" src="" frameborder="0" allowfullscreen></iframe>
-                        <div id="youtubeFallback" class="fallback-message">Aucun direct programmé pour le moment.</div>
+                    <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; margin-top: 15px;">
+                        <iframe id="affichageYouTube" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;" frameborder="0" allowfullscreen></iframe>
+                        <div id="youtubeFallback" style="background: #1e293b; color: #94a3b8; display: flex; align-items: center; justify-content: center; padding: 40px; text-align: center; border-radius: 8px;">Aucun direct programmé pour le moment.</div>
                     </div>
                 </div>
                 <div class="facebook-card-box">
                     <h3>Suivez-nous sur les Réseaux</h3>
-                    <div class="facebook-box">
-                        <p>Retrouvez nos enseignements, cultes et communiqués en direct sur notre page officielle.</p>
-                        <a id="affichageFacebook" href="#" target="_blank" class="btn-social">👉 Accéder à notre page Facebook</a>
+                    <div style="margin-top: 15px;">
+                        <p style="margin-bottom: 15px;">Retrouvez nos enseignements, cultes et communiqués en direct sur notre page officielle.</p>
+                        <a id="affichageFacebook" href="#" target="_blank" style="display: inline-block; background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 600;">👉 Accéder à notre page Facebook</a>
                     </div>
                 </div>
             </div>
@@ -136,20 +80,18 @@
             <h2>Soutenir l'Œuvre de Dieu (Dons & Offrandes)</h2>
             <div class="dons-grid">
                 <div class="don-card">
-                    <div class="card-icon">🏦</div>
-                    <h3>Coordonnées Bancaires</h3>
-                    <p id="affichageBanque" style="white-space: pre-wrap;">Chargement des données...</p>
+                    <h3 style="margin-bottom: 10px;">🏦 Coordonnées Bancaires</h3>
+                    <p id="affichageBanque" style="white-space: pre-wrap; color: #475569;">Chargement...</p>
                 </div>
                 <div class="don-card">
-                    <div class="card-icon">📱</div>
-                    <h3>Mobile Money</h3>
-                    <p id="affichageMobileMoney" style="white-space: pre-wrap;">Chargement des données...</p>
+                    <h3 style="margin-bottom: 10px;">📱 Mobile Money</h3>
+                    <p id="affichageMobileMoney" style="white-space: pre-wrap; color: #475569;">Chargement...</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="main-footer">
+    <footer style="text-align: center; padding: 30px; background: #0f172a; color: #94a3b8; margin-top: 40px;">
         <p>&copy; 2026 Centre Missionnaire Actes 1:8. Tous droits réservés.</p>
     </footer>
 
@@ -157,32 +99,47 @@
         let currentIndex = 0;
         let carouselImages = [];
         let timerCarrousel;
-        const track = document.getElementById('carouselTrack');
+
         const burgerBtn = document.getElementById('burgerBtn');
         const mainNav = document.getElementById('mainNav');
+        const track = document.getElementById('carouselTrack');
 
-        // Menu Mobile (Burger)
-        burgerBtn.addEventListener('click', () => {
-            mainNav.classList.toggle('open');
-            burgerBtn.classList.toggle('active');
-        });
+        // 1. GESTION DU MENU BURGER (Fonctionne de manière totalement isolée)
+        if (burgerBtn && mainNav) {
+            burgerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                mainNav.classList.toggle('open');
+                burgerBtn.classList.toggle('active');
+            });
 
-        // CHARGEMENT SYNCHRONE DE TOUTES LES DONNÉES ET IMAGES
+            // Fermer le menu si on clique sur un lien mobile
+            document.querySelectorAll('.main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('open');
+                    burgerBtn.classList.remove('active');
+                });
+            });
+        }
+
+        // 2. RÉCUPÉRATION SÉCURISÉE DES PHOTOS ET TEXTES
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
                 .then(data => {
-                    if (data) {
-                        if(data.logoSrc) document.getElementById('siteLogo').src = data.logoSrc;
-                        if(data.texteAccueil) document.getElementById('affichageTexteAccueil').innerText = data.texteAccueil;
-                        if(data.vieEgliseTexte) document.getElementById('affichageVieEglise').innerText = data.vieEgliseTexte;
-                        if(data.coordonneesBancaires) document.getElementById('affichageBanque').innerText = data.coordonneesBancaires;
-                        if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
-                        if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
-                        
-                        // Flux YouTube
-                        const iframe = document.getElementById('affichageYouTube');
-                        const fallback = document.getElementById('youtubeFallback');
+                    if (!data) return;
+
+                    // Sécurisation injection des textes (si l'ID n'existe pas, ça ne fait pas planter le script)
+                    if(data.logoSrc && document.getElementById('siteLogo')) document.getElementById('siteLogo').src = data.logoSrc;
+                    if(data.texteAccueil && document.getElementById('affichageTexteAccueil')) document.getElementById('affichageTexteAccueil').innerText = data.texteAccueil;
+                    if(data.vieEgliseTexte && document.getElementById('affichageVieEglise')) document.getElementById('affichageVieEglise').innerText = data.vieEgliseTexte;
+                    if(data.coordonneesBancaires && document.getElementById('affichageBanque')) document.getElementById('affichageBanque').innerText = data.coordonneesBancaires;
+                    if(data.mobileMoney && document.getElementById('affichageMobileMoney')) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
+                    if(data.lienFacebook && document.getElementById('affichageFacebook')) document.getElementById('affichageFacebook').href = data.lienFacebook;
+                    
+                    // Gestion sécurisée du flux YouTube
+                    const iframe = document.getElementById('affichageYouTube');
+                    const fallback = document.getElementById('youtubeFallback');
+                    if(iframe && fallback) {
                         if(data.lienYouTube && data.lienYouTube.trim() !== "") {
                             iframe.src = data.lienYouTube;
                             iframe.style.display = "block";
@@ -191,11 +148,13 @@
                             iframe.style.display = "none";
                             fallback.style.display = "flex";
                         }
+                    }
 
-                        // LOGIQUE DYNAMIQUE DU CARROUSEL MULTIPLE
+                    // GENERATION DYNAMIQUE DE LA GALERIE MULTIPLE
+                    if(track) {
                         if(data.carouselImages && data.carouselImages.length > 0) {
                             carouselImages = data.carouselImages;
-                            track.innerHTML = ""; // Vider l'indicateur de chargement
+                            track.innerHTML = ""; // Vide le texte de chargement
                             
                             carouselImages.forEach((url, index) => {
                                 const slide = document.createElement('div');
@@ -204,17 +163,18 @@
                                 track.appendChild(slide);
                             });
 
-                            // Ne lancer le défilement automatique que s'il y a plus d'une photo
                             if(carouselImages.length > 1) {
                                 lancerAutomatisme();
                             }
                         } else {
-                            track.innerHTML = `<div class="carousel-slide active" style="background: #1e293b;"><h3 style="color:#94a3b8;">Aucune photo dans la galerie</h3></div>`;
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #1e293b; display:flex; align-items:center; justify-content:center;"><h3 style="color:#94a3b8;">Aucune photo dans la galerie</h3></div>`;
                         }
                     }
-                }).catch(err => console.error("Erreur de synchronisation galerie."));
+                })
+                .catch(err => console.error("Erreur d'actualisation des données."));
         });
 
+        // 3. FONCTIONS DU DEFILEMENT AUTOMATIQUE
         function showSlide(index) {
             const slides = document.querySelectorAll('.carousel-slide');
             if(slides.length === 0) return;
@@ -234,7 +194,7 @@
         }
 
         function lancerAutomatisme() {
-            timerCarrousel = setInterval(nextSlide, 5000); // Change de photo toutes les 5 secondes
+            timerCarrousel = setInterval(nextSlide, 5000);
         }
 
         function reinitialiserMinuteur() {
@@ -244,8 +204,8 @@
             }
         }
 
-        document.getElementById('nextBtn').addEventListener('click', nextSlide);
-        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+        if(document.getElementById('nextBtn')) document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        if(document.getElementById('prevBtn')) document.getElementById('prevBtn').addEventListener('click', prevSlide);
     </script>
 </body>
 </html>
