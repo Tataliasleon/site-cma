@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. STYLES GENERAUX & CONFIGURATION DE BASE
+   1. STYLES GÉNÉRAUX & BASE
    ========================================================================== */
 * {
     margin: 0;
@@ -12,6 +12,7 @@ body {
     background-color: #f8fafc;
     color: #0f172a;
     line-height: 1.6;
+    overflow-x: hidden; /* Empêche le défilement horizontal sur mobile */
 }
 
 .container {
@@ -22,22 +23,23 @@ body {
 }
 
 /* ==========================================================================
-   2. EN-TÊTE (HEADER) & NAVIGATION INTERACTIVE
+   2. EN-TÊTE (HEADER) & NAVIGATION STABLE
    ========================================================================== */
 .main-header {
     background-color: #ffffff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1000; /* Reste bien au-dessus du carrousel */
     width: 100%;
+    height: 75px;
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 75px;
+    height: 100%;
 }
 
 .logo-area {
@@ -59,7 +61,7 @@ body {
     color: #1e3a8a;
 }
 
-/* Navigation sur Ordinateur (PC) */
+/* Navigation PC */
 .main-nav {
     display: flex;
     gap: 30px;
@@ -77,7 +79,7 @@ body {
     color: #2563eb;
 }
 
-/* BOUTON BURGER (Caché sur ordinateur par défaut) */
+/* BOUTON BURGER (Caché sur PC) */
 .burger-menu-btn {
     display: none;
     flex-direction: column;
@@ -87,7 +89,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    z-index: 1010;
+    z-index: 2000; /* Toujours visible au-dessus du volet mobile */
     padding: 0;
 }
 
@@ -100,40 +102,41 @@ body {
 }
 
 /* ==========================================================================
-   3. SECTION DU HERO / BIENVENUE
+   3. SECTION HERO & BIENVENUE
    ========================================================================== */
 .hero-welcome {
     background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
     color: white;
     text-align: center;
-    padding: 60px 20px;
+    padding: 50px 20px;
 }
 
 .hero-welcome h1 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 800;
     max-width: 800px;
     margin: 0 auto;
 }
 
 /* ==========================================================================
-   4. PROTECTION ABSOLUE DE LA GALERIE PHOTO (CARROUSEL DYNAMIQUE)
+   4. ZONE DU CARROUSEL COMPLÈTEMENT ISOLÉE
    ========================================================================== */
 .gallery-section {
     width: 100%;
     max-width: 900px;
-    margin: 40px auto;
+    margin: 30px auto;
     padding: 0 15px;
-    display: block !important; /* Force la visibilité de la section */
+    position: relative;
+    z-index: 10; /* Inférieur au header pour éviter les chevauchements */
 }
 
 .carousel-container {
     position: relative;
     width: 100%;
-    height: 480px;
+    height: 450px; /* Hauteur par défaut pour PC */
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     background-color: #0f172a;
 }
 
@@ -143,7 +146,6 @@ body {
     position: relative;
 }
 
-/* IMPORTANT : Assure le bon comportement des slides injectées par le JS */
 .carousel-slide {
     position: absolute;
     top: 0;
@@ -159,129 +161,116 @@ body {
     z-index: 1;
 }
 
-/* Déclenchement de l'affichage de l'image active */
 .carousel-slide.active {
     opacity: 1;
     visibility: visible;
-    z-index: 5;
+    z-index: 2;
 }
 
-/* Boutons de navigation Flèches */
+/* Flèches de navigation */
 .carousel-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background: rgba(15, 23, 42, 0.6);
-    color: #ffffff;
+    color: white;
     border: none;
-    font-size: 22px;
-    padding: 12px 18px;
+    font-size: 20px;
+    padding: 10px 16px;
     cursor: pointer;
     border-radius: 50%;
-    z-index: 20;
-    transition: background 0.2s, scale 0.2s;
+    z-index: 5;
+    transition: background 0.2s;
 }
 
 .carousel-btn:hover {
     background: rgba(37, 99, 235, 0.9);
-    scale: 1.05;
 }
 
-.prev-btn { left: 20px; }
-.next-btn { right: 20px; }
+.prev-btn { left: 15px; }
+.next-btn { right: 15px; }
 
 /* ==========================================================================
-   5. AUTRES SECTIONS DE CONTENU (TEXTES, MEDIAS, DONS)
+   5. SECTIONS DE CONTENU (TEXTES, DONS, MEDIAS)
    ========================================================================== */
 .content-section {
-    padding: 60px 0;
+    padding: 50px 0;
     background-color: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
 }
 
 .content-section h2 {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     color: #1e3a8a;
-    margin-bottom: 25px;
-    position: relative;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.content-section h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 50px;
-    height: 4px;
-    background-color: #2563eb;
-    border-radius: 2px;
-}
-
-/* Grilles Responsive */
 .media-grid, .dons-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
 }
 
 .don-card, .video-card-box, .facebook-card-box {
     background: #f8fafc;
-    padding: 30px;
+    padding: 25px;
     border-radius: 12px;
     border: 1px solid #e2e8f0;
 }
 
 /* ==========================================================================
-   6. ADAPTATION RESPONSIVE & BREAKPOINTS DESIGN (MOBILE)
+   6. RESPONSIVE DESIGN (ADAPTATION MOBILE & SMARTPHONE)
    ========================================================================== */
 @media (max-width: 768px) {
-    /* Ajustement de la Galerie sur Téléphone */
+    /* 1. Redimensionnement fluide de la Galerie sur mobile sans casser l'affichage */
     .carousel-container {
-        height: 300px; /* Réduction de la hauteur pour petits écrans */
-    }
-    
-    .carousel-btn {
-        padding: 8px 14px;
-        font-size: 18px;
+        height: 260px; /* Hauteur plus petite et adaptée aux écrans de smartphones */
     }
 
-    /* Activation du Bouton Burger */
+    .hero-welcome {
+        padding: 35px 15px;
+    }
+
+    .hero-welcome h1 {
+        font-size: 1.5rem;
+    }
+
+    /* 2. Activation du menu Burger visuel */
     .burger-menu-btn {
         display: flex;
     }
 
-    /* Animation du bouton Burger au clic (.active) */
+    /* Animation des barres au clic (Devient une croix 'X') */
     .burger-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .burger-menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(-15px); }
     .burger-menu-btn.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-    /* Volet du menu coulissant */
+    /* 3. Transformation de la barre de navigation en volet mobile coulissant */
     .main-nav {
         position: fixed;
         top: 0;
-        right: -100%;
-        width: 80%;
+        right: -100%; /* Totalement invisible et masqué à droite au départ */
+        width: 75%;  /* Prend les 3/4 de la largeur de l'écran */
         height: 100vh;
         background-color: #ffffff;
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        gap: 35px;
+        gap: 30px;
         transition: right 0.4s ease-in-out;
-        z-index: 1005;
+        z-index: 1500; /* S'affiche au-dessus du carrousel et du reste du site */
     }
 
-    /* Déploiement du volet mobile menu au clic (.open) */
+    /* Déploiement fluide du volet mobile quand on clique (.open) */
     .main-nav.open {
         right: 0;
     }
 
     .main-nav a {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         width: 100%;
         text-align: center;
+        padding: 8px 0;
     }
 }
