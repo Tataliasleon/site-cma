@@ -5,6 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre Missionnaire Actes 1:8</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles de secours pour garantir la visibilité et la fluidité du carrousel */
+        .gallery-section {
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            background-color: #1e293b;
+        }
+        .carousel-track {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            border: none;
+            font-size: 24px;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 10;
+            transition: background 0.2s;
+        }
+        .carousel-btn:hover { background: rgba(59, 130, 246, 0.8); }
+        .prev-btn { left: 20px; }
+        .next-btn { right: 20px; }
+        @media (max-width: 768px) { .carousel-container { height: 280px; } }
+    </style>
 </head>
 <body>
 
@@ -16,9 +76,7 @@
             </div>
             
             <button class="burger-menu-btn" id="burgerBtn" aria-label="Ouvrir le menu">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
 
             <nav class="main-nav" id="mainNav">
@@ -38,7 +96,8 @@
 
     <section id="accueil" class="gallery-section">
         <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack"></div>
+            <div class="carousel-track" id="carouselTrack">
+                </div>
             <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
             <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
         </div>
@@ -55,7 +114,6 @@
         <div class="container">
             <h2>Suivez nos Directs & Cultes</h2>
             <div class="media-grid">
-                
                 <div class="video-card-box">
                     <h3>Direct YouTube</h3>
                     <div class="video-container" id="containerYouTube">
@@ -63,15 +121,13 @@
                         <div id="youtubeFallback" class="fallback-message">Aucun direct programmé pour le moment.</div>
                     </div>
                 </div>
-
                 <div class="facebook-card-box">
                     <h3>Suivez-nous sur les Réseaux</h3>
                     <div class="facebook-box">
                         <p>Retrouvez nos enseignements, cultes et communiqués en direct sur notre page officielle.</p>
-                        <a id="affichageFacebook" href="#" target="_blank" class="btn-social fb-btn">👉 Accéder à notre page Facebook</a>
+                        <a id="affichageFacebook" href="#" target="_blank" class="btn-social">👉 Accéder à notre page Facebook</a>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
@@ -101,22 +157,18 @@
     <script>
         let currentIndex = 0;
         let carouselImages = [];
+        let timerCarrousel;
         const track = document.getElementById('carouselTrack');
         const burgerBtn = document.getElementById('burgerBtn');
         const mainNav = document.getElementById('mainNav');
 
+        // Menu Mobile (Burger)
         burgerBtn.addEventListener('click', () => {
             mainNav.classList.toggle('open');
             burgerBtn.classList.toggle('active');
         });
 
-        document.querySelectorAll('.main-nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                mainNav.classList.remove('open');
-                burgerBtn.classList.remove('active');
-            });
-        });
-
+        // CHARGEMENT SYNCHRONE DE TOUTES LES DONNÉES ET IMAGES
         document.addEventListener("DOMContentLoaded", () => {
             fetch('/api/data?t=' + Date.now())
                 .then(res => res.json())
@@ -129,6 +181,7 @@
                         if(data.mobileMoney) document.getElementById('affichageMobileMoney').innerText = data.mobileMoney;
                         if(data.lienFacebook) document.getElementById('affichageFacebook').href = data.lienFacebook;
                         
+                        // Flux YouTube
                         const iframe = document.getElementById('affichageYouTube');
                         const fallback = document.getElementById('youtubeFallback');
                         if(data.lienYouTube && data.lienYouTube.trim() !== "") {
@@ -140,34 +193,57 @@
                             fallback.style.display = "flex";
                         }
 
+                        // LOGIQUE DYNAMIQUE DU CARROUSEL MULTIPLE
                         if(data.carouselImages && data.carouselImages.length > 0) {
                             carouselImages = data.carouselImages;
-                            track.innerHTML = "";
+                            track.innerHTML = ""; // Vider l'indicateur de chargement
+                            
                             carouselImages.forEach((url, index) => {
                                 const slide = document.createElement('div');
                                 slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
                                 slide.style.backgroundImage = `url('${url}')`;
                                 track.appendChild(slide);
                             });
+
+                            // Ne lancer le défilement automatique que s'il y a plus d'une photo
                             if(carouselImages.length > 1) {
-                                setInterval(nextSlide, 5000);
+                                lancerAutomatisme();
                             }
                         } else {
-                            track.innerHTML = `<div class="carousel-slide active" style="background: #eef2f7; display: flex; align-items: center; justify-content: center; color: #7f8c8d;"><h3>Aucune image disponible</h3></div>`;
+                            track.innerHTML = `<div class="carousel-slide active" style="background: #1e293b;"><h3 style="color:#94a3b8;">Aucune photo dans la galerie</h3></div>`;
                         }
                     }
-                }).catch(err => console.error("Erreur de synchronisation"));
+                }).catch(err => console.error("Erreur de synchronisation galerie."));
         });
 
         function showSlide(index) {
             const slides = document.querySelectorAll('.carousel-slide');
             if(slides.length === 0) return;
+            
             slides[currentIndex].classList.remove('active');
             currentIndex = (index + slides.length) % slides.length;
             slides[currentIndex].classList.add('active');
         }
-        function nextSlide() { showSlide(currentIndex + 1); }
-        function prevSlide() { showSlide(currentIndex - 1); }
+
+        function nextSlide() { 
+            showSlide(currentIndex + 1); 
+            reinitialiserMinuteur();
+        }
+        function prevSlide() { 
+            showSlide(currentIndex - 1); 
+            reinitialiserMinuteur();
+        }
+
+        function lancerAutomatisme() {
+            timerCarrousel = setInterval(nextSlide, 5000); // Change de photo toutes les 5 secondes
+        }
+
+        function reinitialiserMinuteur() {
+            clearInterval(timerCarrousel);
+            if(carouselImages.length > 1) {
+                lancerAutomatisme();
+            }
+        }
 
         document.getElementById('nextBtn').addEventListener('click', nextSlide);
         document.getElementById('prevBtn').addEventListener('click', prevSlide);
