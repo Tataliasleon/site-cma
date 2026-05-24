@@ -3,21 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Direction Générale du Site - CMA</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Panneau d'Administration - CMA</title>
     <style>
-        .gallery-preview { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
-        .image-wrapper { position: relative; width: 100px; height: 100px; }
-        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; }
-        .btn-delete { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        /* BASE & LAYOUT STRUCTURE */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #f1f5f9; padding: 40px 20px; color: #1e293b; }
+        .admin-container { max-width: 800px; margin: 0 auto; background: white; padding: 35px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+        
+        /* HEADER */
+        .admin-header { text-align: center; margin-bottom: 35px; border-bottom: 2px solid #e2e8f0; padding-bottom: 25px; }
+        .admin-header h1 { font-size: 1.8rem; color: #0f172a; margin-bottom: 5px; }
+        .admin-header p { color: #64748b; font-size: 1rem; }
+        
+        /* SECTIONS & FORMULAIRES */
+        .form-section { background: #f8fafc; padding: 25px; border-radius: 10px; margin-bottom: 25px; border-left: 5px solid #3b82f6; }
+        .form-section h2 { font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; font-weight: 700; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; color: #334155; }
+        
+        /* INPUTS */
+        .form-group input[type="text"], .form-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background-color: #fff; color: #0f172a; transition: border 0.2s; }
+        .form-group input[type="text"]:focus, .form-group textarea:focus { border-color: #3b82f6; outline: none; }
+        
+        /* ZONE DE SÉLECTION PHOTOS */
+        .file-dropzone { display: block; width: 100%; padding: 20px; background: #eff6ff; border: 2px dashed #3b82f6; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 600; color: #2563eb; transition: background 0.2s; }
+        .file-dropzone:hover { background: #dbeafe; }
+        .file-dropzone input[type="file"] { display: none; }
+        
+        /* GALERIE DE PRÉVISUALISATION */
+        .gallery-preview { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 20px; background: #ffffff; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; min-height: 50px; }
+        .image-wrapper { position: relative; width: 110px; height: 110px; border-radius: 8px; overflow: visible; }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; }
+        
+        /* BOUTON SUPPRIMER (CROIX ROUGE) */
+        .btn-delete { position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background 0.2s; z-index: 10; }
+        .btn-delete:hover { background: #dc2626; }
+        
+        /* BOUTON ACTION FINAL */
+        .btn-submit { display: block; width: 100%; padding: 16px; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+        .btn-submit:hover { background: #1d4ed8; }
+        
+        /* MESSAGES DE STATUT */
+        .status-msg { padding: 14px; border-radius: 8px; margin-bottom: 25px; display: none; text-align: center; font-weight: 600; font-size: 0.95rem; }
+        .status-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .photo-counter-box { margin-top: 10px; font-weight: 600; color: #475569; font-size: 0.9rem; }
     </style>
 </head>
-<body class="admin-body">
+<body>
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1>⚙️ Contrôle Total du Site Public</h1>
-        <p>Modifiez les textes, médias, dons et photos en temps réel</p>
+        <h1>⚙️ Panneau de Configuration Global</h1>
+        <p>Centre Missionnaire Actes 1:8</p>
     </div>
     
     <div id="statusMessage" class="status-msg"></div>
@@ -25,55 +63,66 @@
     <form id="adminForm">
         
         <div class="form-section">
-            <h2>1. Textes de la Page d'Accueil</h2>
+            <h2>1. Contenus Textuels du Site</h2>
             <div class="form-group">
-              function supprimerServeur(index) { imagesServeurActuelles.splice(index, 1); afficherPhotos(); }
-function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPhotos(); }
+                <label for="texteAccueil">Grand titre d'accueil (Message de bienvenue) :</label>
+                <input type="text" id="texteAccueil" placeholder="Ex: Bienvenue au Centre Missionnaire Actes 1:8">
+            </div>
+            <div class="form-group">
+                <label for="vieEgliseTexte">Présentation de l'Église (Vie de l'Église) :</label>
+                <textarea id="vieEgliseTexte" rows="6" placeholder="Écrivez l'histoire ou la présentation ici..."></textarea>
+            </div>
+        </div>
+
         <div class="form-section">
-            <h2>2. Galerie d'images (Carrousel)</h2>
+            <h2>2. Galerie d'images de la Page Publique</h2>
             <div class="form-group">
-                <label>Ajouter de nouvelles photos au défilement :</label>
-                <input type="file" id="carouselFiles" accept="image/*" multiple style="display: block; width: 100%; padding: 12px; background: #f1f5f9; border: 2px dashed #3b82f6; border-radius: 6px; cursor: pointer;">
+                <label>Sélectionner une ou plusieurs photos à ajouter au carrousel :</label>
+                <label class="file-dropzone">
+                    🖼️ Cliquez ici pour choisir vos photos multiples
+                    <input type="file" id="carouselFiles" accept="image/*" multiple>
+                </label>
                 
-                <div style="margin-top: 12px; font-weight: 600; color: #475569;">
-                    📸 Photos actuellement en ligne : <span id="photoCounter" style="color: #3b82f6;">0</span>
+                <div class="photo-counter-box">
+                    📸 Nombre de photos prêtes pour la galerie publique : <span id="photoCounter" style="color: #2563eb; font-weight: 700;">0</span>
                 </div>
+                
                 <div id="carouselPreview" class="gallery-preview"></div>
             </div>
         </div>
 
         <div class="form-section">
-            <h2>3. Flux Médias & Réseaux Sociaux</h2>
+            <h2>3. Directs & Réseaux Sociaux</h2>
             <div class="form-group">
-                <label>Lien d'intégration du Direct YouTube (URL /embed/) :</label>
-                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/Exemple">
-                <small style="color:#64748b; display:block; margin-top:4px;">Laissez vide s'il n'y a pas de culte en direct.</small>
+                <label for="lienYouTube">Lien d'intégration Direct YouTube (URL embed) :</label>
+                <input type="text" id="lienYouTube" placeholder="https://www.youtube.com/embed/...">
             </div>
             <div class="form-group">
-                <label>Lien de la page Facebook officielle :</label>
-                <input type="text" id="lienFacebook" placeholder="https://facebook.com/nomdelapage">
+                <label for="lienFacebook">Lien complet de la page Facebook :</label>
+                <input type="text" id="lienFacebook" placeholder="https://facebook.com/...">
             </div>
         </div>
 
         <div class="form-section">
-            <h2>4. Gestion des Dons & Offrandes</h2>
+            <h2>4. Informations de Financement</h2>
             <div class="form-group">
-                <label>Coordonnées Bancaires (Banque, IBAN, Swift...) :</label>
-                <textarea id="coordonneesBancaires" rows="3"></textarea>
+                <label for="coordonneesBancaires">Coordonnées Bancaires :</label>
+                <textarea id="coordonneesBancaires" rows="3" placeholder="Informations de virement..."></textarea>
             </div>
             <div class="form-group">
-                <label>Numéros Mobile Money (M-Pesa, Orange, Airtel...) :</label>
-                <textarea id="mobileMoney" rows="3"></textarea>
+                <label for="mobileMoney">Comptes Mobile Money :</label>
+                <textarea id="mobileMoney" rows="3" placeholder="Numéros M-Pesa, Orange Money, Airtel Money..."></textarea>
             </div>
         </div>
 
-        <button type="submit" class="btn-submit">💾 Enregistrer et Publier sur le Site</button>
+        <button type="submit" class="btn-submit">💾 Sauvegarder et Mettre le Site à Jour</button>
     </form>
 </div>
 
 <script>
     let photosAccumulees = []; 
     let imagesServeurActuelles = [];
+
     const carouselInput = document.getElementById('carouselFiles');
     const carouselPreview = document.getElementById('carouselPreview');
     const photoCounter = document.getElementById('photoCounter');
@@ -86,12 +135,13 @@ function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPho
         window.scrollTo(0,0);
     }
 
-    // Récupérer la totalité des données du site pour remplir les champs automatiquement
+    // CHARGEMENT SYNCHRONE DES DONNÉES DEPUIS LE SERVEUR
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/data?t=' + Date.now())
             .then(res => res.json())
             .then(data => {
                 if(data) {
+                    // Injecte dynamiquement les valeurs enregistrées dans les champs du formulaire
                     document.getElementById('texteAccueil').value = data.texteAccueil || "";
                     document.getElementById('vieEgliseTexte').value = data.vieEgliseTexte || "";
                     document.getElementById('lienYouTube').value = data.lienYouTube || "";
@@ -101,72 +151,98 @@ function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPho
                     
                     if(data.carouselImages) {
                         imagesServeurActuelles = data.carouselImages;
-                        afficherPhotos();
+                        afficherToutesLesPhotos();
                     }
                 }
-            }).catch(() => msg("Erreur de connexion avec la base de données.", false));
+            }).catch(err => msg("⚠️ Impossible de charger les données du serveur.", false));
     });
 
-    // Écouter l'ajout de photos locales
+    // CAPTURE DE LA SÉLECTION MULTIPLE
     carouselInput.addEventListener('change', () => {
-        if(carouselInput.files.length > 0) {
-            Array.from(carouselInput.files).forEach(file => photosAccumulees.push(file));
-            afficherPhotos();
-            carouselInput.value = "";
+        if(carouselInput.files && carouselInput.files.length > 0) {
+            Array.from(carouselInput.files).forEach(file => {
+                photosAccumulees.push(file); // Accumulation des sélections multiples successives
+            });
+            afficherToutesLesPhotos();
+            carouselInput.value = ""; // Reset de l'input pour autoriser d'autres sélections
         }
     });
 
-    function supprimerServeur(index) { imagesServeurActuelles.splice(index, 1); afficherPhotos(); }
-     SusieLocale(index) { photosAccumulees.splice(index, 1); afficherPhotos(); }
-    function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPhotos(); }
+    // FONCTIONS DE SUPPRESSION (COMMUNICATION DIRECTE)
+    window.supprimerServeur = function(index) {
+        imagesServeurActuelles.splice(index, 1);
+        afficherToutesLesPhotos();
+    };
 
-    // Rendu de la galerie de gestion
-    function afficherPhotos() {
+    window.supprimerLocale = function(index) {
+        photosAccumulees.splice(index, 1);
+        afficherToutesLesPhotos();
+    };
+
+    // GENERATION PROPRE DE LA GRILL DE GESTION
+    function afficherToutesLesPhotos() {
         carouselPreview.innerHTML = "";
-        
-        imagesServeurActuelles.forEach((url, idx) => {
-            const div = document.createElement('div');
-            div.className = 'image-wrapper';
-            div.innerHTML = `<img src="${url}"><button type="button" class="btn-delete" onclick="supprimerServeur(${idx})">✕</button>`;
-            carouselPreview.appendChild(div);
+
+        // Rendu des photos déjà validées sur le serveur public
+        imagesServeurActuelles.forEach((url, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-wrapper';
+            wrapper.innerHTML = `<img src="${url}"><button type="button" class="btn-delete" onclick="supprimerServeur(${index})">✕</button>`;
+            carouselPreview.appendChild(wrapper);
         });
 
-        photosAccumulees.forEach((file, idx) => {
-            const div = document.createElement('div');
-            div.className = 'image-wrapper';
+        // Rendu des nouvelles photos en attente d'envoi
+        photosAccumulees.forEach((file, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-wrapper';
+            
             const img = document.createElement('img');
-            img.style.border = "2px dashed #22c55e";
-            div.appendChild(img);
-            div.innerHTML += `<button type="button" class="btn-delete" onclick="supprimerLocale(${idx})">✕</button>`;
-            carouselPreview.appendChild(div);
+            img.style.border = "2px dashed #2563eb"; // Contour bleu distinctif
+            wrapper.appendChild(img);
 
-            const reader = new FileReader();
-            reader.onload = (e) => div.querySelector('img').src = e.target.result;
-            reader.readAsDataURL(file);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-delete';
+            btn.innerHTML = '✕';
+            btn.onclick = () => supprimerLocale(index);
+            wrapper.appendChild(btn);
+
+            carouselPreview.appendChild(wrapper);
+
+            const r = new FileReader();
+            r.onload = (e) => { img.src = e.target.result; };
+            r.readAsDataURL(file);
         });
+
         photoCounter.innerText = imagesServeurActuelles.length + photosAccumulees.length;
     }
 
-    // Validation et envoi synchrone de TOUS les changements
+    // INTERCEPTION DE LA SAUVEGARDE GLOBALE
     document.getElementById('adminForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        msg("Publication et synchronisation en cours...", true);
+        msg("Mise à jour et synchronisation de la galerie en cours...", true);
 
         try {
-            let finalUrls = [...imagesServeurActuelles];
+            let finalCarouselUrls = [...imagesServeurActuelles];
 
+            // Traitement et téléversement des nouvelles images multiples
             if(photosAccumulees.length > 0) {
                 const fd = new FormData();
-                photosAccumulees.forEach(file => fd.append('carouselFiles', file));
+                photosAccumulees.forEach(file => {
+                    fd.append('carouselFiles', file);
+                });
+
                 const res = await fetch('/api/upload-carousel', { method: 'POST', body: fd });
                 const d = await res.json();
-                if(d.srcs) finalUrls = [...finalUrls, ...d.srcs];
+                if(d.srcs && d.srcs.length > 0) {
+                    finalCarouselUrls = [...finalCarouselUrls, ...d.srcs];
+                }
             }
 
-            // Regroupement complet de toutes les valeurs modifiées
-            const packageData = {
+            // Assemblage du package final de données structurées
+            const finalData = {
                 logoSrc: "/images/logo.jpeg",
-                carouselImages: finalUrls,
+                carouselImages: finalCarouselUrls,
                 texteAccueil: document.getElementById('texteAccueil').value,
                 vieEgliseTexte: document.getElementById('vieEgliseTexte').value,
                 lienYouTube: document.getElementById('lienYouTube').value,
@@ -175,21 +251,24 @@ function supprimerLocale(index) { photosAccumulees.splice(index, 1); afficherPho
                 mobileMoney: document.getElementById('mobileMoney').value
             };
 
+            // Envoi définitif au serveur
             const saveRes = await fetch('/api/save-data', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(packageData)
+                body: JSON.stringify(finalData)
             });
-
             const r = await saveRes.json();
+            
             if(r.success) {
-                msg("✅ Félicitations ! Tout le site a été mis à jour avec succès.", true);
-                imagesServeurActuelles = finalUrls;
-                photosAccumulees = [];
-                afficherPhotos();
+                msg("✅ Parfait ! Tout le site public et la galerie de photos ont été mis à jour.", true);
+                imagesServeurActuelles = finalCarouselUrls;
+                photosAccumulees = []; // Vide les fichiers locaux envoyés
+                afficherToutesLesPhotos();
+            } else {
+                msg("❌ Le serveur a renvoyé une erreur de sauvegarde.", false);
             }
         } catch (err) {
-            msg("❌ Échec de l'enregistrement.", false);
+            msg("❌ Erreur critique de communication réseau.", false);
         }
     });
 </script>
