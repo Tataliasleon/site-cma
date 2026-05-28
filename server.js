@@ -12,9 +12,9 @@ const PORT = process.env.PORT || 3000;
 // Remplace les valeurs ci-dessous par tes propres identifiants Cloudinary
 // ==========================================
 cloudinary.config({ 
-  cloud_name: 'TON_CLOUD_NAME', 
-  api_key: 'TA_CLE_API', 
-  api_secret: 'TON_API_SECRET' 
+  cloud_name: 'dotjq0cqg', 
+  api_key: '554472961924777', 
+  api_secret: 'zCYze8MRkylM9WZ_M3eT3P7gRr4' 
 });
 
 // Autorisation des flux externes (YouTube, Facebook, Cloudinary)
