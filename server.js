@@ -2,40 +2,40 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// AUTORISATION CRUCIALE : On configure les en-têtes pour permettre à YouTube de s'afficher
+// ==========================================
+// CONFIGURATION DE CLOUDINARY
+// Remplace les valeurs ci-dessous par tes propres identifiants Cloudinary
+// ==========================================
+cloudinary.config({ 
+  cloud_name: 'TON_CLOUD_NAME', 
+  api_key: 'TA_CLE_API', 
+  api_secret: 'TON_API_SECRET' 
+});
+
+// Autorisation des flux externes (YouTube, Facebook, Cloudinary)
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "frame-src 'self' https://www.youtube.com https://youtube.com https://web.facebook.com https://facebook.com;");
-    res.removeHeader("X-Frame-Options"); // Supprime le blocage strict des cadres
+    res.setHeader("Content-Security-Policy", "frame-src 'self' https://www.youtube.com https://youtube.com https://web.facebook.com https://facebook.com; img-src 'self' data: https://res.cloudinary.com;");
+    res.removeHeader("X-Frame-Options");
     next();
 });
 
-// Gestion du stockage des images locales
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dir = path.join(__dirname, 'images');
-        fs.mkdirSync(dir, { recursive: true });
-        cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-const upload = multer({ storage: storage });
+// Configuration temporaire de sauvegarde locale (Multer) avant envoi Cloudinary
+const upload = multer({ dest: 'uploads/' });
 
 app.use(express.json());
 app.use(express.static(__dirname));
-app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const dataPath = path.join(__dirname, 'data.json');
 
-// Initialiser data.json s'il n'existe pas encore
+// Initialisation de secours pour data.json
 if (!fs.existsSync(dataPath)) {
     const initialData = {
-        logoSrc: "/images/logo.jpeg",
+        logoSrc: "",
         carouselImages: [],
         texteAccueil: "Bienvenue au Centre Missionnaire Actes 1:8",
         vieEgliseTexte: "Chargement de la présentation...",
@@ -47,7 +47,7 @@ if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath, JSON.stringify(initialData, null, 2));
 }
 
-// Routes API
+// ROUTE API : Récupérer les données
 app.get('/api/data', (req, res) => {
     fs.readFile(dataPath, 'utf8', (err, data) => {
         if (err) return res.status(500).json({ error: "Erreur de lecture" });
@@ -55,14 +55,31 @@ app.get('/api/data', (req, res) => {
     });
 });
 
-app.post('/api/upload-carousel', upload.array('carouselFiles'), (req, res) => {
+// ROUTE API MULTIPLE : Téléverser plusieurs photos vers Cloudinary
+app.post('/api/upload-carousel', upload.array('carouselFiles'), async (req, res) => {
     if (!req.files || req.files.length === 0) {
         return res.json({ srcs: [] });
     }
-    const urls = req.files.map(file => `/images/${file.filename}`);
-    res.json({ srcs: urls });
+
+    try {
+        const uploadPromises = req.files.map(file => {
+            return cloudinary.uploader.upload(file.path, { folder: "cma_gallery" })
+                .then(result => {
+                    // Supprime le fichier temporaire local après envoi réussi
+                    fs.unlinkSync(file.path);
+                    return result.secure_url; // Lien permanent HTTPS
+                });
+        });
+
+        const urls = await Promise.all(uploadPromises);
+        res.json({ srcs: urls });
+    } catch (error) {
+        console.error("Erreur Cloudinary:", error);
+        res.status(500).json({ error: "Échec du téléversement vers le Cloud" });
+    }
 });
 
+// ROUTE API : Sauvegarder les données textuelles et liens d'images
 app.post('/api/save-data', (req, res) => {
     fs.writeFile(dataPath, JSON.stringify(req.body, null, 2), (err) => {
         if (err) return res.status(500).json({ success: false });
@@ -70,9 +87,8 @@ app.post('/api/save-data', (req, res) => {
     });
 });
 
-// Redirection par défaut vers index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`Serveur démarré sur le port ${PORT}`));
+app.listen(PORT, () => console.log(`Serveur cloud connecté sur le port ${PORT}`));
